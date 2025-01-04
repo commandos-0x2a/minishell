@@ -23,7 +23,7 @@ void	exec_command(char **argv)
 			if (ft_strlen(argv[i]) == 2)
 				outfile = argv[++i];
 			else
-				outfile = argv[i] + 2;
+				outfile = argv[i++] + 2;
 			fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd == -1)
 			{
@@ -40,7 +40,7 @@ void	exec_command(char **argv)
 			if (ft_strlen(argv[i]) == 1)
 				outfile = argv[++i];
 			else
-				outfile = argv[i] + 1;
+				outfile = argv[i++] + 1;
 			fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
 			{
