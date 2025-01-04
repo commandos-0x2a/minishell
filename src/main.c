@@ -3,12 +3,48 @@
 #include <stdio.h>
 
 
+
+
+// int	in_redirection(char *ifile)
+// {
+
+// }
+
+int	out_redirection(char *outfile)
+{
+	int fd;
+
+	fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd == -1)
+	{
+		perror(outfile);
+		return (-1);
+	}
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
+	return (0);
+}
+
+int	out_append(char *outfile)
+{
+	int fd;
+
+	fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (fd == -1)
+	{
+		perror(outfile);
+		return (-1);
+	}
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
+	return (0);
+}
+
 void	exec_command(char **argv)
 {
 	char	full_path[PATH_MAX];
 	extern char	**environ;
 	int		i;
-	int		fd;
 	char	*outfile;
 
 	if (!argv || !argv[0])
@@ -24,16 +60,8 @@ void	exec_command(char **argv)
 				outfile = argv[++i];
 			else
 				outfile = argv[i++] + 2;
-			fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fd == -1)
-			{
-				perror("minishell");
-				exit(1);
-			}
-			dup2(fd, STDOUT_FILENO);
-			close(fd);
+			out_append(outfile);
 			argv[i - 1] = NULL;
-			break;
 		}
 		else if (ft_strncmp(argv[i], ">", 1) == 0)
 		{
@@ -41,16 +69,8 @@ void	exec_command(char **argv)
 				outfile = argv[++i];
 			else
 				outfile = argv[i++] + 1;
-			fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd == -1)
-			{
-				perror("minishell");
-				exit(1);
-			}
-			dup2(fd, STDOUT_FILENO);
-			close(fd);
+			out_redirection(outfile);
 			argv[i - 1] = NULL;
-			break;
 		}
 		i++;
 	}
@@ -64,32 +84,35 @@ void	exec_command(char **argv)
 			size_t len = ft_strlen(argv[i]);
 			if (len >= 2 && argv[i][len - 1] == argv[i][0])
 			{
-				// Move content one character left to remove opening quote
-				ft_memmove(argv[i], argv[i] + 1, len - 2);
-				argv[i][len - 2] = '\0';
+				argv[i][len - 1] = '\0';
+				argv[i]++;
+				// // Move content one character left to remove opening quote
+				// ft_memmove(argv[i], argv[i] + 1, len - 2);
+				// argv[i][len - 2] = '\0';
 			}
 		}
 		i++;
 	}
 
-	// First try direct execution (for absolute paths or ./command)
-	if (argv[0][0] == '/' || (argv[0][0] == '.' && argv[0][1] == '/'))
-	{
-		if (access(argv[0], X_OK) == 0)
-		{
-			execve(argv[0], argv, environ);
-			perror("minishell");
-			exit(126);
-		}
-	}
+	// // First try direct execution (for absolute paths or ./command)
+	// if (argv[0][0] == '/' || (argv[0][0] == '.' && argv[0][1] == '/'))
+	// {
+	// 	if (access(argv[0], X_OK) == 0)
+	// 	{
+	// 		execve(argv[0], argv, environ);
+	// 		perror("minishell");
+	// 		exit(126);
+	// 	}
+	// }
 	
-	// Then try PATH lookup
-	if (get_full_path(full_path, argv, "") == 0)
+	int err = get_full_path(full_path, argv, "");
+	if (err == 0)
 	{
 		execve(full_path, argv, environ);
 		perror("minishell");
+		exit(1);
 	}
-	exit(127);
+	exit(err);
 }
 
 
