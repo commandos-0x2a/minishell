@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   here_doc_process.c                                 :+:      :+:    :+:   */
+/*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/01 16:51:19 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/04 18:46:43 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "minishell.h"
 
 static int	call_here_doc(char *limiter, int out_fd)
 {
@@ -27,8 +27,8 @@ static int	call_here_doc(char *limiter, int out_fd)
 			return (1);
 		if (_read == 0)
 		{
-			ft_dprintf(2, "\npipex: warning: here-document " \
-						"delimited by end-of-file (wanted `%s')\n", limiter);
+			ft_fprintf(2, "\npipex: warning: here-document " \
+						"delimited by end-of-file (wanted `%s`)\n", limiter);
 			break ;
 		}
 		if (ft_strncmp(buffer, limiter, limiter_len - 1) == 0 \
@@ -47,7 +47,10 @@ pid_t	run_here_doc_process(char *limiter, int *out_fd)
 
 	*out_fd = -1;
 	if (pipe(pipe_fds) == -1)
-		exit_handler("pipe", 1);
+	{
+		perror("pipe");
+		exit(1);
+	}
 	proc = fork();
 	if (proc == 0)
 	{
@@ -57,7 +60,7 @@ pid_t	run_here_doc_process(char *limiter, int *out_fd)
 		exit(status);
 	}
 	if (proc == -1)
-		ft_dprintf(2, "pipex: %s: fork\n", strerror(errno));
+		ft_fprintf(2, "pipe: %s: fork\n", strerror(errno));
 	close(pipe_fds[1]);
 	*out_fd = pipe_fds[0];
 	waitpid(proc, &status, 0);
