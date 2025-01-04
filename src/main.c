@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
-int	out_redirection(char *outfile)
+int out_redirection(char *outfile)
 {
 	int fd;
 
@@ -17,7 +17,7 @@ int	out_redirection(char *outfile)
 	return (0);
 }
 
-int	out_append(char *outfile)
+int out_append(char *outfile)
 {
 	int fd;
 
@@ -32,13 +32,12 @@ int	out_append(char *outfile)
 	return (0);
 }
 
-
-void	exec_command(char **argv)
+void exec_command(char **argv)
 {
-	char	full_path[PATH_MAX];
-	extern char	**environ;
-	int		i;
-	char	*outfile;
+	char full_path[PATH_MAX];
+	extern char **environ;
+	int i;
+	char *outfile;
 
 	if (!argv || !argv[0])
 		exit(1);
@@ -94,14 +93,13 @@ void	exec_command(char **argv)
 	exit(err);
 }
 
-
-int	executioner(char *line, int indent)
+int executioner(char *line, int indent)
 {
-	char	**argv;
-	int		i;
-	int		pid;
-	int		status;
-	int		fd;
+	char **argv;
+	int i;
+	int pid;
+	int status;
+	int fd;
 
 	argv = tokenizer(line, 0);
 	if (!argv)
@@ -174,31 +172,31 @@ int	executioner(char *line, int indent)
 
 int main(int argc, char **argv)
 {
-    char    *line;
-	int		is_test;
+	char *line;
+	int is_test;
 
 	is_test = 0;
-    // atexit(cleanup_shell);
+	// atexit(cleanup_shell);
 	if (argc == 2 && ft_strcmp(argv[1], "test") == 0)
 		is_test = 1;
-    while (1)
-    {
-        line = readline(get_prompt());
-        if (!line)
-        {
-            printf("\nexit\n");
-            break;
-        }
-        handle_line(line);
-        if (*line)
+	while (1)
+	{
+		line = readline(get_prompt());
+		if (!line)
+		{
+			printf("\nexit\n");
+			break;
+		}
+		handle_line(line);
+		if (*line)
 		{
 
 			if (is_test)
 				print_tokenizer(line, 0);
 			else
-         		executioner(line, 0);
+				executioner(line, 0);
 		}
-        free(line);
-    }
-    return (0);
+		free(line);
+	}
+	return (0);
 }

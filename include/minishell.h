@@ -3,21 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/01/04 21:22:01 by mkurkar          ###   ########.fr       */
-=======
-/*   Updated: 2025/01/04 21:13:04 by yaltayeh         ###   ########.fr       */
->>>>>>> refs/remotes/origin/dev
+/*   Updated: 2025/01/04 21:39:06 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
 # include <libft.h>
+# include <stddef.h>
 # include <unistd.h>
 # include <sys/wait.h>
 # include <fcntl.h>
