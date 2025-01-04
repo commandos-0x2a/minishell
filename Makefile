@@ -15,7 +15,13 @@ FILES = main				\
 		tokenizer			\
 		get_full_path		\
 		here_doc			\
-		readline_handler
+		readline_handler	\
+		builtins/cd		\
+		builtins/builtins	\
+		builtins/echo		\
+		builtins/pwd		\
+		builtins/env		\
+		builtins/exit
 
 OBJECTS = $(FILES:%=$(BUILD_DIR)/%.o)
 
@@ -43,4 +49,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all bonus libft clean fclean re 
+.PHONY: all bonus libft clean fclean re

@@ -15,13 +15,13 @@
    - [ ] Command argument parsing
 
 2. Shell Builtins
-   - [ ] cd
-   - [ ] echo
-   - [ ] pwd
+   - [x] cd
+   - [x] echo
+   - [x] pwd
    - [ ] export
    - [ ] unset
-   - [ ] env
-   - [ ] exit
+   - [x] env
+   - [x] exit
 
 3. Redirections
    - [x] Input redirection (<)

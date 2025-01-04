@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+         #
+#    By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/02 00:46:59 by yaltayeh          #+#    #+#              #
-#    Updated: 2024/11/15 18:06:16 by yaltayeh         ###   ########.fr        #
+#    Updated: 2025/01/04 21:32:41 by mkurkar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 

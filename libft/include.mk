@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    include.mk                                         :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+         #
+#    By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/02 00:46:54 by yaltayeh          #+#    #+#              #
-#    Updated: 2024/11/15 16:27:46 by yaltayeh         ###   ########.fr        #
+#    Updated: 2025/01/04 21:30:00 by mkurkar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,6 +59,7 @@ LIBFT_SOURCES =	\
 		ft_string/ft_strtok.c			\
 		ft_string/ft_atoi.c				\
 		ft_string/ft_atou.c				\
+		ft_string/ft_str_is_numeric.c	\
 
 LIBFT_SOURCES +=	\
 		ft_memory/ft_bzero.c			\

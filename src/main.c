@@ -2,14 +2,6 @@
 #include <unistd.h>
 #include <stdio.h>
 
-
-
-
-// int	in_redirection(char *ifile)
-// {
-
-// }
-
 int	out_redirection(char *outfile)
 {
 	int fd;
@@ -39,6 +31,7 @@ int	out_append(char *outfile)
 	close(fd);
 	return (0);
 }
+
 
 void	exec_command(char **argv)
 {
@@ -86,25 +79,11 @@ void	exec_command(char **argv)
 			{
 				argv[i][len - 1] = '\0';
 				argv[i]++;
-				// // Move content one character left to remove opening quote
-				// ft_memmove(argv[i], argv[i] + 1, len - 2);
-				// argv[i][len - 2] = '\0';
 			}
 		}
 		i++;
 	}
 
-	// // First try direct execution (for absolute paths or ./command)
-	// if (argv[0][0] == '/' || (argv[0][0] == '.' && argv[0][1] == '/'))
-	// {
-	// 	if (access(argv[0], X_OK) == 0)
-	// 	{
-	// 		execve(argv[0], argv, environ);
-	// 		perror("minishell");
-	// 		exit(126);
-	// 	}
-	// }
-	
 	int err = get_full_path(full_path, argv, "");
 	if (err == 0)
 	{
@@ -124,15 +103,21 @@ int	executioner(char *line, int indent)
 	int		status;
 	int		fd;
 
+	argv = tokenizer(line, 0);
+	if (!argv)
+		return 0;
+
+	// Check for built-in commands before forking
+	if (argv[0] && is_builtin(argv[0]))
+		return handle_builtin(argv);
+
 	pid = fork();
 	if (pid != 0)
 	{
 		waitpid(pid, &status, 0);
 		return (status);
 	}
-	argv = tokenizer(line, 0);
-	if (!argv)
-		return 0;
+
 	i = 0;
 	while (argv[i])
 	{
@@ -200,11 +185,6 @@ int main(void)
             printf("\nexit\n");
             break;
         }
-		if(ft_strcmp(line, "exit") == 0)
-		{
-			free(line);
-			break;
-		}
         handle_line(line);
         if (*line)
             executioner(line, 0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 21:15:57 by yaltayeh          #+#    #+#             */
-/*   Updated: 2024/11/16 13:21:35 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/04 21:29:53 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,4 +74,5 @@ int		ft_putnbr_fd(int n, int fd);
 
 char	*ft_strtok(char *s, const char *d);
 
+int		ft_str_is_numeric(const char *str);
 #endif

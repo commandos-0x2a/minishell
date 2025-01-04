@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/04 16:41:52 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/04 21:22:01 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,14 @@ int		get_full_path(char *full_path, char **argv, char *command);
 
 
 pid_t	run_here_doc_process(char *limiter, int *out_fd);
+
+// Built-in commands
+int		ft_cd(char **argv);
+int		ft_echo(char **argv);
+int		ft_pwd(char **argv);
+int		ft_env(char **argv);
+int		ft_exit(char **argv);
+int		is_builtin(char *cmd);
+int		handle_builtin(char **argv);
 
 #endif
