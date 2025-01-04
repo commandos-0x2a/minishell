@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 21:33:51 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/04 16:59:41 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/04 17:05:14 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 static int	check_exist(char *full_path, char *command)
 {
-	if (command[0] == '/' || (command[0] == '.' && command[1] == '/'))
+    // Direct path check
+    if (command[0] == '/' || (command[0] == '.' && command[1] == '/'))
     {
         if (ft_strlcpy(full_path, command, PATH_MAX) >= PATH_MAX)
         {
