@@ -177,6 +177,11 @@ int main(void)
             printf("\nexit\n");
             break;
         }
+		if(ft_strcmp(line, "exit") == 0)
+		{
+			free(line);
+			break;
+		}
         handle_line(line);
         if (*line)
             executioner(line, 0);
