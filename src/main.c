@@ -32,6 +32,58 @@ int out_append(char *outfile)
 	return (0);
 }
 
+int setup_redirections(char **argv)
+{
+    int i = 0;
+    int original_stdout = dup(STDOUT_FILENO);
+    // int original_stdin = dup(STDIN_FILENO);
+    char *file;
+
+    while (argv[i])
+    {
+        if (ft_strncmp(argv[i], ">>", 2) == 0)
+        {
+            if (ft_strlen(argv[i]) == 2)
+                file = argv[++i];
+            else
+                file = argv[i] + 2;
+            out_append(file);
+            argv[i - 1] = NULL;
+        }
+        else if (ft_strncmp(argv[i], ">", 1) == 0)
+        {
+            if (ft_strlen(argv[i]) == 1)
+                file = argv[++i];
+            else
+                file = argv[i] + 1;
+            out_redirection(file);
+            argv[i - 1] = NULL;
+        }
+        else if (ft_strncmp(argv[i], "<", 1) == 0)
+        {
+            if (ft_strlen(argv[i]) == 1)
+                file = argv[++i];
+            else
+                file = argv[i] + 1;
+            int fd = open(file, O_RDONLY);
+            if (fd != -1)
+            {
+                dup2(fd, STDIN_FILENO);
+                close(fd);
+            }
+            argv[i - 1] = NULL;
+        }
+        i++;
+    }
+    return original_stdout;
+}
+
+void restore_output(int original_fd)
+{
+    dup2(original_fd, STDOUT_FILENO);
+    close(original_fd);
+}
+
 void exec_command(char **argv)
 {
 	char full_path[PATH_MAX];
@@ -96,18 +148,24 @@ void exec_command(char **argv)
 int executioner(char *line, int indent)
 {
 	char **argv;
-	int i;
-	int pid;
-	int status;
-	int fd;
+	int status = 0;
 
 	argv = tokenizer(line, 0);
 	if (!argv)
 		return 0;
 
-	// Check for built-in commands before forking
+	// Handle built-ins with redirections
 	if (argv[0] && is_builtin(argv[0]))
-		return handle_builtin(argv);
+	{
+		int original_fd = setup_redirections(argv);
+		status = handle_builtin(argv);
+		restore_output(original_fd);
+		return status;
+	}
+
+	int i;
+	int pid;
+	int fd;
 
 	pid = fork();
 	if (pid != 0)

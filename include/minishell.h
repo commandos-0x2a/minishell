@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/04 21:40:56 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/04 22:21:29 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,8 @@ int		ft_env(char **argv);
 int		ft_exit(char **argv);
 int		is_builtin(char *cmd);
 int		handle_builtin(char **argv);
+
+int     setup_redirections(char **argv);
+void    restore_output(int original_fd);
 
 #endif
