@@ -13,6 +13,7 @@ FILES = main				\
 		ft_join_path		\
 		ft_getenv			\
 		tokenizer			\
+		print_tokenizer		\
 		get_full_path		\
 		here_doc			\
 		readline_handler	\

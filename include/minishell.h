@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/01/04 21:22:01 by mkurkar          ###   ########.fr       */
+=======
+/*   Updated: 2025/01/04 21:13:04 by yaltayeh         ###   ########.fr       */
+>>>>>>> refs/remotes/origin/dev
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +54,7 @@ char	*ft_getenv(const char *name);
 char	**tokenizer(char *s, int i);
 size_t	ft_join_path(char *dest, const char *path1, const char *path2);
 int		get_full_path(char *full_path, char **argv, char *command);
+void	print_tokenizer(char *line, int indent);
 
 
 pid_t	run_here_doc_process(char *limiter, int *out_fd);
