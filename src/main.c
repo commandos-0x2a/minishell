@@ -99,6 +99,7 @@ int	executioner(char *line, int indent)
 	int		i;
 	int		pid;
 	int		status;
+	int		fd;
 
 	pid = fork();
 	if (pid != 0)
@@ -130,8 +131,14 @@ int	executioner(char *line, int indent)
 					limiter = argv[++i];
 				else
 					limiter = argv[i] + 2;
-				fprintf(stderr, "%-*sHEREDOC (%s)\n", indent, "", limiter);
-
+				pid_t proc = run_here_doc_process(limiter, &fd);
+				if (proc == -1)
+				{
+					perror("minishell");
+					exit(1);
+				}
+				dup2(fd, STDIN_FILENO);
+				close(fd);
 			}
 			else if (ft_strncmp(argv[i], "<", 1) == 0)
 			{
@@ -140,7 +147,7 @@ int	executioner(char *line, int indent)
 					infile = argv[++i];
 				else
 					infile = argv[i] + 1;
-				int fd = open(infile, O_RDONLY);
+				fd = open(infile, O_RDONLY);
 				if (fd == -1)
 					perror("minishell");
 				dup2(fd, STDIN_FILENO);
@@ -149,7 +156,7 @@ int	executioner(char *line, int indent)
 			else
 			{
 				exec_command(argv + i);
-				printf("%-*s%i: %s\n", indent, "", i, argv[i]);
+				fprintf(stderr, "%-*s%i: %s\n", indent, "", i, argv[i]);
 			}
 		}
 		i++;
