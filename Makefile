@@ -2,7 +2,7 @@ NAME	= minishell
 
 # Compiler settings
 CC			= cc
-LDFLAGS		= -L./libft -lft
+LDFLAGS		= -L./libft -lft -lreadline -lncurses
 INCLUDES	= -I./libft/include -I./include
 CFLAGS		:= -Wall -Wextra -Werror -g $(INCLUDES)
 
@@ -15,6 +15,7 @@ FILES = main				\
 		tokenizer			\
 		get_full_path		\
 		here_doc			\
+		readline_handler
 
 OBJECTS = $(FILES:%=$(BUILD_DIR)/%.o)
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_full_path.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 21:33:51 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/04 12:09:02 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/04 16:46:49 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,24 @@
 
 static int	check_exist(char *full_path, char *command)
 {
+    // Direct path check
+    if (command[0] == '/' || (command[0] == '.' && command[1] == '/'))
+    {
+        if (ft_strlcpy(full_path, command, PATH_MAX) >= PATH_MAX)
+        {
+            ft_fprintf(2, "minishell: %s: command is too long\n", command);
+            return (-1);
+        }
+        if (access(full_path, F_OK) == 0)
+        {
+            if (access(full_path, X_OK) == 0)
+                return (1);
+            ft_fprintf(2, "minishell: %s: Permission denied\n", full_path);
+            return (-126);
+        }
+        ft_fprintf(2, "minishell: %s: No such file or directory\n", full_path);
+        return (-127);
+    }
 	if (ft_strlcpy(full_path, command, PATH_MAX) >= PATH_MAX)
 	{
 		ft_fprintf(2, "pipex: %s: command is too long\n", command);

@@ -6,43 +6,33 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 16:30:52 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/04 16:33:00 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/04 16:41:06 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void    cleanup_shell(void)
+void cleanup_shell(void)
 {
-    clear_history();
+	clear_history();
 }
 
-void    handle_line(char *line)
+void handle_line(char *line)
 {
-    if (line && *line)
-        add_history(line);
+	if (line && *line)
+		add_history(line);
 }
 
-char    *get_prompt(void)
+char *get_prompt(void)
 {
-    static char     prompt[PROMPT_MAX];
-    char            hostname[HOSTNAME_MAX];
-    char            cwd[PATH_MAX_LEN];
-    char            *username;
-    struct passwd   *pw;
+    static char prompt[PROMPT_MAX];
+    char cwd[PATH_MAX_LEN];
 
-    pw = getpwuid(getuid());
-    username = pw ? pw->pw_name : "unknown";
-    if (gethostname(hostname, sizeof(hostname)) != 0)
-        strncpy(hostname, "unknown", HOSTNAME_MAX - 1);
     if (getcwd(cwd, sizeof(cwd)) == NULL)
-        strncpy(cwd, "~", PATH_MAX_LEN - 1);
-    
-    hostname[HOSTNAME_MAX - 1] = '\0';
-    cwd[PATH_MAX_LEN - 1] = '\0';
+        strcpy(cwd, "~");
 
-    snprintf(prompt, PROMPT_MAX, "%.32s@%.64s:%.4096s$ ", 
-             username, hostname, cwd);
+    cwd[PATH_MAX_LEN - 1] = '\0';
+    snprintf(prompt, PROMPT_MAX, "%s$ ", cwd);
     return (prompt);
 }
 

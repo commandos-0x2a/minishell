@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/04 16:32:24 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/04 16:41:52 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@
 
 # include <readline/readline.h>
 # include <readline/history.h>
-# include <pwd.h>
 
 
 # define HOSTNAME_MAX 64
