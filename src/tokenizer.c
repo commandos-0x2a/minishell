@@ -3,15 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/04 23:30:42 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/05 21:32:35 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/*
+* Let me explain what this function does:
+* 
+* Imagine you have a sentence like: "play with toys in my room"
+* This function is like a magical sentence splitter! 🪄
+* 
+* What it does:
+* 1. It looks at your sentence
+* 2. Cuts it into separate words (we call them tokens)
+* 3. Makes sure special words in quotes stay together
+* 4. Checks if brackets () are used correctly
+* 
+* For example:
+* Input: "play with toys"
+* Output: ["play", "with", "toys"]
+* 
+* It's like taking a long piece of paper and cutting it into smaller pieces,
+* where each piece has one word! ✂️
+*/
 char	**tokenizer(char *s, int i)
 {
 	char	*p;

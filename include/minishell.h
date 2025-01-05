@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/05 18:24:18 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/05 21:37:11 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,5 +88,7 @@ int	out_redirection(char *outfile);
 int	check_pipe(char ***argv_p);
 int	exec_command(char ***argv_p, int in_fd, int *out_fd);
 // int	executioner(char *line, int indent);
+
+char **handle_wildcards(char **argv);
 
 #endif
