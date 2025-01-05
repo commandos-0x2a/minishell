@@ -26,7 +26,8 @@ FILES = main				\
 		builtins/pwd		\
 		builtins/env		\
 		builtins/exit	\
-		builtins/test
+		builtins/test \
+
 
 OBJECTS = $(FILES:%=$(BUILD_DIR)/%.o)
 

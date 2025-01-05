@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/05 17:34:44 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/05 18:24:18 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,19 @@ int		handle_builtin(char **argv);
 
 int     setup_redirections(char **argv);
 void    restore_output(int original_fd);
+
+
+int	here_doc(char *limiter);
+
+int	in_redirection(char *infile);
+
+int	out_append(char *outfile);
+
+
+
+int	out_redirection(char *outfile);
+int	check_pipe(char ***argv_p);
+int	exec_command(char ***argv_p, int in_fd, int *out_fd);
+// int	executioner(char *line, int indent);
 
 #endif
