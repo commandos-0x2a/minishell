@@ -12,6 +12,7 @@ BUILD_DIR = build
 FILES = main				\
 		ft_join_path		\
 		ft_getenv			\
+		ft_setenv			\
 		tokenizer			\
 		print_tokenizer		\
 		get_full_path		\
@@ -22,7 +23,8 @@ FILES = main				\
 		builtins/echo		\
 		builtins/pwd		\
 		builtins/env		\
-		builtins/exit
+		builtins/exit	\
+		builtins/test
 
 OBJECTS = $(FILES:%=$(BUILD_DIR)/%.o)
 

@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/04 21:22:01 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/05 17:31:38 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ int is_builtin(char *cmd)
             ft_strcmp(cmd, "echo") == 0 ||
             ft_strcmp(cmd, "pwd") == 0 ||
             ft_strcmp(cmd, "env") == 0 ||
-            ft_strcmp(cmd, "exit") == 0);
+            ft_strcmp(cmd, "exit") == 0 || 
+			ft_strcmp(cmd, "test") == 0);
 }
 
 int handle_builtin(char **argv)
@@ -32,6 +33,13 @@ int handle_builtin(char **argv)
     if (ft_strcmp(argv[0], "env") == 0)
         return (ft_env(argv));
     if (ft_strcmp(argv[0], "exit") == 0)
-        return (ft_exit(argv));
+    {
+		return (ft_exit(argv));
+	}
+	if (ft_strcmp(argv[0], "test") == 0)
+	{
+		return (ft_test(argv));
+	}
+		
     return (1);
 }

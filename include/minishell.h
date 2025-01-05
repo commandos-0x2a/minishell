@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/04 22:21:29 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/05 17:29:17 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@
 
 # define PROMPT "commandos0x2a$ "
 
+int     ft_setenv(const char *name, const char *value, int overwrite);
+int     ft_putenv(char *string);
+int		ft_test(char **argv);
 
 char    *get_prompt(void);
 void    handle_line(char *line);
