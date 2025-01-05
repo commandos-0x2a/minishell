@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executioner.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/05 16:59:57 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/05 21:35:53 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,6 +242,12 @@ int	executioner(char *line, int indent)
 	argv = tokenizer(line, 0);
 	if (!argv)
 		return (0);
+	
+	// Add wildcard expansion here
+	argv = handle_wildcards(argv);
+	if (!argv)
+		return (-1);
+	
 	ptr = argv;
 	fd = 0;
 	while (*ptr)

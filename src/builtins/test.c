@@ -1,36 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_getenv.c                                        :+:      :+:    :+:   */
+/*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/16 07:25:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/05 18:26:47 by mkurkar          ###   ########.fr       */
+/*   Created: 2025/01/05 17:26:15 by mkurkar           #+#    #+#             */
+/*   Updated: 2025/01/05 18:29:27 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char *ft_getenv(const char *name)
+int ft_test(char **argv)
 {
     extern char **environ;
-    size_t name_len;
-    int i;
+    char *value;
+    int i = 0;
 
-    if (!name)
-        return (NULL);
-    
-    name_len = ft_strlen(name);
-    i = 0;
+    (void)argv;
+	ft_setenv("MY_VAR", "my_value", 1);
+    value = ft_getenv("MY_VAR");
+    ft_fprintf(2, "Current MY_VAR=%s\n", value ? value : "(null)");
+    free(value); 
     while (environ[i])
     {
-        if (ft_strncmp(environ[i], name, name_len) == 0 && 
-            environ[i][name_len] == '=')
+        if (ft_strncmp(environ[i], "MY_VAR=", 7) == 0)
         {
-            return (ft_strdup(environ[i] + name_len + 1));
+            ft_fprintf(2, "Found in environ: %s\n", environ[i]);
+            break;
         }
         i++;
     }
-    return (NULL);
+    return (0);
 }

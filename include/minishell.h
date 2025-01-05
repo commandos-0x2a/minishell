@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/05 17:24:19 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/05 21:37:11 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,12 @@
 
 # define PROMPT "commandos0x2a$ "
 
-// terminal configuration 
+// Environment functions
+int     ft_setenv(const char *name, const char *value, int overwrite);
+int     ft_putenv(char *string);
+int     ft_test(char **argv);
+
+// Terminal configuration
 char    *get_prompt(void);
 void    handle_line(char *line);
 void    cleanup_shell(void);
@@ -69,5 +74,21 @@ int		handle_builtin(char **argv);
 
 int     setup_redirections(char **argv);
 void    restore_output(int original_fd);
+
+
+int	here_doc(char *limiter);
+
+int	in_redirection(char *infile);
+
+int	out_append(char *outfile);
+
+
+
+int	out_redirection(char *outfile);
+int	check_pipe(char ***argv_p);
+int	exec_command(char ***argv_p, int in_fd, int *out_fd);
+// int	executioner(char *line, int indent);
+
+char **handle_wildcards(char **argv);
 
 #endif
