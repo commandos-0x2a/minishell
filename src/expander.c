@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 13:54:21 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/05 17:08:34 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/05 20:32:28 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,15 @@ void	argv_expander(char **argv)
 }
 
 
-char	*str_expander(char *arg, int i)
+char	*str_expander(char *arg)
 {
 	char	*s;
 	char	*tmp;
-	size_t	total_len;
+	size_t	i;
+	char	*str;
 
 	s = arg;
-	total_len = 0;
+	i = 0;
 	while (*s)
 	{
 		if (*s == '\'')
@@ -49,13 +50,23 @@ char	*str_expander(char *arg, int i)
 			tmp = ft_strchr(++s, '\'');
 			if (!tmp)
 				return (NULL);
-			total_len += tmp - s;
-			s = tmp;
+			i += tmp - s;
+			s = tmp + 1;
+			continue ;
 		}
-		total_len++;
+		i++;
 		s++;
 	}
-	(void)total_len; (void)i;
+	str = malloc((i + 1) * sizeof(char));
+	if (!str)
+		return (NULL);
+	s = arg;
+	while (*s)
+	{
+
+		/* code */
+	}
+	
 	return (arg);
 }
 
@@ -66,7 +77,7 @@ void	argv_expander_new(char **argv)
 	i = 0;
 	while (argv[i])
 	{
-		argv[i] = str_expander(argv[i], 0);
+		argv[i] = str_expander(argv[i]);
 		i++;
 	}
 }
