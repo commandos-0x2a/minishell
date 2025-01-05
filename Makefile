@@ -15,10 +15,12 @@ FILES = main				\
 		ft_setenv			\
 		tokenizer			\
 		print_tokenizer		\
+		executioner			\
+		expander			\
 		get_full_path		\
 		here_doc			\
 		readline_handler	\
-		builtins/cd		\
+		builtins/cd			\
 		builtins/builtins	\
 		builtins/echo		\
 		builtins/pwd		\

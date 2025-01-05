@@ -248,7 +248,6 @@ int main(int argc, char **argv)
 		handle_line(line);
 		if (*line)
 		{
-
 			if (is_test)
 				print_tokenizer(line, 0);
 			else

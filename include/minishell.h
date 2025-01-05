@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/05 17:29:17 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/05 17:34:44 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,25 +41,27 @@
 
 # define PROMPT "commandos0x2a$ "
 
+// Environment functions
 int     ft_setenv(const char *name, const char *value, int overwrite);
 int     ft_putenv(char *string);
-int		ft_test(char **argv);
+int     ft_test(char **argv);
 
+// Terminal configuration
 char    *get_prompt(void);
 void    handle_line(char *line);
 void    cleanup_shell(void);
 
-
-
-char	*ft_getenv(const char *name);
-
+// tokens and exec
 char	**tokenizer(char *s, int i);
+int		executioner(char *line, int indent);
+void	print_tokenizer(char *line, int indent);
+pid_t	run_here_doc_process(char *limiter, int *out_fd);
+void	argv_expander(char **argv);
+
+// libft function
 size_t	ft_join_path(char *dest, const char *path1, const char *path2);
 int		get_full_path(char *full_path, char **argv, char *command);
-void	print_tokenizer(char *line, int indent);
-
-
-pid_t	run_here_doc_process(char *limiter, int *out_fd);
+char	*ft_getenv(const char *name);
 
 // Built-in commands
 int		ft_cd(char **argv);
