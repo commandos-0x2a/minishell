@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:32 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/04 20:57:32 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/04 22:11:54 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,15 @@ int	ft_cd(char **argv)
 	}
 	else
 		path = argv[1];
-
 	if (chdir(path) == -1)
 	{
 		ft_fprintf(2, "minishell: cd: %s: %s\n", path, strerror(errno));
 		return (1);
 	}
-
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 	{
 		ft_fprintf(2, "minishell: cd: %s\n", strerror(errno));
 		return (1);
 	}
-
 	return (0);
 }

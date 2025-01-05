@@ -6,14 +6,17 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/05 17:00:09 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/05 17:24:19 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
 # include <libft.h>
+# include <stddef.h>
 # include <unistd.h>
 # include <sys/wait.h>
 # include <fcntl.h>
@@ -63,5 +66,8 @@ int		ft_env(char **argv);
 int		ft_exit(char **argv);
 int		is_builtin(char *cmd);
 int		handle_builtin(char **argv);
+
+int     setup_redirections(char **argv);
+void    restore_output(int original_fd);
 
 #endif
