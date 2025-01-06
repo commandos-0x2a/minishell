@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 00:04:36 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/07 00:42:11 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,15 @@ int	here_doc(char *limiter)
 	return (0);
 }
 
-int	in_redirection(char *infile)
+int	in_redirection(char *file)
 {
 	int	fd;
 
-	fd = open(infile, O_RDONLY);
+	file = expand_str(file);
+	if (!file)
+		return (-1);
+	fd = open(file, O_RDONLY);
+	free(file);
 	if (fd == -1)
 	{
 		perror(NAME);
@@ -41,14 +45,18 @@ int	in_redirection(char *infile)
 	return (0);
 }
 
-int	out_append(char *outfile)
+int	out_append(char *file)
 {
 	int fd;
 
-	fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	file = expand_str(file);
+	if (!file)
+		return (-1);
+	fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	free(file);
 	if (fd == -1)
 	{
-		perror(outfile);
+		perror(file);
 		return (-1);
 	}
 	dup2(fd, STDOUT_FILENO);
@@ -56,14 +64,18 @@ int	out_append(char *outfile)
 	return (0);
 }
 
-int	out_redirection(char *outfile)
+int	out_redirection(char *file)
 {
 	int fd;
 
-	fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	file = expand_str(file);
+	if (!file)
+		return (-1);
+	fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	free(file);
 	if (fd == -1)
 	{
-		perror(outfile);
+		perror(file);
 		return (-1);
 	}
 	dup2(fd, STDOUT_FILENO);
