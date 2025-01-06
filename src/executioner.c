@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 11:42:23 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/06 16:03:42 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,8 +252,7 @@ int	executioner(char *line, int indent)
 	fd = 0;
 	while (*ptr)
 	{
-		(void)indent;
-		// if ((*ptr)[0] == '(')
+ 		// if ((*ptr)[0] == '(')
 		// {
 		// 	(*ptr)[ft_strlen(*ptr) - 1] = '\0'; // remove ')'
 		// 	tokenizer(*ptr + 1 /* skip '(' */, indent + 4);
