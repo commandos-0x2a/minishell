@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/05 21:48:41 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/06 12:30:54 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,41 @@
 */
 static int match_pattern(const char *pattern, const char *str)
 {
-    if (*pattern == '\0' && *str == '\0')
-        return (1);
-    if (*pattern == '*' && *(pattern + 1) != '\0' && *str == '\0')
+    while (*pattern && *str)
+    {
+        if (*pattern == '*')
+        {
+            // Skip consecutive asterisks
+            while (*pattern == '*')
+                pattern++;
+                
+            // If pattern ends with *, match rest of string
+            if (!*pattern)
+                return (1);
+
+            // Try matching the rest of pattern with every substring
+            while (*str)
+            {
+                if (match_pattern(pattern, str))
+                    return (1);
+                str++;
+            }
+            return (match_pattern(pattern, str));
+        }
+        else if (*pattern == '?' || *pattern == *str)
+        {
+            pattern++;
+            str++;
+            continue;
+        }
         return (0);
-    if (*pattern == '*')
-        return (match_pattern(pattern + 1, str) || match_pattern(pattern, str + 1));
-    if (*pattern == '?' || *pattern == *str)
-        return (*str != '\0' && match_pattern(pattern + 1, str + 1));
-    return (0);
+    }
+
+    // Skip any remaining asterisks
+    while (*pattern == '*')
+        pattern++;
+
+    return (*pattern == '\0' && *str == '\0');
 }
 
 /*
@@ -108,6 +134,12 @@ char **expand_wildcard(char *pattern)
     struct dirent *entry;
     char **files;
     int size;
+    int has_wildcard;
+
+    // Check if pattern contains wildcards
+    has_wildcard = (ft_strchr(pattern, '*') || ft_strchr(pattern, '?'));
+    if (!has_wildcard)
+        return (NULL);  // Return NULL to keep original argument
 
     dir = opendir(".");
     if (!dir)
@@ -140,15 +172,15 @@ char **expand_wildcard(char *pattern)
     }
     closedir(dir);
 
-    // Sort the files array before returning
+    // Sort the files array
     if (size > 0)
         sort_strings(files, size);
 
-    // If no matches found, return the original pattern
+    // If no matches found, return NULL to keep original argument
     if (size == 0)
     {
-        files[0] = ft_strdup(pattern);
-        files[1] = NULL;
+        free(files);
+        return (NULL);
     }
 
     return (files);
@@ -170,52 +202,44 @@ char **handle_wildcards(char **argv)
     int new_size;
     int i;
 
-    // Count total size needed
+    // First count total arguments needed
     total_size = 0;
     i = 0;
     while (argv[i])
     {
-        if (ft_strchr(argv[i], '*') || ft_strchr(argv[i], '?'))
+        expanded = expand_wildcard(argv[i]);
+        if (expanded)
         {
-            expanded = expand_wildcard(argv[i]);
-            if (expanded)
+            int j = 0;
+            while (expanded[j])
             {
-                int j = 0;
-                while (expanded[j])
-                {
-                    total_size++;
-                    j++;
-                }
-                free(expanded);
+                total_size++;
+                j++;
             }
+            // ft_free_array(expanded);
         }
         else
             total_size++;
         i++;
     }
 
-    // Create new array and fill it
+    // Allocate new argument array
     new_argv = malloc(sizeof(char *) * (total_size + 1));
     if (!new_argv)
         return (NULL);
 
+    // Fill new argument array
     new_size = 0;
     i = 0;
     while (argv[i])
     {
-        if (ft_strchr(argv[i], '*') || ft_strchr(argv[i], '?'))
+        expanded = expand_wildcard(argv[i]);
+        if (expanded)
         {
-            expanded = expand_wildcard(argv[i]);
-            if (expanded)
-            {
-                int j = 0;
-                while (expanded[j])
-                {
-                    new_argv[new_size++] = expanded[j];
-                    j++;
-                }
-                free(expanded);
-            }
+            int j = 0;
+            while (expanded[j])
+                new_argv[new_size++] = ft_strdup(expanded[j++]);
+            // ft_free_array(expanded);
         }
         else
             new_argv[new_size++] = ft_strdup(argv[i]);
@@ -223,6 +247,98 @@ char **handle_wildcards(char **argv)
     }
     new_argv[new_size] = NULL;
 
+    // Free original argv and return new one
+    // ft_free_array(argv);
     return (new_argv);
 }
 
+/**
+ * Wildcard Pattern Matching System Map
+ * ==================================
+ * 
+ * 1. handle_wildcards (Main Function)
+ *    │
+ *    ├── Purpose: Manage wildcard expansion in command arguments
+ *    │   - Process each argument for wildcard patterns
+ *    │   - Create new argument array with expanded matches
+ *    │   - Maintain alphabetical order of matches
+ *    │
+ *    ├── Input: char **argv (array of command arguments)
+ *    │   Example: ["ls", "*.txt", "test.*"]
+ *    │
+ *    └── Process Flow:
+ *        ├── Count total size needed
+ *        │   └── For each argument:
+ *        │       ├── Try to expand wildcards
+ *        │       └── Add original or expanded size to total
+ *        │
+ *        └── Create new argument array
+ *            └── For each argument:
+ *                ├── Expand wildcards if present
+ *                └── Copy original if no wildcards
+ * 
+ * 2. expand_wildcard (Pattern Matcher)
+ *    │
+ *    ├── Purpose: Find matching files for a pattern
+ *    │   - Check if pattern contains wildcards
+ *    │   - Read directory contents
+ *    │   - Match files against pattern
+ *    │
+ *    ├── Input: char *pattern (e.g., "*.txt")
+ *    │
+ *    ├── Process:
+ *    │   ├── Verify pattern has wildcards (* or ?)
+ *    │   ├── Open current directory
+ *    │   ├── Read each entry
+ *    │   │   ├── Skip hidden files (unless pattern starts with .)
+ *    │   │   └── Match against pattern
+ *    │   └── Sort matches alphabetically
+ *    │
+ *    └── Output: Array of matching filenames
+ * 
+ * 3. match_pattern (Pattern Checker)
+ *    │
+ *    ├── Purpose: Check if string matches wildcard pattern
+ *    │   - Handle * (match any sequence)
+ *    │   - Handle ? (match any single character)
+ *    │
+ *    ├── Input:
+ *    │   - const char *pattern (e.g., "test*.txt")
+ *    │   - const char *str (filename to check)
+ *    │
+ *    └── Output: 1 if matches, 0 if not
+ * 
+ * 4. add_to_array (Helper Function)
+ *    │
+ *    ├── Purpose: Safely add new matches to array
+ *    │   - Allocate larger array
+ *    │   - Copy existing entries
+ *    │   - Add new entry
+ *    │
+ *    ├── Input:
+ *    │   - char **arr (existing array)
+ *    │   - char *str (new string to add)
+ *    │   - int *size (current array size)
+ *    │
+ *    └── Output: New array with added string
+ * 
+ * Example Flow:
+ * ------------
+ * Input: ls *.txt test.*
+ * │
+ * ├── handle_wildcards processes "*.txt"
+ * │   ├── expand_wildcard searches directory
+ * │   │   ├── Finds: "note.txt", "readme.txt"
+ * │   │   └── Returns array of matches
+ * │   │
+ * │   └── add_to_array adds matches to result
+ * │
+ * ├── handle_wildcards processes "test.*"
+ * │   ├── expand_wildcard searches directory
+ * │   │   ├── Finds: "test.c", "test.h"
+ * │   │   └── Returns array of matches
+ * │   │
+ * │   └── add_to_array adds matches to result
+ * │
+ * └── Final Output: ["note.txt", "readme.txt", "test.c", "test.h"]
+ */
