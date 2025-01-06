@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 13:54:21 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 00:15:31 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/07 00:37:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,63 @@ static char *join_and_free(char *s1, char *s2)
     return (result);
 }
 
+char	*expand_str(char *str)
+{
+	char	*result;
+	char	*temp;
+	char	quote_char;
+	int		i;
+
+
+	result = ft_strdup("");
+	quote_char = 0;
+	i = 0;
+	while (str[i])
+	{
+		if (!result) // to detect all result malloc failed
+			return (NULL);
+		// Handle quotes
+		if ((str[i] == '\'' || str[i] == '\"') && !quote_char)
+		{
+			quote_char = str[i++];
+			continue;
+		}
+		if (str[i] == quote_char)
+		{
+			quote_char = 0;
+			i++;
+			continue;
+		}
+
+		// Handle environment variables
+		if (str[i] == '$' && quote_char != '\'')
+		{
+			temp = expand_env_var(str, &i);
+			if (temp)
+				result = join_and_free(result, temp);
+			continue;
+		}
+
+		// Handle escape character
+		if (str[i] == '\\' && (!quote_char || quote_char == '\"'))
+		{
+			if (str[i + 1])
+			{
+				temp = ft_substr(str, i + 1, 1);
+				result = join_and_free(result, temp);
+				i += 2;
+			}
+			continue;
+		}
+
+		// Normal character
+		temp = ft_substr(str, i, 1);
+		result = join_and_free(result, temp);
+		i++;
+	}
+	return (result);
+}
+
 /*
 * Enhanced version that handles:
 * 1. Environment variables ($VAR, $PATH, etc.)
@@ -156,67 +213,15 @@ static char *join_and_free(char *s1, char *s2)
 */
 void argv_expander(char **argv)
 {
-    char    *ptr;
-    char    *result;
-    char    *temp;
-    char    quote_char;
-    int     i;
-    int     j;
+	char	*expanded;
+	int		i;
 
-    i = 0;
-    while (argv[i])
-    {
-        ptr = argv[i];
-        result = ft_strdup("");
-
-        j = 0;
-        quote_char = 0;
-        while (ptr[j])
-        {
-			if (!result) // to detect all result malloc failed
-				return;
-            // Handle quotes
-            if ((ptr[j] == '\'' || ptr[j] == '\"') && !quote_char)
-            {
-                quote_char = ptr[j++];
-                continue;
-            }
-            if (ptr[j] == quote_char)
-            {
-                quote_char = 0;
-                j++;
-                continue;
-            }
-
-            // Handle environment variables
-            if (ptr[j] == '$' && quote_char != '\'')
-            {
-                temp = expand_env_var(ptr, &j);
-                if (temp)
-                    result = join_and_free(result, temp);
-                continue;
-            }
-
-            // Handle escape character
-            if (ptr[j] == '\\' && (!quote_char || quote_char == '\"'))
-            {
-                if (ptr[j + 1])
-                {
-                    temp = ft_substr(ptr, j + 1, 1);
-                    result = join_and_free(result, temp);
-                    j += 2;
-                }
-                continue;
-            }
-
-            // Normal character
-            temp = ft_substr(ptr, j, 1);
-            result = join_and_free(result, temp);
-            j++;
-        }
-
-        free(argv[i]);
-        argv[i] = result;
-        i++;
-    }
+	i = 0;
+	while (argv[i])
+	{
+		expanded = expand_str(argv[i]);
+		free(argv[i]);
+		argv[i] = expanded;
+		i++;
+	}
 }
