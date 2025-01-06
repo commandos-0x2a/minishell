@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 10:54:58 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/06 13:26:52 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,25 +42,25 @@ static int count_brackets(char *str)
     in_quotes = 0;
     while (*str)
     {
-        if ((*str == '\'' || *str == '\"') && !in_quotes)
-        {
-            in_quotes = 1;
-            quote_char = *str;
-        }
-        else if (in_quotes && *str == quote_char)
-            in_quotes = 0;
-        else if (!in_quotes)
-        {
-            if (*str == '(')
-                count++;
-            else if (*str == ')')
-                count--;
-            if (count < 0)
-                return (-1);
-        }
-        str++;
-    }
-    return count;
+		if ((*str == '\'' || *str == '\"') && !in_quotes)
+		{
+			in_quotes = 1;
+			quote_char = *str;
+		}
+		else if (in_quotes && *str == quote_char)
+			in_quotes = 0;
+		else if (!in_quotes)
+		{
+			if (*str == '(')
+				count++;
+			else if (*str == ')')
+				count--;
+			if (count < 0)
+				return (-1);
+		}
+		str++;
+	}
+	return count;
 }
 
 char	**tokenizer(char *s, int i)
