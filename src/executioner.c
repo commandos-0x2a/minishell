@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 23:22:54 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 23:26:38 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,7 +277,6 @@ int	executioner(char *line)
     char    **argv;
     char    **ptr;
     int     fd;
-    int     status;
 
     argv = tokenizer(line, 0);
     if (!argv)
