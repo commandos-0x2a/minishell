@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 23:26:38 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/07 00:04:36 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,6 @@ int exec_command(char ***argv_p, int in_fd, int *out_fd)
     char		full_path[PATH_MAX];
 	extern char	**environ;
 	int			i;
-	char		*ptr;
 	int			pid;
 	char		**cmd_argv;
 	int			pipefd[2];
@@ -154,7 +153,10 @@ int exec_command(char ***argv_p, int in_fd, int *out_fd)
 	// make fork and return pid to parent process
 	pid = fork();
 	if (pid != 0)
-	{		
+	{
+		// close all unused fd in parent
+		if (in_fd > 0)
+			close(in_fd);
 		if (is_pipe)
 		{
 			close(pipefd[1]);
@@ -170,6 +172,7 @@ int exec_command(char ***argv_p, int in_fd, int *out_fd)
 
 	/* ========== Child process ==========*/	
 
+	// set pipe arg "NULL"
 	**argv_p = NULL;
 
 	// close unused read pipe_fd
@@ -177,7 +180,7 @@ int exec_command(char ***argv_p, int in_fd, int *out_fd)
 		close(pipefd[0]);
 
 
-	// connect with previous command
+	// connect with previous command pipe
 	if (in_fd > 0)
 	{
 		if (dup2(in_fd, STDIN_FILENO))
@@ -186,7 +189,7 @@ int exec_command(char ***argv_p, int in_fd, int *out_fd)
 			perror(NAME"pipe close to in_fd");
 	}
 
-	// connect with next command
+	// connect with next command pipe
 	if (is_pipe)
 	{
 		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
@@ -199,47 +202,51 @@ int exec_command(char ***argv_p, int in_fd, int *out_fd)
 	i = 0;
 	while (argv[i])
 	{
-		if (ft_strncmp(argv[i], "<<", 2) == 0)
+		if (ft_strcmp(*argv, "<<") == 0)
 		{
-			if (ft_strlen(argv[i]) == 2)
-				ptr = argv[++i];
-			else
-				ptr = argv[i++] + 2;
-			here_doc(ptr);
-			argv[i - 1] = NULL;
-			continue;
+			*argv = NULL;
+			here_doc(*(++argv));
 		}
-		else if (ft_strncmp(argv[i], "<", 1) == 0)
+		else if (ft_strncmp(*argv, "<<", 2) == 0)
 		{
-			if (ft_strlen(argv[i]) == 1)
-				ptr = argv[++i];
-			else
-				ptr = argv[i++] + 1;
-			in_redirection(ptr);
-			argv[i - 1] = NULL;
-			continue;
+			here_doc(*argv + 2);
+			*argv = NULL;
 		}
-		else if (ft_strncmp(argv[i], ">>", 2) == 0)
+		else if (ft_strcmp(*argv, "<") == 0)
 		{
-			if (ft_strlen(argv[i]) == 2)
-				ptr = argv[++i];
-			else
-				ptr = argv[i++] + 2;
-			out_append(ptr);
-			argv[i - 1] = NULL;
+			*argv = NULL;
+			in_redirection(*++argv);
 		}
-		else if (ft_strncmp(argv[i], ">", 1) == 0)
+		else if (ft_strncmp(*argv, "<", 1) == 0)
 		{
-			if (ft_strlen(argv[i]) == 1)
-				ptr = argv[++i];
-			else
-				ptr = argv[i++] + 1;
-			out_redirection(ptr);
-			argv[i - 1] = NULL;
+			in_redirection(*argv + 1);
+			*argv = NULL;
+		}
+		else if (ft_strcmp(*argv, ">>") == 0)
+		{
+			*argv = NULL;
+			out_append(*++argv);
+		}
+		else if (ft_strncmp(*argv, ">>", 2) == 0)
+		{
+			out_append(*argv + 2);
+			*argv = NULL;
+		}
+		else if (ft_strcmp(*argv, ">") == 0)
+		{
+			*argv = NULL;
+			out_redirection(*++argv);
+		}
+		else if (ft_strncmp(*argv, ">", 1) == 0)
+		{
+			out_redirection(*argv + 1);
+			*argv = NULL;
 		}
 		else if (!cmd_argv)
-			cmd_argv = argv + i;
-		i++;
+			cmd_argv = argv;
+
+
+		argv++; // next token
 	}
 
 	// exit if don't find command
