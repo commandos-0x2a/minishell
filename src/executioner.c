@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 17:43:20 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 20:56:08 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	here_doc(char *limiter)
 
 	if (run_here_doc_process(limiter, &fd) == -1)
 	{
-		perror("minishell");
+		perror(NAME);
 		return (-1);
 	}
 	dup2(fd, STDIN_FILENO);
@@ -33,7 +33,7 @@ int	in_redirection(char *infile)
 	fd = open(infile, O_RDONLY);
 	if (fd == -1)
 	{
-		perror("minishell");
+		perror(NAME);
 		return (-1);
 	}
 	dup2(fd, STDIN_FILENO);
@@ -147,18 +147,18 @@ int	exec_command(char ***argv_p, int in_fd, int *out_fd)
 	if (in_fd > 0)
 	{
 		if (dup2(in_fd, STDIN_FILENO))
-			perror("pipe dup2 to STDIN");
+			perror(NAME"pipe dup2 to STDIN");
 		if (close(in_fd))
-			perror("pipe close to in_fd");
+			perror(NAME"pipe close to in_fd");
 	}
 
 	// connect with next command
 	if (is_pipe)
 	{
 		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-			perror("pipe dup2 to STDOUT");
+			perror(NAME"pipe dup2 to STDOUT");
 		if (close(pipefd[1]) == -1)
-			perror("pipe close to pipefd[1]");
+			perror(NAME"pipe close to pipefd[1]");
 	}
 
 	// Handle redirections first
@@ -212,6 +212,15 @@ int	exec_command(char ***argv_p, int in_fd, int *out_fd)
 	if (!cmd_argv)
 		exit(0);
 
+	// handle sub shell
+	if ((*cmd_argv)[0] == '(')
+	{
+		(*cmd_argv)[ft_strlen(*cmd_argv) - 1] = '\0';
+		(*cmd_argv)++;
+		executioner(*cmd_argv);
+		exit(1);
+	}
+
 	// Handle quotes for remaining arguments
 	argv_expander(cmd_argv);
 
@@ -223,13 +232,13 @@ int	exec_command(char ***argv_p, int in_fd, int *out_fd)
 	if (err == 0)
 	{
 		execve(full_path, cmd_argv, environ);
-		perror("minishell");
+		perror(NAME);
 		exit(1);
 	}
 	exit(err);
 }
 
-int	executioner(char *line, int indent)
+int	executioner(char *line)
 {
 	char	**argv;
 	char	**ptr;
@@ -249,7 +258,6 @@ int	executioner(char *line, int indent)
 	fd = 0;
 	while (*ptr)
 	{
-		(void)indent;
 		// if ((*ptr)[0] == '(')
  		// if ((*ptr)[0] == '(')
 		// {
@@ -258,11 +266,11 @@ int	executioner(char *line, int indent)
 		// }
 		// else
 		// {
-			// if (ft_strcmp(*ptr, "&&") == 0)
-			// 	fprintf(stderr, "%-*s%i: AND\n", indent, "", i);
-			// else if (ft_strcmp(*ptr, "||") == 0)
-			// 	fprintf(stderr, "%-*s%i: OR\n", indent, "", i);
-			// else
+		// 	if (ft_strcmp(*ptr, "&&") == 0)
+		// 		fprintf(stderr, "%-*s%i: AND\n", indent, "", i);
+		// 	else if (ft_strcmp(*ptr, "||") == 0)
+		// 		fprintf(stderr, "%-*s%i: OR\n", indent, "", i);
+		// 	else
 				if (exec_command(&ptr, fd, &fd) == -1)
 					return (-1);
 		// }
