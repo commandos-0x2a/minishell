@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 20:56:34 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 23:24:11 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,5 +96,8 @@ char **handle_wildcards(char **argv);
 int exec_command(char ***argv_p, int in_fd, int *out_fd);
 int executioner(char *line);
 
+// Add these prototypes
+int handle_subshell(char * cmd,int indent);
+int is_parent_builtin(char *cmd);
 
 #endif

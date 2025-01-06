@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 20:56:08 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 23:22:54 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,22 +89,56 @@ int	check_pipe(char ***argv_p)
 	return (0);
 }
 
-int	exec_command(char ***argv_p, int in_fd, int *out_fd)
+// Add this helper to identify parent-only builtins
+int is_parent_builtin(char *cmd)
 {
-	char		full_path[PATH_MAX];
+    return (ft_strcmp(cmd, "cd") == 0 ||
+            ft_strcmp(cmd, "exit") == 0 ||
+            ft_strcmp(cmd, "export") == 0 ||
+            ft_strcmp(cmd, "unset") == 0);
+}
+
+// Modify exec_command to handle parent builtins
+int exec_command(char ***argv_p, int in_fd, int *out_fd)
+{
+    char **argv = *argv_p;
+    
+    // First check for parent-only builtins
+    if (argv[0] && is_parent_builtin(argv[0]))
+    {
+        int original_fd = -1;
+        if (check_pipe(argv_p))
+        {
+            ft_fprintf(2, "minishell: %s: cannot be used in a pipeline\n", argv[0]);
+            return -1;
+        }
+        
+        // Setup redirections for builtin
+        if (argv[1])
+            original_fd = setup_redirections(argv);
+            
+        int status = handle_builtin(argv);
+        
+        // Restore original output if needed
+        if (original_fd != -1)
+            restore_output(original_fd);
+            
+        return status;
+    }
+
+    // Rest of existing exec_command code
+    char		full_path[PATH_MAX];
 	extern char	**environ;
 	int			i;
 	char		*ptr;
 	int			pid;
 	char		**cmd_argv;
-	char		**argv;
 	int			pipefd[2];
 	int			is_pipe;
 
 	*out_fd = 0;
 
 	cmd_argv = NULL;
-	argv = *argv_p;
 
 	is_pipe = check_pipe(argv_p);
 
@@ -240,40 +274,25 @@ int	exec_command(char ***argv_p, int in_fd, int *out_fd)
 
 int	executioner(char *line)
 {
-	char	**argv;
-	char	**ptr;
-	// int		i = 0;
-	int		fd;
+    char    **argv;
+    char    **ptr;
+    int     fd;
+    int     status;
 
-	argv = tokenizer(line, 0);
-	if (!argv)
-		return (0);
+    argv = tokenizer(line, 0);
+    if (!argv)
+        return (0);
 
-	// Add wildcard expansion here
-	argv = handle_wildcards(argv);
-	if (!argv)
-		return (-1);
+    argv = handle_wildcards(argv);
+    if (!argv)
+        return (-1);
 
 	ptr = argv;
 	fd = 0;
 	while (*ptr)
 	{
-		// if ((*ptr)[0] == '(')
- 		// if ((*ptr)[0] == '(')
-		// {
-		// 	(*ptr)[ft_strlen(*ptr) - 1] = '\0'; // remove ')'
-		// 	tokenizer(*ptr + 1 /* skip '(' */, indent + 4);
-		// }
-		// else
-		// {
-		// 	if (ft_strcmp(*ptr, "&&") == 0)
-		// 		fprintf(stderr, "%-*s%i: AND\n", indent, "", i);
-		// 	else if (ft_strcmp(*ptr, "||") == 0)
-		// 		fprintf(stderr, "%-*s%i: OR\n", indent, "", i);
-		// 	else
-				if (exec_command(&ptr, fd, &fd) == -1)
-					return (-1);
-		// }
+		if (exec_command(&ptr, fd, &fd) == -1)
+			return (-1);
 		if (!*ptr)
 			break;
 		ptr++;
