@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 07:56:57 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 15:17:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,5 +90,10 @@ int	exec_command(char ***argv_p, int in_fd, int *out_fd);
 // int	executioner(char *line, int indent);
 
 char **handle_wildcards(char **argv);
+
+
+int exec_command(char ***argv_p, int in_fd, int *out_fd);
+int executioner(char *line, int indent);
+
 
 #endif

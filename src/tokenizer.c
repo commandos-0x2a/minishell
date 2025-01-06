@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/05 22:03:08 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 15:21:00 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,38 @@
 * It's like taking a long piece of paper and cutting it into smaller pieces,
 * where each piece has one word! ✂️
 */
+
+static int count_brackets(char *str)
+{
+    int count;
+    int in_quotes;
+    char quote_char;
+
+    count = 0;
+    in_quotes = 0;
+    while (*str)
+    {
+		if ((*str == '\'' || *str == '\"') && !in_quotes)
+		{
+			in_quotes = 1;
+			quote_char = *str;
+		}
+		else if (in_quotes && *str == quote_char)
+			in_quotes = 0;
+		else if (!in_quotes)
+		{
+			if (*str == '(')
+				count++;
+			else if (*str == ')')
+				count--;
+			if (count < 0)
+				return (-1);
+		}
+		str++;
+	}
+	return count;
+}
+
 char	**tokenizer(char *s, int i)
 {
 	char	*p;
@@ -41,6 +73,14 @@ char	**tokenizer(char *s, int i)
 		s++;
 	p = s;
 	nb_bracket = 0;
+
+    // Add this check before processing
+    if (count_brackets(s) != 0)
+    {
+        write(2, "syntax error: unmatched parentheses\n", 35);
+        return (NULL);
+    }
+
 	while (*s && (*s != ' ' || nb_bracket))
 	{
 		if (*s == '(')

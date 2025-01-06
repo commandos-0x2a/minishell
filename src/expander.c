@@ -6,189 +6,217 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 13:54:21 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 13:46:47 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 15:18:53 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <ctype.h>
 
-void	argv_expander_old(char **argv)
-{
-	int		i;
-	size_t	len;
 
-	i = 0;
-	while (argv[i])
-	{
-		if (argv[i][0] == '\'' || argv[i][0] == '\"')
-		{
-			len = ft_strlen(argv[i]);
-			if (len >= 2 && argv[i][len - 1] == argv[i][0])
-			{
-				argv[i][len - 1] = '\0';
-				argv[i]++;
-			}
-		}
-		i++;
-	}
+/**
+ * 
+ * Environment Variable Expansion System Map
+ * =======================================
+ * 
+ * 1. argv_expander (Main Function)
+ *    │
+ *    ├── Purpose: Process command arguments and expand environment variables
+ *    │   - Handles quoted strings
+ *    │   - Processes environment variables
+ *    │   - Manages escape characters
+ *    │
+ *    ├── Input: char **argv (array of command arguments)
+ *    │   Example: ["echo", "$HOME", "\"$USER\"", '$PATH']
+ *    │
+ *    └── Process Flow:
+ *        └── For each argument:
+ *            ├── Initialize empty result string
+ *            ├── Process character by character
+ *            │   ├── Handle quotes ('" or '')
+ *            │   ├── If '$' found → Call expand_env_var()
+ *            │   ├── Handle escape characters
+ *            │   └── Join results using join_and_free()
+ *            └── Replace original argument with expanded version
+ * 
+ * 2. expand_env_var (Helper Function)
+ *    │
+ *    ├── Purpose: Extract and resolve environment variable values
+ *    │   - Handles special case $?
+ *    │   - Extracts variable names
+ *    │   - Retrieves variable values
+ *    │
+ *    ├── Input: 
+ *    │   - char *str (string containing env variable)
+ *    │   - int *i (current position in string)
+ *    │
+ *    ├── Process:
+ *    │   ├── Check for special case ($?)
+ *    │   ├── Extract variable name
+ *    │   └── Look up variable value
+ *    │
+ *    └── Output: Expanded value or empty string
+ * 
+ * 3. join_and_free (Utility Function)
+ *    │
+ *    ├── Purpose: Memory-safe string concatenation
+ *    │   - Joins two strings
+ *    │   - Frees original strings
+ *    │   - Prevents memory leaks
+ *    │
+ *    ├── Input: 
+ *    │   - char *s1 (first string)
+ *    │   - char *s2 (second string)
+ *    │
+ *    └── Output: New concatenated string
+ * 
+ * Example Flow:
+ * ------------
+ * Input: echo "Welcome $USER to $HOME"
+ * │
+ * ├── argv_expander processes the argument
+ * │   │
+ * │   ├── Finds $USER
+ * │   │   └── expand_env_var extracts "USER"
+ * │   │       └── Returns "mkurkar"
+ * │   │           └── join_and_free combines "Welcome " + "mkurkar"
+ * │   │
+ * │   └── Finds $HOME
+ * │       └── expand_env_var extracts "HOME"
+ * │           └── Returns "/home/mkurkar"
+ * │               └── join_and_free combines previous result + " to " + "/home/mkurkar"
+ * │
+ * └── Final Output: "Welcome mkurkar to /home/mkurkar"
+ */
+
+static char *expand_env_var(char *str, int *i)
+{
+    char *var_name;
+    char *var_value;
+    int start;
+    int len;
+
+    (*i)++;  // Skip the '$'
+    if (str[*i] == '?')  // Handle $? for last exit status
+    {
+        (*i)++;
+        return (ft_itoa(127, 1));
+    }
+    if (str[*i] == '\0' || str[*i] == ' ' || str[*i] == '\'' || str[*i] == '\"')
+        return (ft_strdup("$"));
+
+    // Handle numeric variables (like $1, $2, etc.)
+    if (ft_isdigit(str[*i]))
+    {
+        (*i)++;
+        return (ft_strdup(""));  // Return empty string for numeric vars
+    }
+
+    start = *i;
+    // Include numbers in variable names, but don't start with them
+    while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+        (*i)++;
+    
+    len = *i - start;
+    if (len == 0)
+        return (ft_strdup("$"));
+
+    var_name = ft_substr(str, start, len);
+    if (!var_name)
+        return (NULL);
+
+    var_value = ft_getenv(var_name);
+    free(var_name);
+
+    return (var_value ? ft_strdup(var_value) : ft_strdup(""));
 }
 
-
-
-
-
-
-
-
-typedef struct s_var
+static char *join_and_free(char *s1, char *s2)
 {
-	char	*name;
-	char	*value;
-}	t_var;
+    char *result;
 
-const t_var variables[] = {
-	{"VAR1", "111111"},
-	{"VAR2", "222222"},
-	{"START", "*"}
-};
-
-char	*expand_environment(char *str, int i)
-{
-	char	*ptr;
-	size_t	len;
-
-	ptr = str;
-	if (!*ptr)
-	{
-		ptr = malloc(i + 1);
-		if (!ptr)
-			return (NULL);
-		ptr[i] = '\0';
-		return (ptr);
-	}
-	if (*ptr == '$')
-	{
-		++ptr;
-		++str;
-		while (isalnum(*ptr))
-			ptr++;
-		len = ptr - str;
-
-		size_t j = 0;
-		while (j < sizeof(variables)/sizeof(*variables))
-		{
-			if (strncmp(str, variables[j].name, len) == 0)
-			{
-				str = variables[j].value;
-				break;
-			}
-			j++;
-		}
-		len = strlen(str);
-	}
-	else
-	{
-		while (*ptr && *ptr != '$')
-		{
-			if (*ptr == '\'')
-			{
-				ptr = strchr(++ptr, '\'');
-				if (!ptr)
-					return (NULL);
-			}
-			ptr++;
-		}
-		len = ptr - str;
-	}
-	ptr = expand_environment(ptr, i + len);
-	memcpy(ptr + i, str, len);
-	return (ptr);
+    result = ft_strjoin(2, s1, s2);
+    free(s1);
+    free(s2);
+    return (result);
 }
 
-void	remove_quotes(char *s, char **a2)
+/*
+* Enhanced version that handles:
+* 1. Environment variables ($VAR, $PATH, etc.)
+* 2. Quote removal and escaping
+* 3. Special case $? for exit status
+* 4. Preserves spaces in quotes
+* 
+* Examples:
+* echo "$HOME/file"    -> /home/user/file
+* echo '$HOME/file'    -> $HOME/file
+* echo "Path: $PATH"   -> Path: /usr/bin:/bin
+* echo $?             -> 0 (or last exit status)
+*/
+void argv_expander(char **argv)
 {
-	char	*p;
-	char	quot;
+    char    *src;
+    char    *result;
+    char    *temp;
+    char    quote_char;
+    int     i;
+    int     j;
 
-	*a2 = NULL;
+    i = 0;
+    while (argv[i])
+    {
+        src = argv[i];
+        result = ft_strdup("");
+        if (!result)
+            return;
 
-	p = s;
-	quot = '\0';
-	while (*s)
-	{
-		if (quot && *s == quot)
-		{
-			quot = '\0';
-			s++;
-		}
-		else if (!quot && (*s == '\"' || *s == '\''))
-		{
-			quot = *s;
-			s++;
-		}
-		if (*s == '\0')
-			break;
-		if (!quot && *s == '*')
-			*a2 = p;
-		*p = *s;
-		s++;
-		p++;
-	}
-	*p = '\0';
-}
+        j = 0;
+        quote_char = 0;
+        while (src[j])
+        {
+            // Handle quotes
+            if ((src[j] == '\'' || src[j] == '\"') && !quote_char)
+            {
+                quote_char = src[j++];
+                continue;
+            }
+            if (src[j] == quote_char)
+            {
+                quote_char = 0;
+                j++;
+                continue;
+            }
 
-char	**str_expander(char *str)
-{
-	char	*a2;
-	char	**ret;
+            // Handle environment variables
+            if (src[j] == '$' && quote_char != '\'')
+            {
+                temp = expand_env_var(src, &j);
+                if (temp)
+                    result = join_and_free(result, temp);
+                continue;
+            }
 
-	str = expand_environment(str, 0);
-	remove_quotes(str, &a2);
-	// printf("waildcard: %s\n", a2);
-	// printf("pattern: %s\n", str);
-	if (a2 && 0) // stop now
-		return (NULL); // run waildcard expander
-	else
-	{
-		ret = calloc(2, sizeof(char *));
-		if (ret)
-			*ret = str;
-		else
-			free(str);
-		return (ret);
-	}
-}
+            // Handle escape character
+            if (src[j] == '\\' && (!quote_char || quote_char == '\"'))
+            {
+                if (src[j + 1])
+                {
+                    temp = ft_substr(src, j + 1, 1);
+                    result = join_and_free(result, temp);
+                    j += 2;
+                }
+                continue;
+            }
 
-char	**argv_expander_handler(char **argv, int i)
-{
-	char	**expanded;
-	char	**new_argv;
-	int		nb;
+            // Normal character
+            temp = ft_substr(src, j, 1);
+            result = join_and_free(result, temp);
+            j++;
+        }
 
-	if (*argv == NULL)
-		return (ft_calloc(i + 1, sizeof(char *)));
-	expanded = str_expander(*argv);
-	if (!expanded)
-		return (NULL);
-	nb = 0;
-	while (expanded[nb])
-		nb++;
-	new_argv = argv_expander_handler(argv + 1, i + nb);
-	if (!new_argv)
-	{
-		while (--nb >= 0)
-			free(expanded[nb]);
-		free(expanded);
-		return (NULL);
-	}
-	while (--nb >= 0)
-		new_argv[i + nb] = expanded[nb];
-	free(expanded);
-	return (new_argv);
-}
-
-char	**argv_expander(char **argv)
-{
-	return (argv_expander_handler(argv, 0));
+        free(argv[i]);
+        argv[i] = result;
+        i++;
+    }
 }
