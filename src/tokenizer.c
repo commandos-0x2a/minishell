@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/05 21:32:35 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/05 22:03:08 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 * 4. Checks if brackets () are used correctly
 * 
 * For example:
-* Input: "play with toys"
-* Output: ["play", "with", "toys"]
+* Input: play "with toys"
+* Output: ["play", "\"with toy\""]
 * 
 * It's like taking a long piece of paper and cutting it into smaller pieces,
 * where each piece has one word! ✂️
