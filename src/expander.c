@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 13:54:21 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 19:34:01 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/07 00:15:31 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ static char *join_and_free(char *s1, char *s2)
 */
 void argv_expander(char **argv)
 {
-    char    *src;
+    char    *ptr;
     char    *result;
     char    *temp;
     char    quote_char;
@@ -166,22 +166,22 @@ void argv_expander(char **argv)
     i = 0;
     while (argv[i])
     {
-        src = argv[i];
+        ptr = argv[i];
         result = ft_strdup("");
-        if (!result)
-            return;
 
         j = 0;
         quote_char = 0;
-        while (src[j])
+        while (ptr[j])
         {
+			if (!result) // to detect all result malloc failed
+				return;
             // Handle quotes
-            if ((src[j] == '\'' || src[j] == '\"') && !quote_char)
+            if ((ptr[j] == '\'' || ptr[j] == '\"') && !quote_char)
             {
-                quote_char = src[j++];
+                quote_char = ptr[j++];
                 continue;
             }
-            if (src[j] == quote_char)
+            if (ptr[j] == quote_char)
             {
                 quote_char = 0;
                 j++;
@@ -189,20 +189,20 @@ void argv_expander(char **argv)
             }
 
             // Handle environment variables
-            if (src[j] == '$' && quote_char != '\'')
+            if (ptr[j] == '$' && quote_char != '\'')
             {
-                temp = expand_env_var(src, &j);
+                temp = expand_env_var(ptr, &j);
                 if (temp)
                     result = join_and_free(result, temp);
                 continue;
             }
 
             // Handle escape character
-            if (src[j] == '\\' && (!quote_char || quote_char == '\"'))
+            if (ptr[j] == '\\' && (!quote_char || quote_char == '\"'))
             {
-                if (src[j + 1])
+                if (ptr[j + 1])
                 {
-                    temp = ft_substr(src, j + 1, 1);
+                    temp = ft_substr(ptr, j + 1, 1);
                     result = join_and_free(result, temp);
                     j += 2;
                 }
@@ -210,7 +210,7 @@ void argv_expander(char **argv)
             }
 
             // Normal character
-            temp = ft_substr(src, j, 1);
+            temp = ft_substr(ptr, j, 1);
             result = join_and_free(result, temp);
             j++;
         }
