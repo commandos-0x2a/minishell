@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 16:04:52 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/06 20:28:14 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ char	**tokenizer(char *s, int i)
     // Add this check before processing
     if (count_brackets(s) != 0)
     {
-        write(2, "syntax error: unmatched parentheses\n", 35);
+        write(2, "syntax error: unmatched parentheses\n", 36);
         return (NULL);
     }
 
