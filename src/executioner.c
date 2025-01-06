@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 15:21:42 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 15:25:27 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ int	exec_command(char ***argv_p, int in_fd, int *out_fd)
 		exit(0);
 
 	// Handle quotes for remaining arguments
-	cmd_argv = argv_expander(cmd_argv);
+	argv_expander(cmd_argv);
 
 	// Check for built-in commands before get full path and execve
 	if (cmd_argv[0] && is_builtin(cmd_argv[0]))
