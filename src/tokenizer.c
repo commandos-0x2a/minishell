@@ -6,9 +6,10 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 15:56:33 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/06 16:04:52 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minishell.h"
 
@@ -25,8 +26,8 @@
 * 4. Checks if brackets () are used correctly
 * 
 * For example:
-* Input: "play with toys"
-* Output: ["play", "with", "toys"]
+* Input: play "with toys"
+* Output: ["play", "\"with toy\""]
 * 
 * It's like taking a long piece of paper and cutting it into smaller pieces,
 * where each piece has one word! ✂️
