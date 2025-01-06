@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 23:24:11 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/07 00:37:56 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ char	**tokenizer(char *s, int i);
 int		executioner(char *line);
 void	print_tokenizer(char *line, int indent);
 pid_t	run_here_doc_process(char *limiter, int *out_fd);
+char	*expand_str(char *str);
 void	argv_expander(char **argv);
 
 // libft function
