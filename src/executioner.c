@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executioner.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/05 21:35:53 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/06 13:31:50 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,8 @@ int	exec_command(char ***argv_p, int in_fd, int *out_fd)
 	// make fork and return pid to parent process
 	pid = fork();
 	if (pid != 0)
-	{		
+	{
+		close(in_fd);
 		if (is_pipe)
 		{
 			close(pipefd[1]);
@@ -216,7 +217,7 @@ int	exec_command(char ***argv_p, int in_fd, int *out_fd)
 		exit(0);
 
 	// Handle quotes for remaining arguments
-	argv_expander(cmd_argv);
+	cmd_argv = argv_expander(cmd_argv);
 
 	// Check for built-in commands before get full path and execve
 	if (cmd_argv[0] && is_builtin(cmd_argv[0]))
