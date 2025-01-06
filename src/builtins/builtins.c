@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/05 18:26:15 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/05 21:58:43 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,9 @@
 
 int is_builtin(char *cmd)
 {
-    return (ft_strcmp(cmd, "cd") == 0 || 
-            ft_strcmp(cmd, "echo") == 0 ||
+    return (ft_strcmp(cmd, "echo") == 0 ||
             ft_strcmp(cmd, "pwd") == 0 ||
             ft_strcmp(cmd, "env") == 0 ||
-            ft_strcmp(cmd, "exit") == 0 || 
             // ft_strcmp(cmd, "export") == 0 ||
             // ft_strcmp(cmd, "unset") == 0 ||
 			ft_strcmp(cmd, "test") == 0);
