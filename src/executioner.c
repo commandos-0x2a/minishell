@@ -6,14 +6,11 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 15:25:27 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 17:43:20 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
-/* ========== Implement redirections ========== */
 
 int	here_doc(char *limiter)
 {
@@ -103,14 +100,14 @@ int	exec_command(char ***argv_p, int in_fd, int *out_fd)
 	char		**argv;
 	int			pipefd[2];
 	int			is_pipe;
-	
+
 	*out_fd = 0;
 
 	cmd_argv = NULL;
 	argv = *argv_p;
 
 	is_pipe = check_pipe(argv_p);
-	
+
 	if (is_pipe && !**argv_p)
 	{
 		fprintf(stderr, "syntax error '|' \n");
@@ -123,8 +120,7 @@ int	exec_command(char ***argv_p, int in_fd, int *out_fd)
 	// make fork and return pid to parent process
 	pid = fork();
 	if (pid != 0)
-	{
-		close(in_fd);
+	{		
 		if (is_pipe)
 		{
 			close(pipefd[1]);
@@ -139,7 +135,7 @@ int	exec_command(char ***argv_p, int in_fd, int *out_fd)
 	}
 
 	/* ========== Child process ==========*/	
-	
+
 	**argv_p = NULL;
 
 	// close unused read pipe_fd
@@ -243,18 +239,19 @@ int	executioner(char *line, int indent)
 	argv = tokenizer(line, 0);
 	if (!argv)
 		return (0);
-	
+
 	// Add wildcard expansion here
 	argv = handle_wildcards(argv);
 	if (!argv)
 		return (-1);
-	
+
 	ptr = argv;
 	fd = 0;
 	while (*ptr)
 	{
 		(void)indent;
 		// if ((*ptr)[0] == '(')
+ 		// if ((*ptr)[0] == '(')
 		// {
 		// 	(*ptr)[ft_strlen(*ptr) - 1] = '\0'; // remove ')'
 		// 	tokenizer(*ptr + 1 /* skip '(' */, indent + 4);

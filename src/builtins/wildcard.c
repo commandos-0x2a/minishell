@@ -3,15 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/06 15:18:06 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 16:05:12 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "minishell.h"
 #include <dirent.h>
+
+void ft_free_array(char **arr)
+{
+	int i;
+
+	i = 0;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+}
+
 
 /*
 * This function is like playing a matching game!
@@ -216,7 +231,7 @@ char **handle_wildcards(char **argv)
                 total_size++;
                 j++;
             }
-            // ft_free_array(expanded);
+            ft_free_array(expanded);
         }
         else
             total_size++;
@@ -239,7 +254,8 @@ char **handle_wildcards(char **argv)
             int j = 0;
             while (expanded[j])
                 new_argv[new_size++] = ft_strdup(expanded[j++]);
-            // ft_free_array(expanded);
+            ft_free_array(expanded);
+			expanded = NULL;
         }
         else
             new_argv[new_size++] = ft_strdup(argv[i]);
@@ -249,6 +265,8 @@ char **handle_wildcards(char **argv)
 
     // Free original argv and return new one
     // ft_free_array(argv);
+	if(expanded != NULL)
+		ft_free_array(expanded);
     return (new_argv);
 }
 
