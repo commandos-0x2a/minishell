@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 17:44:34 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 19:35:18 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,8 @@ char **handle_wildcards(char **argv);
 int exec_command(char ***argv_p, int in_fd, int *out_fd);
 int executioner(char *line, int indent);
 
+// Add these prototypes
+int handle_subshell(char *cmd, int indent);
+int is_parent_builtin(char *cmd);
 
 #endif
