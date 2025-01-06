@@ -251,7 +251,7 @@ int main(int argc, char **argv)
 			if (is_test)
 				print_tokenizer(line, 0);
 			else
-				executioner(line);
+				flow_control(line);
 		}
 		free(line);
 	}

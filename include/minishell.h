@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 00:37:56 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/07 08:13:15 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void    cleanup_shell(void);
 
 // tokens and exec
 char	**tokenizer(char *s, int i);
-int		executioner(char *line);
 void	print_tokenizer(char *line, int indent);
 pid_t	run_here_doc_process(char *limiter, int *out_fd);
 char	*expand_str(char *str);
@@ -78,24 +77,15 @@ int     setup_redirections(char **argv);
 void    restore_output(int original_fd);
 
 
-int	here_doc(char *limiter);
+char	**redirection_handler(char **tokens, int *status);
+int 	exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe);
+int		executioner(char **tokens);
+int		flow_control(char *chain);
 
-int	in_redirection(char *infile);
-
-int	out_append(char *outfile);
-
-
-
-int	out_redirection(char *outfile);
-int	check_pipe(char ***argv_p);
-int	exec_command(char ***argv_p, int in_fd, int *out_fd);
-// int	executioner(char *line, int indent);
 
 char **handle_wildcards(char **argv);
 
 
-int exec_command(char ***argv_p, int in_fd, int *out_fd);
-int executioner(char *line);
 
 // Add these prototypes
 int handle_subshell(char * cmd,int indent);

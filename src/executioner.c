@@ -6,100 +6,11 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 00:42:11 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/07 08:13:49 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	here_doc(char *limiter)
-{
-	int	fd;
-
-	if (run_here_doc_process(limiter, &fd) == -1)
-	{
-		perror(NAME);
-		return (-1);
-	}
-	dup2(fd, STDIN_FILENO);
-	close(fd);
-	return (0);
-}
-
-int	in_redirection(char *file)
-{
-	int	fd;
-
-	file = expand_str(file);
-	if (!file)
-		return (-1);
-	fd = open(file, O_RDONLY);
-	free(file);
-	if (fd == -1)
-	{
-		perror(NAME);
-		return (-1);
-	}
-	dup2(fd, STDIN_FILENO);
-	close(fd);
-	return (0);
-}
-
-int	out_append(char *file)
-{
-	int fd;
-
-	file = expand_str(file);
-	if (!file)
-		return (-1);
-	fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	free(file);
-	if (fd == -1)
-	{
-		perror(file);
-		return (-1);
-	}
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
-	return (0);
-}
-
-int	out_redirection(char *file)
-{
-	int fd;
-
-	file = expand_str(file);
-	if (!file)
-		return (-1);
-	fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	free(file);
-	if (fd == -1)
-	{
-		perror(file);
-		return (-1);
-	}
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
-	return (0);
-}
-
-int	check_pipe(char ***argv_p)
-{
-	char	**argv;
-
-	argv = *argv_p;
-	while (*argv)
-	{
-		if (ft_strcmp(*argv, "|") == 0)
-		{
-			*argv_p = argv;
-			return (1);
-		}
-		argv++;
-	}
-	*argv_p = argv;
-	return (0);
-}
 
 // Add this helper to identify parent-only builtins
 int is_parent_builtin(char *cmd)
@@ -111,25 +22,24 @@ int is_parent_builtin(char *cmd)
 }
 
 // Modify exec_command to handle parent builtins
-int exec_command(char ***argv_p, int in_fd, int *out_fd)
+int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 {
-    char **argv = *argv_p;
     
     // First check for parent-only builtins
-    if (argv[0] && is_parent_builtin(argv[0]))
+    if (tokens[0] && is_parent_builtin(tokens[0]))
     {
         int original_fd = -1;
-        if (check_pipe(argv_p))
+        if (is_pipe)
         {
-            ft_fprintf(2, "minishell: %s: cannot be used in a pipeline\n", argv[0]);
+            ft_fprintf(2, "minishell: %s: cannot be used in a pipeline\n", tokens[0]);
             return -1;
         }
         
         // Setup redirections for builtin
-        if (argv[1])
-            original_fd = setup_redirections(argv);
+        if (tokens[1])
+            original_fd = setup_redirections(tokens);
             
-        int status = handle_builtin(argv);
+        int status = handle_builtin(tokens);
         
         // Restore original output if needed
         if (original_fd != -1)
@@ -141,23 +51,13 @@ int exec_command(char ***argv_p, int in_fd, int *out_fd)
     // Rest of existing exec_command code
     char		full_path[PATH_MAX];
 	extern char	**environ;
-	int			i;
 	int			pid;
-	char		**cmd_argv;
+	char		**argv;
 	int			pipefd[2];
-	int			is_pipe;
 
 	*out_fd = 0;
+	argv = NULL;
 
-	cmd_argv = NULL;
-
-	is_pipe = check_pipe(argv_p);
-
-	if (is_pipe && !**argv_p)
-	{
-		fprintf(stderr, "syntax error '|' \n");
-		return (-1);
-	}
 	if (is_pipe && pipe(pipefd) == -1)
 		return (-1);
 
@@ -184,9 +84,6 @@ int exec_command(char ***argv_p, int in_fd, int *out_fd)
 
 	/* ========== Child process ==========*/	
 
-	// set pipe arg "NULL"
-	**argv_p = NULL;
-
 	// close unused read pipe_fd
 	if (is_pipe)
 		close(pipefd[0]);
@@ -210,112 +107,77 @@ int exec_command(char ***argv_p, int in_fd, int *out_fd)
 			perror(NAME"pipe close to pipefd[1]");
 	}
 
-	// Handle redirections first
-	i = 0;
-	while (argv[i])
-	{
-		if (ft_strcmp(*argv, "<<") == 0)
-		{
-			*argv = NULL;
-			here_doc(*(++argv));
-		}
-		else if (ft_strncmp(*argv, "<<", 2) == 0)
-		{
-			here_doc(*argv + 2);
-			*argv = NULL;
-		}
-		else if (ft_strcmp(*argv, "<") == 0)
-		{
-			*argv = NULL;
-			in_redirection(*++argv);
-		}
-		else if (ft_strncmp(*argv, "<", 1) == 0)
-		{
-			in_redirection(*argv + 1);
-			*argv = NULL;
-		}
-		else if (ft_strcmp(*argv, ">>") == 0)
-		{
-			*argv = NULL;
-			out_append(*++argv);
-		}
-		else if (ft_strncmp(*argv, ">>", 2) == 0)
-		{
-			out_append(*argv + 2);
-			*argv = NULL;
-		}
-		else if (ft_strcmp(*argv, ">") == 0)
-		{
-			*argv = NULL;
-			out_redirection(*++argv);
-		}
-		else if (ft_strncmp(*argv, ">", 1) == 0)
-		{
-			out_redirection(*argv + 1);
-			*argv = NULL;
-		}
-		else if (!cmd_argv)
-			cmd_argv = argv;
-
-
-		argv++; // next token
-	}
-
-	// exit if don't find command
-	if (!cmd_argv)
-		exit(0);
+	int	status;
+	argv = redirection_handler(tokens, &status);
+	if (!argv) // don't find the command or failed system call
+		exit(status);
 
 	// handle sub shell
-	if ((*cmd_argv)[0] == '(')
+	if ((*argv)[0] == '(')
 	{
-		(*cmd_argv)[ft_strlen(*cmd_argv) - 1] = '\0';
-		(*cmd_argv)++;
-		executioner(*cmd_argv);
+		(*argv)[ft_strlen(*argv) - 1] = '\0';
+		(*argv)++;
+		flow_control(*argv);
 		exit(1);
 	}
 
 	// Handle quotes for remaining arguments
-	argv_expander(cmd_argv);
+	argv_expander(argv);
 
 	// Check for built-in commands before get full path and execve
-	if (cmd_argv[0] && is_builtin(cmd_argv[0]))
-		exit(handle_builtin(cmd_argv));
+	if (argv[0] && is_builtin(argv[0]))
+		exit(handle_builtin(argv));
 
-	int err = get_full_path(full_path, cmd_argv, "");
+	int err = get_full_path(full_path, argv, "");
 	if (err == 0)
 	{
-		execve(full_path, cmd_argv, environ);
+		execve(full_path, argv, environ);
 		perror(NAME);
 		exit(1);
 	}
 	exit(err);
 }
 
-int	executioner(char *line)
+char	**get_next_exec(char **tokens, int *is_pipe)
 {
-    char    **argv;
-    char    **ptr;
+	*is_pipe = 0;
+	while (*tokens)
+	{
+		if (ft_strcmp(*tokens, "|") == 0)
+		{
+			*is_pipe = 1;
+			break ;
+		}
+		tokens++;
+	}
+	return (tokens);
+}
+
+int	executioner(char **tokens)
+{
+	char	**next_exec;
+	int		is_pipe;
     int     fd;
 
-    argv = tokenizer(line, 0);
-    if (!argv)
-        return (0);
-
-    argv = handle_wildcards(argv);
-    if (!argv)
+	tokens = handle_wildcards(tokens);
+    if (!tokens)
         return (-1);
 
-	ptr = argv;
 	fd = 0;
-	while (*ptr)
+	while (*tokens)
 	{
-		if (exec_command(&ptr, fd, &fd) == -1)
+		next_exec = get_next_exec(tokens, &is_pipe);
+
+		*next_exec = NULL;
+
+		if (is_pipe && *++next_exec)
+			return (-1); // syntax error
+		
+		if (exec_command(tokens, fd, &fd, is_pipe) == -1)
 			return (-1);
-		if (!*ptr)
-			break;
-		ptr++;
+
+		tokens = next_exec;
 	}
-	free(argv);
 	while (wait(NULL) != -1)
 		;
 	return (0);

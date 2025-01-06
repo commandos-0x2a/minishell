@@ -28,12 +28,12 @@
    - [x] Output redirection (>)
    - [x] Append output (>>)
    - [ ] Here-document (<<)
-   - [ ] Handle multiple redirections
+   - [x] Handle multiple redirections
 
 4. Pipe Implementation
-   - [ ] Basic pipe (|)
-   - [ ] Multiple pipes
-   - [ ] Pipe with redirections
+   - [x] Basic pipe (|)
+   - [x] Multiple pipes
+   - [x] Pipe with redirections
 
 5. Signal Handling
    - [ ] Ctrl-C
@@ -44,6 +44,10 @@
    - [x] Basic environment variable handling
    - [ ] Variable expansion
    - [ ] Special variables ($?, $$, etc.)
+
+7. Flow control
+   - [x] Basic flow control
+   - [ ] Short-circuit evaluation
 
 ## Code Improvements
 1. Memory Management
@@ -72,6 +76,10 @@
    - [ ] Multiple commands
    - [ ] Complex pipelines
    - [ ] Error scenarios
+
+3. Flow control
+   - [ ] check redirection and pipes
+   - [ ] check nested flows
 
 ## Documentation
 1. Code Documentation
