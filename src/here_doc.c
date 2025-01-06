@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/04 18:46:43 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/06 18:23:32 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static int	call_here_doc(char *limiter, int out_fd)
 			return (1);
 		if (_read == 0)
 		{
-			ft_fprintf(2, "\npipex: warning: here-document " \
+			ft_fprintf(2, "\n"NAME": warning: here-document " \
 						"delimited by end-of-file (wanted `%s`)\n", limiter);
 			break ;
 		}
@@ -48,7 +48,7 @@ pid_t	run_here_doc_process(char *limiter, int *out_fd)
 	*out_fd = -1;
 	if (pipe(pipe_fds) == -1)
 	{
-		perror("pipe");
+		perror(NAME": pipe here_doc");
 		exit(1);
 	}
 	proc = fork();
@@ -60,7 +60,7 @@ pid_t	run_here_doc_process(char *limiter, int *out_fd)
 		exit(status);
 	}
 	if (proc == -1)
-		ft_fprintf(2, "pipe: %s: fork\n", strerror(errno));
+		ft_fprintf(2, NAME": %s: fork\n", strerror(errno));
 	close(pipe_fds[1]);
 	*out_fd = pipe_fds[0];
 	waitpid(proc, &status, 0);

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 17:44:34 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/06 20:56:34 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
+# define NAME "minishell"
 
 # define HOSTNAME_MAX 64
 # define USERNAME_MAX 32
@@ -53,7 +54,7 @@ void    cleanup_shell(void);
 
 // tokens and exec
 char	**tokenizer(char *s, int i);
-int		executioner(char *line, int indent);
+int		executioner(char *line);
 void	print_tokenizer(char *line, int indent);
 pid_t	run_here_doc_process(char *limiter, int *out_fd);
 void	argv_expander(char **argv);
@@ -93,7 +94,7 @@ char **handle_wildcards(char **argv);
 
 
 int exec_command(char ***argv_p, int in_fd, int *out_fd);
-int executioner(char *line, int indent);
+int executioner(char *line);
 
 
 #endif

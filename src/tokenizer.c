@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 16:04:52 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/06 22:19:14 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ char	**tokenizer(char *s, int i)
     // Add this check before processing
     if (count_brackets(s) != 0)
     {
-        write(2, "syntax error: unmatched parentheses\n", 35);
+        write(2, NAME": syntax error: unmatched parentheses\n", 35);
         return (NULL);
     }
 
@@ -100,7 +100,7 @@ char	**tokenizer(char *s, int i)
 	}
 	if (nb_bracket != 0 || s == NULL)
 	{
-		write(2, "syntax error\n", 13);
+		write(2, NAME": syntax error\n", 13);
 		return (NULL);
 	}
 	if (p == s && !*s)
