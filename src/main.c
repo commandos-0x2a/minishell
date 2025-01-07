@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/07 13:09:28 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/07 13:53:42 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,10 +244,23 @@ int main(int argc, char **argv)
 {
 	char *line;
 	int is_test;
+	t_config config;  // Now on stack instead of heap
 
 	is_test = 0;
-	// Set up signal handling
 	setup_signals();
+
+	// Load configuration
+	load_config(&config);
+
+
+	if(ft_strcmp(config.prompt_style, "colorful") == 0)
+	{
+		ft_fprintf(2, "colorful\n");
+	}
+	else
+	{
+		ft_fprintf(2, "normal\n");
+	}
 
 	if (argc == 2 && ft_strcmp(argv[1], "test") == 0)
 		is_test = 1;
@@ -273,5 +286,8 @@ int main(int argc, char **argv)
 		setup_signals();
 		free(line);
 	}
+
+	// Save config before exit
+	save_config(&config);
 	return (0);
 }

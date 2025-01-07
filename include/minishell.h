@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 13:09:19 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/07 13:35:10 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,10 @@
 # define PROMPT_MAX (HOSTNAME_MAX + USERNAME_MAX + PATH_MAX_LEN + 10)
 
 # define PROMPT "commandos0x2a$ "
+
+// Define maximum sizes for config values
+# define MAX_PROMPT_STYLE 32
+# define MAX_CONFIG_LINE 256
 
 // Environment functions
 int     ft_setenv(const char *name, const char *value, int overwrite);
@@ -86,6 +90,19 @@ int		flow_control(char *chain);
 char **handle_wildcards(char **argv);
 
 
+// Modify config structure to use fixed arrays
+typedef struct s_config
+{
+    char    prompt_style[MAX_PROMPT_STYLE];
+    int     history_size;
+    int     tab_width;
+    int     color_enabled;
+    int     auto_suggest;
+} t_config;
+
+// Modify prototypes
+void load_config(t_config *config);
+void save_config(const t_config *config);
 
 // Add these prototypes
 int handle_subshell(char * cmd,int indent);
