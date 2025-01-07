@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:32 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/05 21:42:21 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/07 13:25:43 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	ft_cd(char **argv)
 		path = ft_getenv("HOME");
 		if (!path)
 		{
-			ft_fprintf(2, "minishell: cd: HOME not set\n");
+			ft_fprintf(2, NAME": cd: HOME not set\n");
 			return (1);
 		}
 	}
@@ -30,12 +30,12 @@ int	ft_cd(char **argv)
 		path = argv[1];
 	if (chdir(path) == -1)
 	{
-		ft_fprintf(2, "minishell: cd: %s: %s\n", path, strerror(errno));
+		ft_fprintf(2, NAME": cd: %s: %s\n", path, strerror(errno));
 		return (1);
 	}
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 	{
-		ft_fprintf(2, "minishell: cd: %s\n", strerror(errno));
+		ft_fprintf(2, NAME": cd: %s\n", strerror(errno));
 		return (1);
 	}
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/06 15:20:09 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/07 17:12:02 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,32 @@
 */
 int is_builtin(char *cmd)
 {
-    return (ft_strcmp(cmd, "echo") == 0 ||
+    int type;
+
+    if (!cmd)
+        return (0);
+
+    type = 0;
+    if (ft_strcmp(cmd, "echo") == 0 ||
             ft_strcmp(cmd, "pwd") == 0 ||
-            ft_strcmp(cmd, "env") == 0 ||
-            ft_strcmp(cmd, "cd") == 0 || 
-            ft_strcmp(cmd, "exit") == 0 ||
-            ft_strcmp(cmd, "export") == 0 ||
-            ft_strcmp(cmd, "unset") == 0);
+            ft_strcmp(cmd, "env") == 0)
+        type |= 1;
+    if (ft_strcmp(cmd, "cd") == 0 || 
+            ft_strcmp(cmd, "exit") == 0)
+		type |= 2;
+    if (ft_strcmp(cmd, "export") == 0 ||
+            ft_strcmp(cmd, "unset") == 0)
+		type |= 3;
+    return (type);
 }
 
 int handle_builtin(char **argv)
 {
     int ret;
 
+    argv = redirection_handler(argv, 0, &ret);
+    if (ret != 0)
+        return (ret);
     ret = 1;
     if (ft_strcmp(argv[0], "echo") == 0)
         ret = ft_echo(argv);
