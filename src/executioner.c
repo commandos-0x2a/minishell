@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executioner.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 10:57:19 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/07 11:47:09 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,9 @@ int	executioner(char **tokens)
 
 	tokens = handle_wildcards(tokens);
     if (!tokens)
-        return (-1);
+    {
+		return (-1);
+	}
 
 	fd = 0;
 	while (*tokens)
