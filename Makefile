@@ -29,7 +29,8 @@ FILES = main				\
 		builtins/env		\
 		builtins/exit		\
 		builtins/test 		\
-		builtins/wildcard
+		builtins/wildcard	\
+		signals
 
 
 OBJECTS = $(FILES:%=$(BUILD_DIR)/%.o)

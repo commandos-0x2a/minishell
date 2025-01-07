@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
+/*   Updated: 2025/01/07 13:09:28 by mkurkar          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include <unistd.h>
 #include <stdio.h>
@@ -234,17 +246,21 @@ int main(int argc, char **argv)
 	int is_test;
 
 	is_test = 0;
-	// atexit(cleanup_shell);
+	// Set up signal handling
+	setup_signals();
+
 	if (argc == 2 && ft_strcmp(argv[1], "test") == 0)
 		is_test = 1;
 	while (1)
 	{
 		line = readline(get_prompt());
-		if (!line)
+		if (!line)  // ctrl-D handling
 		{
 			printf("\nexit\n");
 			break;
 		}
+		// Reset signals for command execution
+		reset_signals();
 		handle_line(line);
 		if (*line)
 		{
@@ -253,6 +269,8 @@ int main(int argc, char **argv)
 			else
 				flow_control(line);
 		}
+		// Restore signal handling for interactive mode
+		setup_signals();
 		free(line);
 	}
 	return (0);
