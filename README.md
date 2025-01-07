@@ -2,8 +2,8 @@
 
 ## Current Issues
 1. Quote handling in commands
-   - [ ] Fix python3 -c "print('hello')" execution
-   - [ ] Preserve quotes during tokenization
+   - [x] Fix python3 -c "print('hello')" execution
+   - [x] Preserve quotes during tokenization
    - [ ] Strip quotes only when executing commands
 
 ## Core Features to Implement
@@ -12,7 +12,7 @@
    - [x] PATH resolution
    - [x] Direct path execution
    - [ ] Exit status handling
-   - [ ] Command argument parsing
+   - [x] Command argument parsing
 
 2. Shell Builtins
    - [x] cd
@@ -31,9 +31,9 @@
    - [ ] Handle multiple redirections
 
 4. Pipe Implementation
-   - [ ] Basic pipe (|)
-   - [ ] Multiple pipes
-   - [ ] Pipe with redirections
+   - [x] Basic pipe (|)
+   - [x] Multiple pipes
+   - [x] Pipe with redirections
 
 5. Signal Handling
    - [ ] Ctrl-C
@@ -54,7 +54,7 @@
 2. Error Handling
    - [ ] Improve error messages
    - [ ] Handle edge cases
-   - [ ] Command not found handling
+   - [x] Command not found handling
 
 3. Code Structure
    - [ ] Split large functions
@@ -63,14 +63,14 @@
 
 ## Testing
 1. Command Tests
-   - [ ] Basic commands
-   - [ ] Quotes handling
-   - [ ] Pipes and redirections
+   - [x] Basic commands
+   - [x] Quotes handling
+   - [x] Pipes and redirections
    - [ ] Edge cases
 
 2. Integration Tests
-   - [ ] Multiple commands
-   - [ ] Complex pipelines
+   - [x] Multiple commands
+   - [x] Complex pipelines
    - [ ] Error scenarios
 
 ## Documentation
