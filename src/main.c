@@ -233,6 +233,10 @@ int main(int argc, char **argv)
 	char *line;
 	int is_test;
 
+
+	// check is stdin and stdout and stderr is tty
+
+
 	is_test = 0;
 	// atexit(cleanup_shell);
 	if (argc == 2 && ft_strcmp(argv[1], "test") == 0)
