@@ -19,14 +19,16 @@ FILES = main				\
 		expander			\
 		get_full_path		\
 		here_doc			\
+		redirection_handler	\
+		flow_control		\
 		readline_handler	\
 		builtins/cd			\
 		builtins/builtins	\
 		builtins/echo		\
 		builtins/pwd		\
 		builtins/env		\
-		builtins/exit	\
-		builtins/test \
+		builtins/exit		\
+		builtins/test 		\
 		builtins/wildcard
 
 

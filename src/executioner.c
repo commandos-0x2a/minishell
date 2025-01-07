@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 08:13:49 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/07 10:57:19 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,31 +24,6 @@ int is_parent_builtin(char *cmd)
 // Modify exec_command to handle parent builtins
 int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 {
-    
-    // First check for parent-only builtins
-    if (tokens[0] && is_parent_builtin(tokens[0]))
-    {
-        int original_fd = -1;
-        if (is_pipe)
-        {
-            ft_fprintf(2, "minishell: %s: cannot be used in a pipeline\n", tokens[0]);
-            return -1;
-        }
-        
-        // Setup redirections for builtin
-        if (tokens[1])
-            original_fd = setup_redirections(tokens);
-            
-        int status = handle_builtin(tokens);
-        
-        // Restore original output if needed
-        if (original_fd != -1)
-            restore_output(original_fd);
-            
-        return status;
-    }
-
-    // Rest of existing exec_command code
     char		full_path[PATH_MAX];
 	extern char	**environ;
 	int			pid;
@@ -87,7 +62,6 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 	// close unused read pipe_fd
 	if (is_pipe)
 		close(pipefd[0]);
-
 
 	// connect with previous command pipe
 	if (in_fd > 0)
@@ -170,8 +144,16 @@ int	executioner(char **tokens)
 
 		*next_exec = NULL;
 
-		if (is_pipe && *++next_exec)
+		if (is_pipe && *++next_exec == NULL)
 			return (-1); // syntax error
+		
+		// move here doc to here
+
+		// if pipe not exist run build in command in parent
+		// if (!is_pipe && is_builtin())
+		// {
+
+		// }
 		
 		if (exec_command(tokens, fd, &fd, is_pipe) == -1)
 			return (-1);
