@@ -6,20 +6,11 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 10:57:19 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/07 22:56:52 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// Add this helper to identify parent-only builtins
-int is_parent_builtin(char *cmd)
-{
-    return (ft_strcmp(cmd, "cd") == 0 ||
-            ft_strcmp(cmd, "exit") == 0 ||
-            ft_strcmp(cmd, "export") == 0 ||
-            ft_strcmp(cmd, "unset") == 0);
-}
 
 // Modify exec_command to handle parent builtins
 int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
@@ -82,7 +73,7 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 	}
 
 	int	status;
-	argv = redirection_handler(tokens, &status);
+	argv = redirection_handler(tokens, 1, &status);
 	if (!argv) // don't find the command or failed system call
 		exit(status);
 
@@ -99,8 +90,8 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 	argv_expander(argv);
 
 	// Check for built-in commands before get full path and execve
-	if (argv[0] && is_builtin(argv[0]))
-		exit(handle_builtin(argv));
+	// if (argv[0] && is_builtin(argv[0]))
+	// 	exit(handle_builtin(argv));
 
 	int err = get_full_path(full_path, argv, "");
 	if (err == 0)
@@ -127,6 +118,30 @@ char	**get_next_exec(char **tokens, int *is_pipe)
 	return (tokens);
 }
 
+int	here_doc_handler(char **tokens, int *fd)
+{
+	*fd = 0;
+	while (*tokens)
+	{
+		if (ft_strcmp(*tokens, "<<") == 0)
+		{
+			if (*fd > 0)
+				close(*fd);
+			if (run_here_doc_process(*++tokens, fd) == -1)
+				return (-1);
+		}
+		else if (ft_strncmp(*tokens, "<<", 2) == 0)
+		{
+			if (*fd > 0)
+				close(*fd);
+			if (run_here_doc_process(*tokens + 2, fd) == -1)
+				return (-1);
+		}
+		tokens++;
+	}
+	return (0);
+}
+
 int	executioner(char **tokens)
 {
 	char	**next_exec;
@@ -147,12 +162,13 @@ int	executioner(char **tokens)
 		if (is_pipe && *++next_exec == NULL)
 			return (-1); // syntax error
 		
-		// move here doc to here
+		if (here_doc_handler(tokens, &fd) != 0)
+			return (-1);
 
 		// if pipe not exist run build in command in parent
-		// if (!is_pipe && is_builtin())
+		// if (!is_pipe && is_builtin_function(get_argv0(tokens)))
 		// {
-
+		// 	handle_builtin();
 		// }
 		
 		if (exec_command(tokens, fd, &fd, is_pipe) == -1)

@@ -6,27 +6,13 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 08:12:59 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/07 22:56:46 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	here_doc(char *limiter)
-{
-	int	fd;
-
-	if (run_here_doc_process(limiter, &fd) == -1)
-	{
-		perror(NAME);
-		return (-1);
-	}
-	dup2(fd, STDIN_FILENO);
-	close(fd);
-	return (0);
-}
-
-int	in_redirection(char *file)
+int	in_redirection(char *file, int _dup)
 {
 	int	fd;
 
@@ -40,12 +26,13 @@ int	in_redirection(char *file)
 		perror(NAME);
 		return (-1);
 	}
-	dup2(fd, STDIN_FILENO);
+	if (_dup)
+		dup2(fd, STDIN_FILENO);
 	close(fd);
 	return (0);
 }
 
-int	out_append(char *file)
+int	out_append(char *file, int _dup)
 {
 	int fd;
 
@@ -59,12 +46,13 @@ int	out_append(char *file)
 		perror(file);
 		return (-1);
 	}
-	dup2(fd, STDOUT_FILENO);
+	if (_dup)
+		dup2(fd, STDOUT_FILENO);
 	close(fd);
 	return (0);
 }
 
-int	out_redirection(char *file)
+int	out_redirection(char *file, int _dup)
 {
 	int fd;
 
@@ -78,12 +66,13 @@ int	out_redirection(char *file)
 		perror(file);
 		return (-1);
 	}
-	dup2(fd, STDOUT_FILENO);
+	if (_dup)
+		dup2(fd, STDOUT_FILENO);
 	close(fd);
 	return (0);
 }
 
-char	**redirection_handler(char **tokens, int *status)
+char	**redirection_handler(char **tokens, int _dup, int *status)
 {
 	char	**new_tokens;
 
@@ -94,41 +83,40 @@ char	**redirection_handler(char **tokens, int *status)
 		if (ft_strcmp(*tokens, "<<") == 0)
 		{
 			*tokens = NULL;
-			*status = here_doc(*(++tokens));
+			++tokens;
 		}
 		else if (ft_strncmp(*tokens, "<<", 2) == 0)
 		{
-			*status = here_doc(*tokens + 2);
 			*tokens = NULL;
 		}
 		else if (ft_strcmp(*tokens, "<") == 0)
 		{
 			*tokens = NULL;
-			*status = in_redirection(*++tokens);
+			*status = in_redirection(*++tokens, _dup);
 		}
 		else if (ft_strncmp(*tokens, "<", 1) == 0)
 		{
-			*status = in_redirection(*tokens + 1);
+			*status = in_redirection(*tokens + 1, _dup);
 			*tokens = NULL;
 		}
 		else if (ft_strcmp(*tokens, ">>") == 0)
 		{
 			*tokens = NULL;
-			*status = out_append(*++tokens);
+			*status = out_append(*++tokens, _dup);
 		}
 		else if (ft_strncmp(*tokens, ">>", 2) == 0)
 		{
-			*status = out_append(*tokens + 2);
+			*status = out_append(*tokens + 2, _dup);
 			*tokens = NULL;
 		}
 		else if (ft_strcmp(*tokens, ">") == 0)
 		{
 			*tokens = NULL;
-			*status = out_redirection(*++tokens);
+			*status = out_redirection(*++tokens, _dup);
 		}
 		else if (ft_strncmp(*tokens, ">", 1) == 0)
 		{
-			*status = out_redirection(*tokens + 1);
+			*status = out_redirection(*tokens + 1, _dup);
 			*tokens = NULL;
 		}
 		else if (!new_tokens)
