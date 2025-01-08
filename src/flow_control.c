@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 11:00:20 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:20:07 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ int	flow_control(char *chain)
 	char	**tokens;
 	char	**next_flow;
 	int		op;
-	char	**ptr;
+	// char	**ptr;
 	int		test;
 
 	tokens = tokenizer(chain, 0);
 	if (!tokens)
 		return (-1);
 
-	ptr = tokens;
+	// ptr = tokens;
 	test = 1; // cuz run first time
 	while (*tokens)
 	{
@@ -94,6 +94,6 @@ int	flow_control(char *chain)
 
 		tokens = next_flow; 
 	}
-	free(ptr);
+	// free(ptr);
 	return (0);
 }
