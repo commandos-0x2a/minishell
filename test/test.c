@@ -5,21 +5,14 @@
 
 int main(int argc, char **argv)
 {
-	int		fd;
-	char	*msg;
-	size_t	len;
-	int		exit_status;
+	int pid;
 
-	if (argc != 4)
-	{
-		fprintf(stderr, "Usage: %s fd msg exit_status\n", argv[0]);
-		return (1);
-	}
-	fd = atoi(argv[1]);
-	msg = argv[2];
-	len = strlen(msg);
-	exit_status = atoi(argv[3]);
-	write(fd, msg, len);
-	write(fd, "\n", 1);
-	return (exit_status);
+	pid = fork();
+	if (pid == 0)
+		exit(1);
+
+	int status;
+	status = 123;
+	printf("pid: %d, status: %d\n", wait(&status), status);
+	printf("pid: %d, status: %d\n", wait(&status), status);
 }

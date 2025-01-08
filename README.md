@@ -4,14 +4,14 @@
 1. Quote handling in commands
    - [x] Fix python3 -c "print('hello')" execution
    - [x] Preserve quotes during tokenization
-   - [ ] Strip quotes only when executing commands
+   - [x] Strip quotes only when executing commands
 
 ## Core Features to Implement
 1. Command Execution
    - [x] Basic command execution
    - [x] PATH resolution
    - [x] Direct path execution
-   - [ ] Exit status handling
+   - [x] Exit status handling
    - [x] Command argument parsing
 
 2. Shell Builtins
@@ -27,8 +27,8 @@
    - [x] Input redirection (<)
    - [x] Output redirection (>)
    - [x] Append output (>>)
-   - [ ] Here-document (<<)
-   - [ ] Handle multiple redirections
+   - [x] Here-document (<<)
+   - [x] Handle multiple redirections
 
 4. Pipe Implementation
    - [x] Basic pipe (|)

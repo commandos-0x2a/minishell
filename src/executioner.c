@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 09:25:49 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 11:20:04 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 	if (is_pipe && pipe(pipefd) == -1)
 		return (-1);
 
-
 	// make fork and return pid to parent process
 	pid = fork();
 	if (pid != 0)
 	{
-		// close all unused fd in parent
+		/* ========== Parent process ==========*/
+		// close unused fd
 		if (in_fd > 0)
 			close(in_fd);
 		if (is_pipe)
@@ -46,10 +46,10 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 			}
 		}
 		return (pid);
+		/* ========== Bye parent ==========*/
 	}
 
-	/* ========== Child process ==========*/	
-
+	/* ========== Child process ==========*/
 	// close unused read pipe_fd
 	if (is_pipe)
 		close(pipefd[0]);
@@ -125,11 +125,8 @@ char	**get_next_exec(char **tokens, int *is_pipe)
 	return (tokens);
 }
 
-int	here_doc_handler(char **tokens)
+int	here_doc_handler(char **tokens, int fd)
 {
-	int	fd;
-
-	fd = 0;
 	while (*tokens)
 	{
 		if (ft_strcmp(*tokens, "<<") == 0)
@@ -156,7 +153,7 @@ int	here_doc_handler(char **tokens)
 		}
 		tokens++;
 	}
-	return (0);
+	return (fd);
 }
 
 int	executioner(char **tokens)
@@ -165,15 +162,18 @@ int	executioner(char **tokens)
 	int		is_pipe;
 	int		prev_is_pipe;
     int     fd;
+	int		proc_pid;
 
 	tokens = handle_wildcards(tokens);
     if (!tokens)
     {
+		perror(NAME": wildcards");
 		return (-1);
 	}
 
 	fd = 0;
 	prev_is_pipe = 0;
+	proc_pid = -1;
 	while (*tokens)
 	{
 		next_exec = get_next_exec(tokens, &is_pipe);
@@ -185,7 +185,7 @@ int	executioner(char **tokens)
 			ft_fprintf(2, NAME": syntax error `|'\n");
 			return (-1); // syntax error
 		}
-		fd = here_doc_handler(tokens);
+		fd = here_doc_handler(tokens, fd);
 		if (fd == -1)
 			return (-1);
 
@@ -194,12 +194,34 @@ int	executioner(char **tokens)
 			tokens = redirection_handler(tokens, 0);
 			g_status = handle_builtin(tokens, 0);
 		}
-		else if (exec_command(tokens, fd, &fd, is_pipe) == -1)
-			return (-1);
+		else 
+		{
+			proc_pid = exec_command(tokens, fd, &fd, is_pipe);
+			if (proc_pid == -1)
+				return (-1);
+		}
 		prev_is_pipe = is_pipe;
 		tokens = next_exec;
 	}
-	while (wait(NULL) != -1)
-		;
-	return (0);
+
+
+
+
+	/* wait children */
+
+	int	status = 0;
+	int pid;
+	while ((pid = wait(&status)) != -1)
+	{
+		if (pid == proc_pid)
+		{
+			if (WIFEXITED(status))
+				g_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				g_status = 128 + WTERMSIG(status);
+			else
+				g_status = status;
+		}
+	}
+	return (g_status);
 }
