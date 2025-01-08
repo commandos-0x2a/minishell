@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 08:13:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 07:12:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,10 @@ void    cleanup_shell(void);
 // tokens and exec
 char	**tokenizer(char *s, int i);
 void	print_tokenizer(char *line, int indent);
-pid_t	run_here_doc_process(char *limiter, int *out_fd);
 char	*expand_str(char *str);
 void	argv_expander(char **argv);
+char	*get_argv0(char **tokens);
+
 
 // libft function
 size_t	ft_join_path(char *dest, const char *path1, const char *path2);
@@ -70,14 +71,12 @@ int		ft_echo(char **argv);
 int		ft_pwd(char **argv);
 int		ft_env(char **argv);
 int		ft_exit(char **argv);
-int		is_builtin(char *cmd);
 int		handle_builtin(char **argv);
 
-int     setup_redirections(char **argv);
 void    restore_output(int original_fd);
 
 
-char	**redirection_handler(char **tokens, int *status);
+char	**redirection_handler(char **tokens, int _dup, int *status);
 int 	exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe);
 int		executioner(char **tokens);
 int		flow_control(char *chain);
@@ -90,5 +89,8 @@ char **handle_wildcards(char **argv);
 // Add these prototypes
 int handle_subshell(char * cmd,int indent);
 int is_parent_builtin(char *cmd);
+
+
+int	here_doc(char *limiter);
 
 #endif
