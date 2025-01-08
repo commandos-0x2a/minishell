@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 09:14:31 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 12:42:33 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,12 +97,23 @@ int	out_redirection(char *token, int _dup)
 	return (0);
 }
 
+
+void	swap_args(char **a, char **b)
+{
+	char *tmp;
+
+	tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+
 char	**redirection_handler(char **tokens, int _dup)
 {
-	char	**new_tokens;
+	char	**argv;
 	int		status;
+	char	**last_argv;
 
-	new_tokens = NULL;
+	argv = NULL;
 	status = 0;
 	while (*tokens)
 	{
@@ -110,6 +121,7 @@ char	**redirection_handler(char **tokens, int _dup)
 		{
 			*tokens = NULL;
 			++tokens;
+			*tokens = NULL;
 		}
 		else if (ft_strncmp(*tokens, "<<", 2) == 0)
 		{
@@ -119,6 +131,7 @@ char	**redirection_handler(char **tokens, int _dup)
 		{
 			*tokens = NULL;
 			status = in_redirection(*++tokens, _dup);
+			*tokens = NULL;
 		}
 		else if (ft_strncmp(*tokens, "<", 1) == 0)
 		{
@@ -129,6 +142,7 @@ char	**redirection_handler(char **tokens, int _dup)
 		{
 			*tokens = NULL;
 			status = out_append(*++tokens, _dup);
+			*tokens = NULL;
 		}
 		else if (ft_strncmp(*tokens, ">>", 2) == 0)
 		{
@@ -139,21 +153,28 @@ char	**redirection_handler(char **tokens, int _dup)
 		{
 			*tokens = NULL;
 			status = out_redirection(*++tokens, _dup);
+			*tokens = NULL;
 		}
 		else if (ft_strncmp(*tokens, ">", 1) == 0)
 		{
 			status = out_redirection(*tokens + 1, _dup);
 			*tokens = NULL;
 		}
-		else if (!new_tokens)
-			new_tokens = tokens;
-
+		else if (!argv)
+		{
+			argv = tokens;
+			last_argv = tokens;
+		}
+		else
+		{
+			swap_args(++last_argv, tokens);
+		}
 		if (status != 0)
 			return (NULL);
 
 		tokens++;
 	}
-	if (!new_tokens)
+	if (!argv)
 		return (tokens);
-	return (new_tokens);
+	return (argv);
 }

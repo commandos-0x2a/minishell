@@ -5,14 +5,8 @@
 
 int main(int argc, char **argv)
 {
-	int pid;
+	char *value = getenv("TEST");
 
-	pid = fork();
-	if (pid == 0)
-		exit(1);
-
-	int status;
-	status = 123;
-	printf("pid: %d, status: %d\n", wait(&status), status);
-	printf("pid: %d, status: %d\n", wait(&status), status);
+	printf("argc: %d\n", argc);
+	printf("value: %s\n", value);
 }
