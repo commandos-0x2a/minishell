@@ -36,9 +36,9 @@
    - [x] Pipe with redirections
 
 5. Signal Handling
-   - [ ] Ctrl-C
-   - [ ] Ctrl-D
-   - [ ] Ctrl-\
+   - [x] Ctrl-C `Need Improvement`
+   - [x] Ctrl-D `Need Improvement`
+   - [x] Ctrl-\ `Need Improvement`
 
 6. Environment Variables
    - [x] Basic environment variable handling

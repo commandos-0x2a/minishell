@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/08 16:32:40 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 17:56:41 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 
 #include "minishell.h"
@@ -27,7 +29,6 @@ void ft_free_array(char **arr)
 	free(arr);
 }
 
-
 /*
  * This function is like playing a matching game!
  * It checks if a word matches a special pattern.
@@ -37,15 +38,23 @@ void ft_free_array(char **arr)
  * The * is like a magic star that matches anything!
  * The ? is like a surprise box that matches any letter!
  * example:
- * Pattern: h e * o ?
- * String:  h e l l o !
- * 		    ↓ ↓ ↓ ↓ ↓ ↓
- * Step 1:  h = h ✓ (exact match)
- * Step 2:  e = e ✓ (exact match)
- * Step 3:  * matches 'l l' ✓ (asterisk can match multiple chars)
- * Step 4:  o = o ✓ (exact match)
- * Step 5:  ? matches '!' ✓ (question mark matches any single char)
+ * Pattern:	h e * o ?
+ * String: 	h e l l o !
+ * 		   	↓ ↓ ↓ ↓ ↓ ↓
+ * Step 1: 	h = h ✓ (exact match)
+ * Step 2: 	e = e ✓ (exact match)
+ * Step 3: 	* matches 'l l' ✓ (asterisk can match multiple chars)
+ * Step 4: 	o = o ✓ (exact match)
+ * Step 5: 	? matches '!' ✓ (question mark matches any single char)
  * Result: MATCH ✓
+ *
+ * This function is like playing a matching game!
+ * It checks if a word matches a special pattern.
+ * For example:
+ * Pattern: "cat*" will match: "cat", "cats", "catfood"
+ * Pattern: "?at" will match: "cat", "rat", "hat"
+ * The * is like a magic star that matches anything!
+ * The ? is like a surprise box that matches any letter! 
  */
 static int match_pattern(const char *pattern, const char *str)
 {
@@ -91,25 +100,24 @@ static int match_pattern(const char *pattern, const char *str)
 */
 static char **add_to_array(char **arr, char *str, int *size)
 {
-    char **new_arr;
-    int i;
-
-    new_arr = malloc(sizeof(char *) * (*size + 2));
-    if (!new_arr)
-        return (NULL);
-    
-    i = 0;
-    while (i < *size)
-    {
-        new_arr[i] = arr[i];
-        i++;
-    }
-    new_arr[i] = ft_strdup(str);
-    new_arr[i + 1] = NULL;
-    *size += 1;
-    
-    free(arr);
-    return (new_arr);
+	char **new_arr;
+	int i;	
+	new_arr = malloc(sizeof(char *) * (*size + 2));
+	if (!new_arr)
+	    return (NULL);
+	
+	i = 0;
+	while (i < *size)
+	{
+	    new_arr[i] = arr[i];
+	    i++;
+	}
+	new_arr[i] = ft_strdup(str);
+	new_arr[i + 1] = NULL;
+	*size += 1;
+	
+	free(arr);
+	return (new_arr);
 }
 
 /*

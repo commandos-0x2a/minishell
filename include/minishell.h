@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 09:25:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 21:13:04 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,11 @@
 # endif
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <sys/types.h>
+# include <termios.h>
+#include <bits/sigaction.h>
+#include <asm-generic/signal-defs.h>
+#include <bits/signum-arch.h>
 
 # define NAME "minishell"
 
@@ -85,6 +90,7 @@ char	**redirection_handler(char **tokens, int _dup);
 int 	exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe);
 int		executioner(char **tokens);
 int		flow_control(char *chain);
+void    wait_children(int target_pid);
 
 
 char **handle_wildcards(char **argv);
@@ -105,8 +111,8 @@ void load_config(t_config *config);
 void save_config(const t_config *config);
 
 // Add these prototypes
-int handle_subshell(char * cmd,int indent);
-int is_parent_builtin(char *cmd);
+// int handle_subshell(char * cmd,int indent);
+// int is_parent_builtin(char *cmd);
 
 void setup_signals(void);
 void reset_signals(void);
