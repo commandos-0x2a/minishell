@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/06 16:05:12 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/08 13:36:02 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void ft_free_array(char **arr)
 * Pattern: "cat*" will match: "cat", "cats", "catfood"
 * Pattern: "?at" will match: "cat", "rat", "hat"
 * The * is like a magic star that matches anything!
-* The ? is like a surprise box that matches any letter!
+* The ? is like a surprise box that matches any letter! 
 */
 static int match_pattern(const char *pattern, const char *str)
 {

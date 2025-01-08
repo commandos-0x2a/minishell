@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/08 09:45:32 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 14:01:39 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,10 @@ static void restore_prompt(int sig)
     (void)sig;
     write(1, "\n", 1);
     rl_on_new_line();
-#ifdef __linux__
     rl_replace_line("", 0);
-#endif
+// #ifdef __linux__
+//     rl_replace_line("", 0);
+// #endif
     rl_redisplay();
 }
 
@@ -40,7 +41,7 @@ void setup_signals(void)
 
     // Set up signal handlers
     signal(SIGINT, restore_prompt);   // ctrl-C
-    signal(SIGQUIT, SIG_IGN);        // ctrl-
+    signal(SIGQUIT, SIG_IGN);        // ctrl- \/
 }
 
 void reset_signals(void)
