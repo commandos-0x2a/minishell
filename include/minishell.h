@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 09:25:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 17:49:20 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ char	**redirection_handler(char **tokens, int _dup);
 int 	exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe);
 int		executioner(char **tokens);
 int		flow_control(char *chain);
+void    wait_children(int target_pid);
 
 
 char **handle_wildcards(char **argv);

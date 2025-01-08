@@ -15,7 +15,6 @@ FILES = main				\
 		ft_setenv			\
 		tokenizer			\
 		print_tokenizer		\
-		executioner			\
 		expander			\
 		get_full_path		\
 		here_doc			\
@@ -23,6 +22,10 @@ FILES = main				\
 		flow_control		\
 		readline_handler	\
 		get_argv0			\
+		\
+		execution/wait_children	\
+		execution/executioner	\
+		\
 		builtins/cd			\
 		builtins/builtins	\
 		builtins/echo		\

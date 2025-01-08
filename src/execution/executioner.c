@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 15:28:03 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 18:20:44 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,25 +203,6 @@ int	executioner(char **tokens)
 		prev_is_pipe = is_pipe;
 		tokens = next_exec;
 	}
-
-
-
-
-	/* wait children */
-
-	int	status = 0;
-	int pid;
-	while ((pid = wait(&status)) != -1)
-	{
-		if (pid == proc_pid)
-		{
-			if (WIFEXITED(status))
-				g_status = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-				g_status = 128 + WTERMSIG(status);
-			else
-				g_status = status;
-		}
-	}
-	return (g_status);
+	wait_children(proc_pid);
+	return (0);
 }

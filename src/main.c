@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/07 13:53:42 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/08 17:44:19 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,7 +258,6 @@ int main(int argc, char **argv)
 	// Load configuration
 	load_config(&config);
 
-
 	if(ft_strcmp(config.prompt_style, "colorful") == 0)
 	{
 		ft_fprintf(2, "colorful\n");
@@ -279,7 +278,7 @@ int main(int argc, char **argv)
 			break;
 		}
 		// Reset signals for command execution
-		reset_signals();
+		// reset_signals();
 		handle_line(line);
 		if (*line)
 		{
@@ -289,7 +288,6 @@ int main(int argc, char **argv)
 				flow_control(line);
 		}
 		// Restore signal handling for interactive mode
-		setup_signals();
 		free(line);
 	}
 
