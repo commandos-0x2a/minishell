@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/08 15:34:14 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:32:40 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,51 +29,57 @@ void ft_free_array(char **arr)
 
 
 /*
-* This function is like playing a matching game!
-* It checks if a word matches a special pattern.
-* For example:
-* Pattern: "cat*" will match: "cat", "cats", "catfood"
-* Pattern: "?at" will match: "cat", "rat", "hat"
-* The * is like a magic star that matches anything!
-* The ? is like a surprise box that matches any letter!
-*/
+ * This function is like playing a matching game!
+ * It checks if a word matches a special pattern.
+ * For example:
+ * Pattern: "cat*" will match: "cat", "cats", "catfood"
+ * Pattern: "?at" will match: "cat", "rat", "hat"
+ * The * is like a magic star that matches anything!
+ * The ? is like a surprise box that matches any letter!
+ * example:
+ * Pattern: h e * o ?
+ * String:  h e l l o !
+ * 		    ↓ ↓ ↓ ↓ ↓ ↓
+ * Step 1:  h = h ✓ (exact match)
+ * Step 2:  e = e ✓ (exact match)
+ * Step 3:  * matches 'l l' ✓ (asterisk can match multiple chars)
+ * Step 4:  o = o ✓ (exact match)
+ * Step 5:  ? matches '!' ✓ (question mark matches any single char)
+ * Result: MATCH ✓
+ */
 static int match_pattern(const char *pattern, const char *str)
 {
-    while (*pattern && *str)
-    {
-        if (*pattern == '*')
-        {
-            // Skip consecutive asterisks
-            while (*pattern == '*')
-                pattern++;
-                
-            // If pattern ends with *, match rest of string
-            if (!*pattern)
-                return (1);
-
-            // Try matching the rest of pattern with every substring
-            while (*str)
-            {
-                if (match_pattern(pattern, str))
-                    return (1);
-                str++;
-            }
-            return (match_pattern(pattern, str));
-        }
-        else if (*pattern == '?' || *pattern == *str)
-        {
-            pattern++;
-            str++;
-            continue;
-        }
-        return (0);
-    }
-
-    // Skip any remaining asterisks
-    while (*pattern == '*')
-        pattern++;
-
-    return (*pattern == '\0' && *str == '\0');
+	while (*pattern && *str)
+	{
+		if (*pattern == '*')
+		{
+			// Skip consecutive asterisks
+			while (*pattern == '*')
+				pattern++;
+			// If pattern ends with *, match rest of string
+			if (!*pattern)
+				return (1);
+			// Try matching the rest of pattern with every substring
+			while (*str)
+			{
+				if (match_pattern(pattern, str))
+					return (1);
+				str++;
+			}
+			return (match_pattern(pattern, str));
+		}
+		else if (*pattern == '?' || *pattern == *str)
+		{
+			pattern++;
+			str++;
+			continue;
+		}
+		return (0);
+	}
+	// Skip any remaining asterisks
+	while (*pattern == '*')
+		pattern++;
+	return (*pattern == '\0' && *str == '\0');
 }
 
 /*
@@ -211,63 +217,33 @@ char **expand_wildcard(char *pattern)
 */
 char **handle_wildcards(char **argv)
 {
-    char **new_argv;
-    char **expanded;
-    int total_size;
-    int new_size;
-    int i;
+	char    **new_argv;
+	char    **expanded;
+	int     total;
+	int     i;
+	int     j;
 
-    // First count total arguments needed
-    total_size = 0;
-    i = 0;
-    while (argv[i])
-    {
-        expanded = expand_wildcard(argv[i]);
-        if (expanded)
-        {
-            int j = 0;
-            while (expanded[j])
-            {
-                total_size++;
-                j++;
-            }
-            ft_free_array(expanded);
-        }
-        else
-            total_size++;
-        i++;
-    }
-
-    // Allocate new argument array
-    new_argv = malloc(sizeof(char *) * (total_size + 1));
-    if (!new_argv)
-        return (NULL);
-
-    // Fill new argument array
-    new_size = 0;
-    i = 0;
-    while (argv[i])
-    {
-        expanded = expand_wildcard(argv[i]);
-        if (expanded)
-        {
-            int j = 0;
-            while (expanded[j])
-                new_argv[new_size++] = ft_strdup(expanded[j++]);
-            ft_free_array(expanded);
-			expanded = NULL;
-        }
-        else
-            new_argv[new_size++] = ft_strdup(argv[i]);
-        i++;
-    }
-    new_argv[new_size] = NULL;
-
-    // Free original argv and return new one
-    // ft_free_array(argv);
-	if(expanded != NULL)
-		ft_free_array(expanded);
-    return (new_argv);
+	new_argv = NULL;
+	total = 0;
+	i = 0;
+	while (argv[i])
+	{
+		expanded = expand_wildcard(argv[i]);
+		if (expanded)
+		{
+			j = 0;
+			while (expanded[j])
+			{
+				new_argv = add_to_array(new_argv, expanded[j], &total);
+				j++;
+			}
+			ft_free_array(expanded);
+		}
+		else
+			new_argv = add_to_array(new_argv, argv[i], &total);
+		i++;
+	}
+	return (new_argv);
 }
 
 /**

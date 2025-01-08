@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/08 09:45:32 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:15:00 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minishell.h"
 #include <signal.h>
@@ -21,9 +22,7 @@ static void restore_prompt(int sig)
     (void)sig;
     write(1, "\n", 1);
     rl_on_new_line();
-#ifdef __linux__
     rl_replace_line("", 0);
-#endif
     rl_redisplay();
 }
 
