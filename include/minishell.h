@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 09:25:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 17:54:56 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,8 @@ void load_config(t_config *config);
 void save_config(const t_config *config);
 
 // Add these prototypes
-int handle_subshell(char * cmd,int indent);
-int is_parent_builtin(char *cmd);
+// int handle_subshell(char * cmd,int indent);
+// int is_parent_builtin(char *cmd);
 
 void setup_signals(void);
 void reset_signals(void);

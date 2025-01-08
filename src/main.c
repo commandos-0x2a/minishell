@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/07 13:53:42 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/08 17:54:01 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,10 +248,6 @@ int main(int argc, char **argv)
 	int is_test;
 	t_config config;  // Now on stack instead of heap
 
-
-	// check is stdin and stdout and stderr is tty
-
-
 	is_test = 0;
 	setup_signals();
 
@@ -278,8 +274,6 @@ int main(int argc, char **argv)
 			printf("\nexit\n");
 			break;
 		}
-		// Reset signals for command execution
-		reset_signals();
 		handle_line(line);
 		if (*line)
 		{
