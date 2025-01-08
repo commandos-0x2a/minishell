@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/08 13:36:02 by yaltayeh         ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/01/08 16:43:13 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 #include "minishell.h"
@@ -39,41 +40,37 @@ void ft_free_array(char **arr)
 */
 static int match_pattern(const char *pattern, const char *str)
 {
-    while (*pattern && *str)
-    {
-        if (*pattern == '*')
-        {
-            // Skip consecutive asterisks
-            while (*pattern == '*')
-                pattern++;
-                
-            // If pattern ends with *, match rest of string
-            if (!*pattern)
-                return (1);
-
-            // Try matching the rest of pattern with every substring
-            while (*str)
-            {
-                if (match_pattern(pattern, str))
-                    return (1);
-                str++;
-            }
-            return (match_pattern(pattern, str));
-        }
-        else if (*pattern == '?' || *pattern == *str)
-        {
-            pattern++;
-            str++;
-            continue;
-        }
-        return (0);
-    }
-
-    // Skip any remaining asterisks
-    while (*pattern == '*')
-        pattern++;
-
-    return (*pattern == '\0' && *str == '\0');
+	while (*pattern && *str)
+	{
+		if (*pattern == '*')
+		{
+			// Skip consecutive asterisks
+			while (*pattern == '*')
+				pattern++;
+			// If pattern ends with *, match rest of string
+			if (!*pattern)
+				return (1);
+			// Try matching the rest of pattern with every substring
+			while (*str)
+			{
+				if (match_pattern(pattern, str))
+					return (1);
+				str++;
+			}
+			return (match_pattern(pattern, str));
+		}
+		else if (*pattern == '?' || *pattern == *str)
+		{
+			pattern++;
+			str++;
+			continue;
+		}
+		return (0);
+	}
+	// Skip any remaining asterisks
+	while (*pattern == '*')
+		pattern++;
+	return (*pattern == '\0' && *str == '\0');
 }
 
 /*
@@ -211,63 +208,33 @@ char **expand_wildcard(char *pattern)
 */
 char **handle_wildcards(char **argv)
 {
-    char **new_argv;
-    char **expanded;
-    int total_size;
-    int new_size;
-    int i;
+	char    **new_argv;
+	char    **expanded;
+	int     total;
+	int     i;
+	int     j;
 
-    // First count total arguments needed
-    total_size = 0;
-    i = 0;
-    while (argv[i])
-    {
-        expanded = expand_wildcard(argv[i]);
-        if (expanded)
-        {
-            int j = 0;
-            while (expanded[j])
-            {
-                total_size++;
-                j++;
-            }
-            ft_free_array(expanded);
-        }
-        else
-            total_size++;
-        i++;
-    }
-
-    // Allocate new argument array
-    new_argv = malloc(sizeof(char *) * (total_size + 1));
-    if (!new_argv)
-        return (NULL);
-
-    // Fill new argument array
-    new_size = 0;
-    i = 0;
-    while (argv[i])
-    {
-        expanded = expand_wildcard(argv[i]);
-        if (expanded)
-        {
-            int j = 0;
-            while (expanded[j])
-                new_argv[new_size++] = ft_strdup(expanded[j++]);
-            ft_free_array(expanded);
-			expanded = NULL;
-        }
-        else
-            new_argv[new_size++] = ft_strdup(argv[i]);
-        i++;
-    }
-    new_argv[new_size] = NULL;
-
-    // Free original argv and return new one
-    // ft_free_array(argv);
-	if(expanded != NULL)
-		ft_free_array(expanded);
-    return (new_argv);
+	new_argv = NULL;
+	total = 0;
+	i = 0;
+	while (argv[i])
+	{
+		expanded = expand_wildcard(argv[i]);
+		if (expanded)
+		{
+			j = 0;
+			while (expanded[j])
+			{
+				new_argv = add_to_array(new_argv, expanded[j], &total);
+				j++;
+			}
+			ft_free_array(expanded);
+		}
+		else
+			new_argv = add_to_array(new_argv, argv[i], &total);
+		i++;
+	}
+	return (new_argv);
 }
 
 /**
@@ -360,3 +327,39 @@ char **handle_wildcards(char **argv)
  * │
  * └── Final Output: ["note.txt", "readme.txt", "test.c", "test.h"]
  */
+
+
+
+
+// char	**argv_expander_handler(char **argv, int i)
+// {
+// 	char	**expanded;
+// 	char	**new_argv;
+// 	int		nb;
+
+// 	if (*argv == NULL)
+// 		return (ft_calloc(i + 1, sizeof(char *)));
+// 	expanded = str_expander(*argv);
+// 	if (!expanded)
+// 		return (NULL);
+// 	nb = 0;
+// 	while (expanded[nb])
+// 		nb++;
+// 	new_argv = argv_expander_handler(argv + 1, i + nb);
+// 	if (!new_argv)
+// 	{
+// 		while (--nb >= 0)
+// 			free(expanded[nb]);
+// 		free(expanded);
+// 		return (NULL);
+// 	}
+// 	while (--nb >= 0)
+// 		new_argv[i + nb] = expanded[nb];
+// 	free(expanded);
+// 	return (new_argv);
+// }
+
+// char	**argv_expander(char **argv)
+// {
+// 	return (argv_expander_handler(argv, 0));
+// }

@@ -6,9 +6,10 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/08 14:01:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:44:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minishell.h"
 #include <signal.h>
@@ -22,9 +23,6 @@ static void restore_prompt(int sig)
     write(1, "\n", 1);
     rl_on_new_line();
     rl_replace_line("", 0);
-// #ifdef __linux__
-//     rl_replace_line("", 0);
-// #endif
     rl_redisplay();
 }
 
