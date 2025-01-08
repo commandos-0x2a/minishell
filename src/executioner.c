@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 22:56:52 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 07:18:03 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,24 +118,34 @@ char	**get_next_exec(char **tokens, int *is_pipe)
 	return (tokens);
 }
 
-int	here_doc_handler(char **tokens, int *fd)
+int	here_doc_handler(char **tokens)
 {
-	*fd = 0;
+	int	fd;
+
+	fd = 0;
 	while (*tokens)
 	{
 		if (ft_strcmp(*tokens, "<<") == 0)
 		{
-			if (*fd > 0)
-				close(*fd);
-			if (run_here_doc_process(*++tokens, fd) == -1)
+			if (fd > 0)
+				close(fd);
+			fd = here_doc(*++tokens);
+			if (fd == -1)
+			{
+				perror(NAME": here_doc");
 				return (-1);
+			}
 		}
 		else if (ft_strncmp(*tokens, "<<", 2) == 0)
 		{
-			if (*fd > 0)
-				close(*fd);
-			if (run_here_doc_process(*tokens + 2, fd) == -1)
+			if (fd > 0)
+				close(fd);
+			fd = here_doc(*tokens + 2);
+			if (fd == -1)
+			{
+				perror(NAME": here_doc");
 				return (-1);
+			}
 		}
 		tokens++;
 	}
@@ -161,8 +171,8 @@ int	executioner(char **tokens)
 
 		if (is_pipe && *++next_exec == NULL)
 			return (-1); // syntax error
-		
-		if (here_doc_handler(tokens, &fd) != 0)
+		fd = here_doc_handler(tokens);
+		if (fd != 0)
 			return (-1);
 
 		// if pipe not exist run build in command in parent

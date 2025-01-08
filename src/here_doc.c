@@ -6,13 +6,13 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/06 18:23:32 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 07:20:46 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	call_here_doc(char *limiter, int out_fd)
+static int	here_doc_handler(char *limiter, int out_fd)
 {
 	char	buffer[4096];
 	ssize_t	_read;
@@ -24,7 +24,7 @@ static int	call_here_doc(char *limiter, int out_fd)
 		write(1, "> ", 2);
 		_read = read(0, buffer, sizeof(buffer));
 		if (_read == -1)
-			return (1);
+			return (-1);
 		if (_read == 0)
 		{
 			ft_fprintf(2, "\n"NAME": warning: here-document " \
@@ -39,30 +39,21 @@ static int	call_here_doc(char *limiter, int out_fd)
 	return (0);
 }
 
-pid_t	run_here_doc_process(char *limiter, int *out_fd)
+int	here_doc(char *limiter)
 {
-	pid_t	proc;
-	int		pipe_fds[2];
-	int		status;
+	int	pipe_fd[2];
 
-	*out_fd = -1;
-	if (pipe(pipe_fds) == -1)
+	if (pipe(pipe_fd) == -1)
 	{
-		perror(NAME": pipe here_doc");
-		exit(1);
+		free(limiter);
+		return (-1);
 	}
-	proc = fork();
-	if (proc == 0)
+	if (here_doc_handler(limiter, pipe_fd[1]) == -1)
 	{
-		close(pipe_fds[0]);
-		status = call_here_doc(limiter, pipe_fds[1]);
-		close(pipe_fds[1]);
-		exit(status);
+		close(pipe_fd[1]);
+		close(pipe_fd[0]);
+		return (-1);
 	}
-	if (proc == -1)
-		ft_fprintf(2, NAME": %s: fork\n", strerror(errno));
-	close(pipe_fds[1]);
-	*out_fd = pipe_fds[0];
-	waitpid(proc, &status, 0);
-	return (proc);
+	close(pipe_fd[1]);
+	return (pipe_fd[0]);
 }
