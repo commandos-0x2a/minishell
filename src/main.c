@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
+int g_status;
+
 // int out_redirection(char *outfile)
 // {
 // 	int fd;

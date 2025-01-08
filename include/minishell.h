@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 07:12:21 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 08:54:28 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@
 # else
 #  include <limits.h>
 # endif
-
-
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -41,6 +39,8 @@
 # define PROMPT_MAX (HOSTNAME_MAX + USERNAME_MAX + PATH_MAX_LEN + 10)
 
 # define PROMPT "commandos0x2a$ "
+
+extern int g_status;
 
 // Environment functions
 int     ft_setenv(const char *name, const char *value, int overwrite);
@@ -71,12 +71,13 @@ int		ft_echo(char **argv);
 int		ft_pwd(char **argv);
 int		ft_env(char **argv);
 int		ft_exit(char **argv);
-int		handle_builtin(char **argv);
+int 	handle_builtin(char **argv, int _exit);
+int 	is_builtin(char *cmd);
 
 void    restore_output(int original_fd);
 
 
-char	**redirection_handler(char **tokens, int _dup, int *status);
+char	**redirection_handler(char **tokens, int _dup);
 int 	exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe);
 int		executioner(char **tokens);
 int		flow_control(char *chain);

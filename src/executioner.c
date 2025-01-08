@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 07:18:03 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 09:21:35 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,17 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 			perror(NAME"pipe close to pipefd[1]");
 	}
 
-	int	status;
-	argv = redirection_handler(tokens, 1, &status);
-	if (!argv) // don't find the command or failed system call
-		exit(status);
+	argv = redirection_handler(tokens, 1);
+	if (!argv) // failed system call
+	{
+		perror(NAME": redirection_handler");
+		exit(-1);
+	}
+	if (!*argv) // command not exist
+	{
+		ft_fprintf(2, NAME": command not exist\n");
+		exit(0);
+	}
 
 	// handle sub shell
 	if ((*argv)[0] == '(')
@@ -90,8 +97,8 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 	argv_expander(argv);
 
 	// Check for built-in commands before get full path and execve
-	// if (argv[0] && is_builtin(argv[0]))
-	// 	exit(handle_builtin(argv));
+	if (is_builtin(argv[0]))
+		handle_builtin(argv, 1);
 
 	int err = get_full_path(full_path, argv, "");
 	if (err == 0)
@@ -156,6 +163,7 @@ int	executioner(char **tokens)
 {
 	char	**next_exec;
 	int		is_pipe;
+	int		prev_is_pipe;
     int     fd;
 
 	tokens = handle_wildcards(tokens);
@@ -163,6 +171,7 @@ int	executioner(char **tokens)
         return (-1);
 
 	fd = 0;
+	prev_is_pipe = 0;
 	while (*tokens)
 	{
 		next_exec = get_next_exec(tokens, &is_pipe);
@@ -170,20 +179,22 @@ int	executioner(char **tokens)
 		*next_exec = NULL;
 
 		if (is_pipe && *++next_exec == NULL)
+		{
+			ft_fprintf(2, NAME": syntax error `|'\n");
 			return (-1); // syntax error
+		}
 		fd = here_doc_handler(tokens);
-		if (fd != 0)
+		if (fd == -1)
 			return (-1);
 
-		// if pipe not exist run build in command in parent
-		// if (!is_pipe && is_builtin_function(get_argv0(tokens)))
-		// {
-		// 	handle_builtin();
-		// }
-		
-		if (exec_command(tokens, fd, &fd, is_pipe) == -1)
+		if (!is_pipe && !prev_is_pipe && is_builtin(get_argv0(tokens)) == 1)
+		{
+			tokens = redirection_handler(tokens, 0);
+			g_status = handle_builtin(tokens, 0);
+		}
+		else if (exec_command(tokens, fd, &fd, is_pipe) == -1)
 			return (-1);
-
+		prev_is_pipe = is_pipe;
 		tokens = next_exec;
 	}
 	while (wait(NULL) != -1)

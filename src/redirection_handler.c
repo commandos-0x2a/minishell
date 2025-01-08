@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 07:53:25 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 09:14:31 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,12 +97,13 @@ int	out_redirection(char *token, int _dup)
 	return (0);
 }
 
-char	**redirection_handler(char **tokens, int _dup, int *status)
+char	**redirection_handler(char **tokens, int _dup)
 {
 	char	**new_tokens;
+	int		status;
 
 	new_tokens = NULL;
-	*status = 0;
+	status = 0;
 	while (*tokens)
 	{
 		if (ft_strcmp(*tokens, "<<") == 0)
@@ -117,40 +118,42 @@ char	**redirection_handler(char **tokens, int _dup, int *status)
 		else if (ft_strcmp(*tokens, "<") == 0)
 		{
 			*tokens = NULL;
-			*status = in_redirection(*++tokens, _dup);
+			status = in_redirection(*++tokens, _dup);
 		}
 		else if (ft_strncmp(*tokens, "<", 1) == 0)
 		{
-			*status = in_redirection(*tokens + 1, _dup);
+			status = in_redirection(*tokens + 1, _dup);
 			*tokens = NULL;
 		}
 		else if (ft_strcmp(*tokens, ">>") == 0)
 		{
 			*tokens = NULL;
-			*status = out_append(*++tokens, _dup);
+			status = out_append(*++tokens, _dup);
 		}
 		else if (ft_strncmp(*tokens, ">>", 2) == 0)
 		{
-			*status = out_append(*tokens + 2, _dup);
+			status = out_append(*tokens + 2, _dup);
 			*tokens = NULL;
 		}
 		else if (ft_strcmp(*tokens, ">") == 0)
 		{
 			*tokens = NULL;
-			*status = out_redirection(*++tokens, _dup);
+			status = out_redirection(*++tokens, _dup);
 		}
 		else if (ft_strncmp(*tokens, ">", 1) == 0)
 		{
-			*status = out_redirection(*tokens + 1, _dup);
+			status = out_redirection(*tokens + 1, _dup);
 			*tokens = NULL;
 		}
 		else if (!new_tokens)
 			new_tokens = tokens;
 
-		if (*status != 0)
+		if (status != 0)
 			return (NULL);
 
 		tokens++;
 	}
+	if (!new_tokens)
+		return (tokens);
 	return (new_tokens);
 }

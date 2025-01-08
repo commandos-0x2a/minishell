@@ -22,6 +22,7 @@ FILES = main				\
 		redirection_handler	\
 		flow_control		\
 		readline_handler	\
+		get_argv0			\
 		builtins/cd			\
 		builtins/builtins	\
 		builtins/echo		\
