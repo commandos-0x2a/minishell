@@ -6,9 +6,10 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/08 17:52:17 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/08 17:56:57 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minishell.h"
 #include <signal.h>
@@ -35,6 +36,9 @@ void setup_signals(void)
 
     signal(SIGINT, restore_prompt);
     signal(SIGQUIT, SIG_IGN);
+    // Set up signal handlers
+    signal(SIGINT, restore_prompt);   // ctrl-C
+    signal(SIGQUIT, SIG_IGN);        // ctrl- \/
 }
 
 void reset_signals(void)

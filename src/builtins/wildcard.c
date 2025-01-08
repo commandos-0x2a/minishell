@@ -6,9 +6,10 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/08 16:35:09 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/08 17:56:41 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 
@@ -46,6 +47,14 @@ void ft_free_array(char **arr)
  * Step 4: 	o = o ✓ (exact match)
  * Step 5: 	? matches '!' ✓ (question mark matches any single char)
  * Result: MATCH ✓
+ *
+ * This function is like playing a matching game!
+ * It checks if a word matches a special pattern.
+ * For example:
+ * Pattern: "cat*" will match: "cat", "cats", "catfood"
+ * Pattern: "?at" will match: "cat", "rat", "hat"
+ * The * is like a magic star that matches anything!
+ * The ? is like a surprise box that matches any letter! 
  */
 static int match_pattern(const char *pattern, const char *str)
 {
