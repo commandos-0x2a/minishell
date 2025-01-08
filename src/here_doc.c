@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 07:20:46 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 14:42:23 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,16 @@ static int	here_doc_handler(char *limiter, int out_fd)
 	limiter_len = ft_strlen(limiter);
 	while (1)
 	{
-		write(1, "> ", 2);
+		if (isatty(0))
+			write(1, "> ", 2);
 		_read = read(0, buffer, sizeof(buffer));
 		if (_read == -1)
 			return (-1);
 		if (_read == 0)
 		{
-			ft_fprintf(2, "\n"NAME": warning: here-document " \
-						"delimited by end-of-file (wanted `%s`)\n", limiter);
+			if (isatty(0))
+				ft_fprintf(2, "\n"NAME": warning: here-document " \
+							"delimited by end-of-file (wanted `%s`)\n", limiter);
 			break ;
 		}
 		if (ft_strncmp(buffer, limiter, limiter_len - 1) == 0 \

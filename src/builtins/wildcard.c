@@ -6,9 +6,10 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/08 16:29:58 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/08 16:35:09 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 #include "minishell.h"
@@ -334,3 +335,39 @@ char **handle_wildcards(char **argv)
  * │
  * └── Final Output: ["note.txt", "readme.txt", "test.c", "test.h"]
  */
+
+
+
+
+// char	**argv_expander_handler(char **argv, int i)
+// {
+// 	char	**expanded;
+// 	char	**new_argv;
+// 	int		nb;
+
+// 	if (*argv == NULL)
+// 		return (ft_calloc(i + 1, sizeof(char *)));
+// 	expanded = str_expander(*argv);
+// 	if (!expanded)
+// 		return (NULL);
+// 	nb = 0;
+// 	while (expanded[nb])
+// 		nb++;
+// 	new_argv = argv_expander_handler(argv + 1, i + nb);
+// 	if (!new_argv)
+// 	{
+// 		while (--nb >= 0)
+// 			free(expanded[nb]);
+// 		free(expanded);
+// 		return (NULL);
+// 	}
+// 	while (--nb >= 0)
+// 		new_argv[i + nb] = expanded[nb];
+// 	free(expanded);
+// 	return (new_argv);
+// }
+
+// char	**argv_expander(char **argv)
+// {
+// 	return (argv_expander_handler(argv, 0));
+// }

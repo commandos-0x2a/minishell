@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 11:20:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:28:03 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,10 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 	}
 	if (!*argv) // command not exist
 	{
-		ft_fprintf(2, NAME": command not exist\n");
+		//ft_fprintf(2, NAME": command not exist\n");
 		exit(0);
 	}
+
 
 	// handle sub shell
 	if ((*argv)[0] == '(')
@@ -96,6 +97,12 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 	// Handle quotes for remaining arguments
 	argv_expander(argv);
 
+	argv = handle_wildcards(argv);
+	if (!argv)
+    {
+		perror(NAME": wildcards");
+		exit(-1);
+	}
 	// Check for built-in commands before get full path and execve
 	if (is_builtin(argv[0]))
 		handle_builtin(argv, 1);
@@ -163,13 +170,6 @@ int	executioner(char **tokens)
 	int		prev_is_pipe;
     int     fd;
 	int		proc_pid;
-
-	tokens = handle_wildcards(tokens);
-    if (!tokens)
-    {
-		perror(NAME": wildcards");
-		return (-1);
-	}
 
 	fd = 0;
 	prev_is_pipe = 0;

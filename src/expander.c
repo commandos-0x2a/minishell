@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 13:54:21 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 11:32:35 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:23:04 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,7 +222,7 @@ void argv_expander(char **argv)
 	while (argv[i])
 	{
 		expanded = expand_str(argv[i]);
-		free(argv[i]);
+		// free(argv[i]);
 		argv[i] = expanded;
 		i++;
 	}
