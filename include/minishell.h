@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 17:54:56 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/08 20:49:35 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,10 @@
 # endif
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <sys/types.h>
+# include <termios.h>
+#include <bits/sigaction.h>
+#include <asm-generic/signal-defs.h>
 
 # define NAME "minishell"
 
