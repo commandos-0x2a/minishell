@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
+/*   Updated: 2025/01/07 13:53:42 by mkurkar          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include <unistd.h>
 #include <stdio.h>
@@ -234,23 +246,40 @@ int main(int argc, char **argv)
 {
 	char *line;
 	int is_test;
+	t_config config;  // Now on stack instead of heap
 
 
 	// check is stdin and stdout and stderr is tty
 
 
 	is_test = 0;
-	// atexit(cleanup_shell);
+	setup_signals();
+
+	// Load configuration
+	load_config(&config);
+
+
+	if(ft_strcmp(config.prompt_style, "colorful") == 0)
+	{
+		ft_fprintf(2, "colorful\n");
+	}
+	else
+	{
+		ft_fprintf(2, "normal\n");
+	}
+
 	if (argc == 2 && ft_strcmp(argv[1], "test") == 0)
 		is_test = 1;
 	while (1)
 	{
 		line = readline(get_prompt());
-		if (!line)
+		if (!line)  // ctrl-D handling
 		{
 			printf("\nexit\n");
 			break;
 		}
+		// Reset signals for command execution
+		reset_signals();
 		handle_line(line);
 		if (*line)
 		{
@@ -259,7 +288,12 @@ int main(int argc, char **argv)
 			else
 				flow_control(line);
 		}
+		// Restore signal handling for interactive mode
+		setup_signals();
 		free(line);
 	}
+
+	// Save config before exit
+	save_config(&config);
 	return (0);
 }

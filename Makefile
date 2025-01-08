@@ -30,7 +30,9 @@ FILES = main				\
 		builtins/env		\
 		builtins/exit		\
 		builtins/test 		\
-		builtins/wildcard
+		builtins/wildcard	\
+		signals				\
+		config				
 
 
 OBJECTS = $(FILES:%=$(BUILD_DIR)/%.o)

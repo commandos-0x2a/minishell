@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 09:21:35 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 09:25:49 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,9 @@ int	executioner(char **tokens)
 
 	tokens = handle_wildcards(tokens);
     if (!tokens)
-        return (-1);
+    {
+		return (-1);
+	}
 
 	fd = 0;
 	prev_is_pipe = 0;
