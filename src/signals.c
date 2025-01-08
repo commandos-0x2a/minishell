@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/07 13:12:26 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/08 09:44:12 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ static void restore_prompt(int sig)
     (void)sig;
     write(1, "\n", 1);
     rl_on_new_line();
+#ifdef __linux__
     rl_replace_line("", 0);
+#endif
     rl_redisplay();
 }
 
