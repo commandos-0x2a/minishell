@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 13:35:10 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/08 09:25:28 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@
 # else
 #  include <limits.h>
 # endif
-
-
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -46,6 +44,8 @@
 # define MAX_PROMPT_STYLE 32
 # define MAX_CONFIG_LINE 256
 
+extern int g_status;
+
 // Environment functions
 int     ft_setenv(const char *name, const char *value, int overwrite);
 int     ft_putenv(char *string);
@@ -59,9 +59,10 @@ void    cleanup_shell(void);
 // tokens and exec
 char	**tokenizer(char *s, int i);
 void	print_tokenizer(char *line, int indent);
-pid_t	run_here_doc_process(char *limiter, int *out_fd);
 char	*expand_str(char *str);
 void	argv_expander(char **argv);
+char	*get_argv0(char **tokens);
+
 
 // libft function
 size_t	ft_join_path(char *dest, const char *path1, const char *path2);
@@ -74,14 +75,13 @@ int		ft_echo(char **argv);
 int		ft_pwd(char **argv);
 int		ft_env(char **argv);
 int		ft_exit(char **argv);
-int		is_builtin(char *cmd);
-int		handle_builtin(char **argv);
+int 	handle_builtin(char **argv, int _exit);
+int 	is_builtin(char *cmd);
 
-int     setup_redirections(char **argv);
 void    restore_output(int original_fd);
 
 
-char	**redirection_handler(char **tokens, int *status);
+char	**redirection_handler(char **tokens, int _dup);
 int 	exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe);
 int		executioner(char **tokens);
 int		flow_control(char *chain);
@@ -107,9 +107,12 @@ void save_config(const t_config *config);
 // Add these prototypes
 int handle_subshell(char * cmd,int indent);
 int is_parent_builtin(char *cmd);
+
 void setup_signals(void);
 void reset_signals(void);
 
 
+
+int	here_doc(char *limiter);
 
 #endif

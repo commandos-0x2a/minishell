@@ -14,6 +14,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
+int g_status;
+
 // int out_redirection(char *outfile)
 // {
 // 	int fd;
@@ -245,6 +247,10 @@ int main(int argc, char **argv)
 	char *line;
 	int is_test;
 	t_config config;  // Now on stack instead of heap
+
+
+	// check is stdin and stdout and stderr is tty
+
 
 	is_test = 0;
 	setup_signals();

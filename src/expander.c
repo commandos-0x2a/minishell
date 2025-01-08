@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 13:54:21 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 00:37:22 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 11:32:35 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,9 @@ static char *expand_env_var(char *str, int *i)
     if (str[*i] == '?')  // Handle $? for last exit status
     {
         (*i)++;
-        return (ft_itoa(127, 1));
+		str = malloc(12);
+		sprintf(str, "%d", g_status);
+        return (str);
     }
     if (str[*i] == '\0' || str[*i] == ' ' || str[*i] == '\'' || str[*i] == '\"')
         return (ft_strdup("$"));

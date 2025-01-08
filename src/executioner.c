@@ -3,23 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   executioner.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 11:47:09 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/08 11:20:04 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// Add this helper to identify parent-only builtins
-int is_parent_builtin(char *cmd)
-{
-    return (ft_strcmp(cmd, "cd") == 0 ||
-            ft_strcmp(cmd, "exit") == 0 ||
-            ft_strcmp(cmd, "export") == 0 ||
-            ft_strcmp(cmd, "unset") == 0);
-}
 
 // Modify exec_command to handle parent builtins
 int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
@@ -36,12 +27,12 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 	if (is_pipe && pipe(pipefd) == -1)
 		return (-1);
 
-
 	// make fork and return pid to parent process
 	pid = fork();
 	if (pid != 0)
 	{
-		// close all unused fd in parent
+		/* ========== Parent process ==========*/
+		// close unused fd
 		if (in_fd > 0)
 			close(in_fd);
 		if (is_pipe)
@@ -55,10 +46,10 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 			}
 		}
 		return (pid);
+		/* ========== Bye parent ==========*/
 	}
 
-	/* ========== Child process ==========*/	
-
+	/* ========== Child process ==========*/
 	// close unused read pipe_fd
 	if (is_pipe)
 		close(pipefd[0]);
@@ -81,10 +72,17 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 			perror(NAME"pipe close to pipefd[1]");
 	}
 
-	int	status;
-	argv = redirection_handler(tokens, &status);
-	if (!argv) // don't find the command or failed system call
-		exit(status);
+	argv = redirection_handler(tokens, 1);
+	if (!argv) // failed system call
+	{
+		perror(NAME": redirection_handler");
+		exit(-1);
+	}
+	if (!*argv) // command not exist
+	{
+		ft_fprintf(2, NAME": command not exist\n");
+		exit(0);
+	}
 
 	// handle sub shell
 	if ((*argv)[0] == '(')
@@ -99,8 +97,8 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 	argv_expander(argv);
 
 	// Check for built-in commands before get full path and execve
-	if (argv[0] && is_builtin(argv[0]))
-		exit(handle_builtin(argv));
+	if (is_builtin(argv[0]))
+		handle_builtin(argv, 1);
 
 	int err = get_full_path(full_path, argv, "");
 	if (err == 0)
@@ -127,19 +125,55 @@ char	**get_next_exec(char **tokens, int *is_pipe)
 	return (tokens);
 }
 
+int	here_doc_handler(char **tokens, int fd)
+{
+	while (*tokens)
+	{
+		if (ft_strcmp(*tokens, "<<") == 0)
+		{
+			if (fd > 0)
+				close(fd);
+			fd = here_doc(*++tokens);
+			if (fd == -1)
+			{
+				perror(NAME": here_doc");
+				return (-1);
+			}
+		}
+		else if (ft_strncmp(*tokens, "<<", 2) == 0)
+		{
+			if (fd > 0)
+				close(fd);
+			fd = here_doc(*tokens + 2);
+			if (fd == -1)
+			{
+				perror(NAME": here_doc");
+				return (-1);
+			}
+		}
+		tokens++;
+	}
+	return (fd);
+}
+
 int	executioner(char **tokens)
 {
 	char	**next_exec;
 	int		is_pipe;
+	int		prev_is_pipe;
     int     fd;
+	int		proc_pid;
 
 	tokens = handle_wildcards(tokens);
     if (!tokens)
     {
+		perror(NAME": wildcards");
 		return (-1);
 	}
 
 	fd = 0;
+	prev_is_pipe = 0;
+	proc_pid = -1;
 	while (*tokens)
 	{
 		next_exec = get_next_exec(tokens, &is_pipe);
@@ -147,22 +181,47 @@ int	executioner(char **tokens)
 		*next_exec = NULL;
 
 		if (is_pipe && *++next_exec == NULL)
+		{
+			ft_fprintf(2, NAME": syntax error `|'\n");
 			return (-1); // syntax error
-		
-		// move here doc to here
-
-		// if pipe not exist run build in command in parent
-		// if (!is_pipe && is_builtin())
-		// {
-
-		// }
-		
-		if (exec_command(tokens, fd, &fd, is_pipe) == -1)
+		}
+		fd = here_doc_handler(tokens, fd);
+		if (fd == -1)
 			return (-1);
 
+		if (!is_pipe && !prev_is_pipe && is_builtin(get_argv0(tokens)) == 1)
+		{
+			tokens = redirection_handler(tokens, 0);
+			g_status = handle_builtin(tokens, 0);
+		}
+		else 
+		{
+			proc_pid = exec_command(tokens, fd, &fd, is_pipe);
+			if (proc_pid == -1)
+				return (-1);
+		}
+		prev_is_pipe = is_pipe;
 		tokens = next_exec;
 	}
-	while (wait(NULL) != -1)
-		;
-	return (0);
+
+
+
+
+	/* wait children */
+
+	int	status = 0;
+	int pid;
+	while ((pid = wait(&status)) != -1)
+	{
+		if (pid == proc_pid)
+		{
+			if (WIFEXITED(status))
+				g_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				g_status = 128 + WTERMSIG(status);
+			else
+				g_status = status;
+		}
+	}
+	return (g_status);
 }
