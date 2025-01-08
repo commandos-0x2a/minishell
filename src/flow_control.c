@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 08:16:10 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 07:41:15 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,10 @@ int	flow_control(char *chain)
 
 		// if have operation check if have anything after it
 		if (op && *++next_flow == NULL) // increment next_flow if operation exist to skip it
+		{
+			ft_fprintf(2, NAME": syntax erron flow control\n");
 			return (-1); // syntex error
+		}
 
 		test = executioner(tokens);
 

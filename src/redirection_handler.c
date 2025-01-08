@@ -6,66 +6,91 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 22:56:46 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/08 07:53:25 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	in_redirection(char *file, int _dup)
+int	in_redirection(char *token, int _dup)
 {
 	int	fd;
+	char	*file;
 
-	file = expand_str(file);
+	file = expand_str(token);
 	if (!file)
 		return (-1);
+	if (ft_strcmp(file, "*") == 0)
+	{
+		ft_fprintf(2, NAME": %s: ambiguous redirect\n", token);
+		free(file);
+		return (1);
+	}
 	fd = open(file, O_RDONLY);
-	free(file);
 	if (fd == -1)
 	{
 		perror(NAME);
+		free(file);
 		return (-1);
 	}
+	free(file);
 	if (_dup)
 		dup2(fd, STDIN_FILENO);
 	close(fd);
 	return (0);
 }
 
-int	out_append(char *file, int _dup)
+int	out_append(char *token, int _dup)
 {
 	int fd;
+	char	*file;
 
-	file = expand_str(file);
+
+	file = expand_str(token);
 	if (!file)
 		return (-1);
+	if (ft_strcmp(file, "*") == 0)
+	{
+		ft_fprintf(2, NAME": %s: ambiguous redirect\n", token);
+		free(file);
+		return (1);
+	}
 	fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	free(file);
 	if (fd == -1)
 	{
 		perror(file);
+		free(file);
 		return (-1);
 	}
+	free(file);
 	if (_dup)
 		dup2(fd, STDOUT_FILENO);
 	close(fd);
 	return (0);
 }
 
-int	out_redirection(char *file, int _dup)
+int	out_redirection(char *token, int _dup)
 {
-	int fd;
+	int 	fd;
+	char	*file;
 
-	file = expand_str(file);
+	file = expand_str(token);
 	if (!file)
 		return (-1);
+	if (ft_strcmp(file, "*") == 0)
+	{
+		ft_fprintf(2, NAME": %s: ambiguous redirect\n", token);
+		free(file);
+		return (1);
+	}
 	fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	free(file);
 	if (fd == -1)
 	{
 		perror(file);
+		free(file);
 		return (-1);
 	}
+	free(file);
 	if (_dup)
 		dup2(fd, STDOUT_FILENO);
 	close(fd);
