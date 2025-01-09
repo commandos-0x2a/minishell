@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 12:42:53 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:11:32 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,10 @@
 # include <stdio.h>
 # ifdef __linux__
 #  include <linux/limits.h>
+#  include <bits/termios-c_lflag.h>
+#  include <asm-generic/termbits.h>
+#  include <bits/sigaction.h>
+#  include <asm-generic/signal-defs.h>
 # else
 #  include <limits.h>
 # endif
@@ -43,7 +47,7 @@
 # define PATH_MAX_LEN 3000
 # define PROMPT_MAX (HOSTNAME_MAX + USERNAME_MAX + PATH_MAX_LEN + 10)
 
-# define PROMPT "commandos0x2a$ "
+# define DEFAULT_PROMPT "commandos0x2a$ "
 
 // Define maximum sizes for config values
 # define MAX_PROMPT_STYLE 32
