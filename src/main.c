@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/09 18:26:08 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 18:29:13 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ int	terminal_reset(int fd)
 
 int main(int argc, char **argv)
 {
-    g_status = 0;  // Initialize exit status
 	char *line;
 	int is_test;
 	t_config config;
