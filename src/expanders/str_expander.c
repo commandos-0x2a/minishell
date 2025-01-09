@@ -5,13 +5,16 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/05 13:54:21 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 18:00:25 by yaltayeh         ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/01/09 18:28:39 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "minishell.h"
 #include <ctype.h>
+
+char *ft_itoa_kur(int n);
 
 
 /**
@@ -96,14 +99,18 @@ static char *expand_env_var(char *str, int *i)
     int start;
     int len;
 
+
+	// try to handle the $? case
     (*i)++;  // Skip the '$'
-    if (str[*i] == '?')  // Handle $? for last exit status
+    // Handle $? special parameter
+    if (str[*i] == '?')
     {
         (*i)++;
 		// str = malloc(12);
 		// sprintf(str, "%d", status);
         return (strdup("WTF"));
     }
+
     if (str[*i] == '\0' || str[*i] == ' ' || str[*i] == '\'' || str[*i] == '\"')
         return (ft_strdup("$"));
 
