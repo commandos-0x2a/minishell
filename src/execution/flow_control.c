@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 23:36:07 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/10 01:05:15 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ char	**get_next_flow(char **tokens, int *op)
 	*op = 0;
 	while (*tokens)
 	{
-		if (ft_strcmp(*tokens, "&&") == 0
-			|| ft_strcmp(*tokens, "||") == 0)
+		if (is_flow_control_operator(*tokens))
 		{
 			if (ft_strcmp(*tokens, "&&") == 0)
 				*op = 1;
@@ -50,6 +49,7 @@ int	flow_control(char *line)
 	char	**next_flow;
 	int		op;
 	char	**ptr;
+	char	**ptr;
 	int		test;
 
 	tokens = tokenizer(line, 0);
@@ -57,18 +57,19 @@ int	flow_control(char *line)
 		return (-1);
 
 	ptr = tokens;
+	ptr = tokens;
 	test = 1; // cuz run first time
 	while (*tokens)
 	{
-
-		next_flow = get_next_flow(tokens, &op);
+		next_flow = get_next_flow_control_operator(tokens, &op);
 		*next_flow = NULL; // replace operation token with NULL to end flow
-
 		// if have operation check if have anything after it
 		if (test)
 		{
 			test = pipeline_control(tokens);
 			if (test == -1)
+			{
+				free(ptr);
 				return (-1);
 			test = !test; // toggle cuz exec when success return (0)
 		}
@@ -80,8 +81,12 @@ int	flow_control(char *line)
 		if (op == 2) // is op == OR toggle test
 			test = !test;
 
-		tokens = next_flow; 
+		if (next_flow != NULL)
+			tokens = next_flow; 
+		else
+			break;
 	}
+	free(ptr);
 	free(ptr);
 	return (0);
 }

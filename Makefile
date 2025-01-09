@@ -25,6 +25,7 @@ FILES = main					\
 		tokenizers/print_tokenizer		\
 		tokenizers/tokenizer			\
 		tokenizers/get_argv0			\
+		tokenizers/get_argv				\
 		\
 		execution/flow_control			\
 		execution/here_doc				\
