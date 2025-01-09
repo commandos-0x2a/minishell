@@ -6,19 +6,29 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 19:11:50 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 21:09:24 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**get_next_flow(char **tokens, int *op)
+/**
+ * Check if token is flow control operator
+ */
+int	is_flow_control_operator(char *token)
+{
+	return (ft_strcmp(token, "&&") == 0 || ft_strcmp(token, "||") == 0);
+}
+
+/**
+ * Get next flow control operator
+ */
+char	**get_next_flow_control_operator(char **tokens, int *op)
 {
 	*op = 0;
 	while (*tokens)
 	{
-		if (ft_strcmp(*tokens, "&&") == 0
-			|| ft_strcmp(*tokens, "||") == 0)
+		if (is_flow_control_operator(*tokens))
 		{
 			if (ft_strcmp(*tokens, "&&") == 0)
 				*op = 1;
@@ -54,6 +64,8 @@ int	flow_control(char *chain)
 	char	**ptr;
 	int		test;
 
+	if (chain == NULL)
+		return (-1);
 	tokens = tokenizer(chain, 0);
 	if (!tokens)
 		return (-1);
@@ -62,10 +74,8 @@ int	flow_control(char *chain)
 	test = 1; // cuz run first time
 	while (*tokens)
 	{
-
-		next_flow = get_next_flow(tokens, &op);
+		next_flow = get_next_flow_control_operator(tokens, &op);
 		*next_flow = NULL; // replace operation token with NULL to end flow
-
 		// if have operation check if have anything after it
 		if (test)
 		{
@@ -83,22 +93,13 @@ int	flow_control(char *chain)
 			free(ptr);
 			return (-1); // syntex error
 		}
-		/*
-			test	op		is_run_next
-			 0		AND			0
-			 1		AND			1
-			 0		OR			1
-			 1		OR			0
-			
-			if op == AND
-				test = test
-			but if op == OR
-				test = not test
-		*/
-		if (op == 2) // is op == OR toggle test
+		if (op == 2) // If the operator is OR, toggle the test variable
 			test = !test;
 
-		tokens = next_flow; 
+		if (next_flow != NULL)
+			tokens = next_flow; 
+		else
+			break;
 	}
 	free(ptr);
 	return (0);
