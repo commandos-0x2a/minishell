@@ -21,8 +21,8 @@ int	tty_raw(int fd) /* put terminal into a raw mode */
 		* Echo off, canonical mode off, extended input
 		* processing off, signal chars off.
 	*/
-	buf.c_lflag &=  ~(ECHO | ICANON | IEXTEN | ISIG);
-	// buf.c_lflag &= ~(ECHOCTL | ISIG);
+	// buf.c_lflag &=  ~(ECHO | ICANON | IEXTEN | ISIG);
+	buf.c_lflag &= ~(ECHOCTL | ISIG);
 	/*
 		* No SIGINT on BREAK, CR-to-NL off, input parity
 		* check off, don’t strip 8th bit on input, output

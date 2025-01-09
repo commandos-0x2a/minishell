@@ -14,6 +14,7 @@ FILES = main					\
 		ft_getenv				\
 		ft_setenv				\
 		get_full_path			\
+		\
 		readline_handler		\
 		signals					\
 		config					\

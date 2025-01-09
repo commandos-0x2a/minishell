@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_join_path.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 19:38:47 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/04 16:34:08 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/09 12:46:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
 size_t	ft_join_path(char *dest, const char *path1, const char *path2)
 {
