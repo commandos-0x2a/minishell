@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 21:44:32 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 07:15:31 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,96 +29,8 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 
 	// make fork and return pid to parent process
 	pid = fork();
-	if (pid == 0) {
-        // Child process
-        signal(SIGTTIN, SIG_DFL);
-        signal(SIGTTOU, SIG_DFL);
-        setpgid(0, 0);
-        
-        if (!is_pipe)
-            tcsetpgrp(STDIN_FILENO, getpid());
-            
-        reset_signals();
-        if (tcgetpgrp(STDIN_FILENO) != getpid())
-            tcsetpgrp(STDIN_FILENO, getpid());
-            
-        // ...rest of child process code...
-		/* ========== Child process ==========*/
-		// close unused read pipe_fd
-		if (is_pipe)
-			close(pipefd[0]);
-
-		// connect with previous command pipe
-		if (in_fd > 0)
-		{
-			if (dup2(in_fd, STDIN_FILENO))
-				perror(NAME"pipe dup2 to STDIN");
-			if (close(in_fd))
-				perror(NAME"pipe close to in_fd");
-		}
-
-		// connect with next command pipe
-		if (is_pipe)
-		{
-			if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-				perror(NAME"pipe dup2 to STDOUT");
-			if (close(pipefd[1]) == -1)
-				perror(NAME"pipe close to pipefd[1]");
-		}
-
-		argv = redirection_handler(tokens, 1);
-		if (!argv) // failed system call
-		{
-			perror(NAME": redirection_handler");
-			exit(-1);
-		}
-		if (!*argv) // command not exist
-		{
-			//ft_fprintf(2, NAME": command not exist\n");
-			exit(0);
-		}
-
-
-		// handle sub shell
-		if ((*argv)[0] == '(')
-		{
-			(*argv)[ft_strlen(*argv) - 1] = '\0';
-			(*argv)++;
-			flow_control(*argv);
-			exit(1);
-		}
-
-		// Handle quotes for remaining arguments
-		argv_expander(argv);
-
-		argv = handle_wildcards(argv);
-		if (!argv)
-		{
-			perror(NAME": wildcards");
-			exit(-1);
-		}
-		// Check for built-in commands before get full path and execve
-		if (is_builtin(argv[0]))
-			handle_builtin(argv, 1);
-
-		int err = get_full_path(full_path, argv, "");
-		if (err == 0)
-		{
-			execve(full_path, argv, environ);
-			perror(NAME);
-			exit(1);
-		}
-		exit(err);
-    } else if (pid > 0) {
-        // Parent process
-        setpgid(pid, pid);
-        if (!is_pipe) {
-            tcsetpgrp(STDIN_FILENO, pid);
-            int status;
-            waitpid(pid, &status, WUNTRACED);
-            tcsetpgrp(STDIN_FILENO, getpgrp());
-        }
-        // ...rest of parent process code...
+	if (pid != 0)
+	{
 		/* ========== Parent process ==========*/
 		// close unused fd
 		if (in_fd > 0)
@@ -136,7 +48,73 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 		return (pid);
 		/* ========== Bye parent ==========*/
     }
-	return (-1);
+	
+	/* ========== Child process ==========*/
+	// close unused read pipe_fd
+	if (is_pipe)
+		close(pipefd[0]);
+
+	// connect with previous command pipe
+	if (in_fd > 0)
+	{
+		if (dup2(in_fd, STDIN_FILENO))
+			perror(NAME"pipe dup2 to STDIN");
+		if (close(in_fd))
+			perror(NAME"pipe close to in_fd");
+	}
+
+	// connect with next command pipe
+	if (is_pipe)
+	{
+		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+			perror(NAME"pipe dup2 to STDOUT");
+		if (close(pipefd[1]) == -1)
+			perror(NAME"pipe close to pipefd[1]");
+	}
+
+	argv = redirection_handler(tokens, 1);
+	if (!argv) // failed system call
+	{
+		perror(NAME": redirection_handler");
+		exit(-1);
+	}
+	if (!*argv) // command not exist
+	{
+		//ft_fprintf(2, NAME": command not exist\n");
+		exit(0);
+	}
+
+
+	// handle sub shell
+	if ((*argv)[0] == '(')
+	{
+		(*argv)[ft_strlen(*argv) - 1] = '\0';
+		(*argv)++;
+		flow_control(*argv);
+		exit(1);
+	}
+
+	// Handle quotes for remaining arguments
+	argv_expander(argv);
+
+	argv = handle_wildcards(argv);
+	if (!argv)
+	{
+		perror(NAME": wildcards");
+		exit(-1);
+	}
+	// Check for built-in commands before get full path and execve
+	if (is_builtin(argv[0]))
+		handle_builtin(argv, 1);
+
+	int err = get_full_path(full_path, argv, "");
+	if (err == 0)
+	{
+		execve(full_path, argv, environ);
+		perror(NAME);
+		exit(1);
+	}
+	exit(err);
 }
 
 char	**get_next_exec(char **tokens, int *is_pipe)

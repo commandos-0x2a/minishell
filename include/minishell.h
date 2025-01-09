@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 21:13:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 12:42:53 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@
 # else
 #  include <limits.h>
 # endif
+
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/types.h>
 # include <termios.h>
-#include <bits/sigaction.h>
-#include <asm-generic/signal-defs.h>
-#include <bits/signum-arch.h>
+# include <signal.h>
+
 
 # define NAME "minishell"
 

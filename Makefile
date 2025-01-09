@@ -9,22 +9,27 @@ CFLAGS		:= -Wall -Wextra -Werror -g $(INCLUDES)
 SRC_DIR = src
 BUILD_DIR = build
 
-FILES = main				\
-		ft_join_path		\
-		ft_getenv			\
-		ft_setenv			\
-		tokenizer			\
-		print_tokenizer		\
-		expander			\
-		get_full_path		\
-		here_doc			\
-		redirection_handler	\
-		flow_control		\
-		readline_handler	\
-		get_argv0			\
+FILES = main					\
+		ft_join_path			\
+		ft_getenv				\
+		ft_setenv				\
+		get_full_path			\
+		readline_handler		\
+		signals					\
+		config					\
 		\
+		expanders/str_expander	\
+		expanders/wildcard		\
+		\
+		tokenizers/print_tokenizer		\
+		tokenizers/tokenizer			\
+		tokenizers/get_argv0			\
+		\
+		execution/flow_control	\
+		execution/here_doc		\
 		execution/wait_children	\
 		execution/executioner	\
+		execution/redirection_handler	\
 		\
 		builtins/cd			\
 		builtins/builtins	\
@@ -33,10 +38,6 @@ FILES = main				\
 		builtins/env		\
 		builtins/exit		\
 		builtins/test 		\
-		builtins/wildcard	\
-		signals				\
-		config				
-
 
 OBJECTS = $(FILES:%=$(BUILD_DIR)/%.o)
 
