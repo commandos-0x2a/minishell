@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 18:27:03 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 19:44:56 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,13 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 			perror(NAME"pipe close to pipefd[1]");
 	}
 
-	argv = redirection_handler(tokens, 1);
-	if (!argv) // failed system call
+	if (redirection_handler(tokens, 1) != 0)
 	{
 		perror(NAME": redirection_handler");
 		exit(-1);
 	}
-	if (!*argv) // command not exist
+	argv = get_argv(tokens);
+	if (!argv) // command not exist
 		exit(0);
 
 
@@ -188,7 +188,12 @@ int	executioner(char **tokens)
 
 		if (!is_pipe && !prev_is_pipe && is_builtin(get_argv0(tokens)) == 1)
 		{
-			tokens = redirection_handler(tokens, 0);
+			if(redirection_handler(tokens, 0) != 0)
+			{
+				perror("redirection_handler");
+				return (-1);
+			}
+			tokens = get_argv(tokens);
 			return (handle_builtin(tokens, 0));
 		}
 		else 

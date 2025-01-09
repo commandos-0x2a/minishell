@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 14:42:23 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 19:09:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,7 @@ int	here_doc(char *limiter)
 	int	pipe_fd[2];
 
 	if (pipe(pipe_fd) == -1)
-	{
-		free(limiter);
 		return (-1);
-	}
 	if (here_doc_handler(limiter, pipe_fd[1]) == -1)
 	{
 		close(pipe_fd[1]);

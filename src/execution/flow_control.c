@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 17:56:13 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 19:11:50 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ int	flow_control(char *chain)
 	char	**tokens;
 	char	**next_flow;
 	int		op;
-	// char	**ptr;
+	char	**ptr;
 	int		test;
 
 	tokens = tokenizer(chain, 0);
 	if (!tokens)
 		return (-1);
 
-	// ptr = tokens;
+	ptr = tokens;
 	test = 1; // cuz run first time
 	while (*tokens)
 	{
@@ -71,12 +71,16 @@ int	flow_control(char *chain)
 		{
 			test = executioner(tokens);
 			if (test == -1)
+			{
+				free(ptr);
 				return (-1);
+			}
 			test = !test; // toggle cuz exec is success return (0)
 		}
 		if (op && *++next_flow == NULL) // increment next_flow if operation exist to skip it
 		{
 			ft_fprintf(2, NAME": syntax erron flow control\n");
+			free(ptr);
 			return (-1); // syntex error
 		}
 		/*
@@ -96,6 +100,6 @@ int	flow_control(char *chain)
 
 		tokens = next_flow; 
 	}
-	// free(ptr);
+	free(ptr);
 	return (0);
 }

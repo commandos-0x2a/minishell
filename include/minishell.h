@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 18:28:08 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 19:41:14 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	print_tokenizer(char *line, int indent);
 char	*expand_str(char *str);
 void	argv_expander(char **argv);
 char	*get_argv0(char **tokens);
-
+char    **get_argv(char **tokens);
 
 // libft function
 size_t	ft_join_path(char *dest, const char *path1, const char *path2);
@@ -88,7 +88,7 @@ int 	is_builtin(char *cmd);
 void    restore_output(int original_fd);
 
 
-char	**redirection_handler(char **tokens, int _dup);
+int     redirection_handler(char **tokens, int _dup);
 int 	exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe);
 int		executioner(char **tokens);
 int		flow_control(char *chain);

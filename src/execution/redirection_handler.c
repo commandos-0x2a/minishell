@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 12:42:33 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 19:47:44 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,84 +97,34 @@ int	out_redirection(char *token, int _dup)
 	return (0);
 }
 
-
-void	swap_args(char **a, char **b)
+int	redirection_handler(char **tokens, int _dup)
 {
-	char *tmp;
-
-	tmp = *a;
-	*a = *b;
-	*b = tmp;
-}
-
-char	**redirection_handler(char **tokens, int _dup)
-{
-	char	**argv;
 	int		status;
-	char	**last_argv;
 
-	argv = NULL;
 	status = 0;
 	while (*tokens)
 	{
 		if (ft_strcmp(*tokens, "<<") == 0)
-		{
-			*tokens = NULL;
-			++tokens;
-			*tokens = NULL;
-		}
+			tokens++;
 		else if (ft_strncmp(*tokens, "<<", 2) == 0)
-		{
-			*tokens = NULL;
-		}
+			;
 		else if (ft_strcmp(*tokens, "<") == 0)
-		{
-			*tokens = NULL;
 			status = in_redirection(*++tokens, _dup);
-			*tokens = NULL;
-		}
 		else if (ft_strncmp(*tokens, "<", 1) == 0)
-		{
 			status = in_redirection(*tokens + 1, _dup);
-			*tokens = NULL;
-		}
 		else if (ft_strcmp(*tokens, ">>") == 0)
-		{
-			*tokens = NULL;
 			status = out_append(*++tokens, _dup);
-			*tokens = NULL;
-		}
 		else if (ft_strncmp(*tokens, ">>", 2) == 0)
-		{
 			status = out_append(*tokens + 2, _dup);
-			*tokens = NULL;
-		}
 		else if (ft_strcmp(*tokens, ">") == 0)
-		{
-			*tokens = NULL;
 			status = out_redirection(*++tokens, _dup);
-			*tokens = NULL;
-		}
 		else if (ft_strncmp(*tokens, ">", 1) == 0)
-		{
 			status = out_redirection(*tokens + 1, _dup);
-			*tokens = NULL;
-		}
-		else if (!argv)
-		{
-			argv = tokens;
-			last_argv = tokens;
-		}
-		else
-		{
-			swap_args(++last_argv, tokens);
-		}
+			
 		if (status != 0)
-			return (NULL);
+			return (status);
 
 		tokens++;
 	}
-	if (!argv)
-		return (tokens);
-	return (argv);
+	return (0);
 }
