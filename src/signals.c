@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/09 07:32:00 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 16:10:05 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minishell.h"
 #include <signal.h>

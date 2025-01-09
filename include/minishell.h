@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 15:11:32 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/09 16:06:45 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 # include <stdio.h>
 # ifdef __linux__
 #  include <linux/limits.h>
-#  include <bits/termios-c_lflag.h>
-#  include <asm-generic/termbits.h>
+// #  include <bits/termios-c_lflag.h>
+// #  include <asm-generic/termbits.h>
 #  include <bits/sigaction.h>
 #  include <asm-generic/signal-defs.h>
 # else

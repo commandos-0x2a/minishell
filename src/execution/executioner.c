@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executioner.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 07:15:31 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 16:17:31 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

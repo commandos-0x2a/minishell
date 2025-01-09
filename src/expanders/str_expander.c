@@ -1,17 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expander.c                                         :+:      :+:    :+:   */
+/*   str_expander.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 13:54:21 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 15:23:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 16:09:41 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <ctype.h>
+
+char *ft_itoa_kur(int n);
 
 
 /**
@@ -96,14 +98,16 @@ static char *expand_env_var(char *str, int *i)
     int start;
     int len;
 
+
+	// try to handle the $? case
     (*i)++;  // Skip the '$'
-    if (str[*i] == '?')  // Handle $? for last exit status
+    // Handle $? special parameter
+    if (str[*i] == '?')
     {
         (*i)++;
-		str = malloc(12);
-		sprintf(str, "%d", g_status);
-        return (str);
+        return ft_itoa_kur(g_status);
     }
+
     if (str[*i] == '\0' || str[*i] == ' ' || str[*i] == '\'' || str[*i] == '\"')
         return (ft_strdup("$"));
 

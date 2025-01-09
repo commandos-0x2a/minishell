@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wait_children.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 17:47:06 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 23:17:05 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 16:18:00 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
