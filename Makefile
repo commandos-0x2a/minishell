@@ -26,10 +26,11 @@ FILES = main					\
 		tokenizers/tokenizer			\
 		tokenizers/get_argv0			\
 		\
-		execution/flow_control	\
-		execution/here_doc		\
-		execution/wait_children	\
-		execution/executioner	\
+		execution/flow_control			\
+		execution/here_doc				\
+		execution/pipeline_control		\
+		execution/wait_children			\
+		execution/command_execution		\
 		execution/redirection_handler	\
 		\
 		builtins/cd			\

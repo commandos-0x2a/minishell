@@ -1,25 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executioner.c                                      :+:      :+:    :+:   */
+/*   command_execution.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 18:27:03 by yaltayeh         ###   ########.fr       */
+/*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/01/10 00:17:59 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Modify exec_command to handle parent builtins
-int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
+int command_execution(char **tokens, int in_fd, int *out_fd, int is_pipe, int prev_is_pipe)
 {
     char		full_path[PATH_MAX];
 	extern char	**environ;
 	int			pid;
 	char		**argv;
 	int			pipefd[2];
+
+
+
+
+
+	in_fd = here_doc(tokens, in_fd);
+	if (in_fd == -1)
+		return (-1);
+
+	if (!is_pipe && !prev_is_pipe && is_builtin(get_argv0(tokens)) == 1)
+	{
+		tokens = redirection_handler(tokens, 0);
+		return (handle_builtin(tokens, 0));
+	}
+
+
+
+
 
 	*out_fd = 0;
 	argv = NULL;
@@ -112,93 +129,4 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 		exit(1);
 	}
 	exit(err);
-}
-
-char	**get_next_exec(char **tokens, int *is_pipe)
-{
-	*is_pipe = 0;
-	while (*tokens)
-	{
-		if (ft_strcmp(*tokens, "|") == 0)
-		{
-			*is_pipe = 1;
-			break ;
-		}
-		tokens++;
-	}
-	return (tokens);
-}
-
-int	here_doc_handler(char **tokens, int fd)
-{
-	while (*tokens)
-	{
-		if (ft_strcmp(*tokens, "<<") == 0)
-		{
-			if (fd > 0)
-				close(fd);
-			fd = here_doc(*++tokens);
-			if (fd == -1)
-			{
-				perror(NAME": here_doc");
-				return (-1);
-			}
-		}
-		else if (ft_strncmp(*tokens, "<<", 2) == 0)
-		{
-			if (fd > 0)
-				close(fd);
-			fd = here_doc(*tokens + 2);
-			if (fd == -1)
-			{
-				perror(NAME": here_doc");
-				return (-1);
-			}
-		}
-		tokens++;
-	}
-	return (fd);
-}
-
-int	executioner(char **tokens)
-{
-	char	**next_exec;
-	int		is_pipe;
-	int		prev_is_pipe;
-    int     fd;
-	int		proc_pid;
-
-	fd = 0;
-	prev_is_pipe = 0;
-	proc_pid = -1;
-	while (*tokens)
-	{
-		next_exec = get_next_exec(tokens, &is_pipe);
-
-		*next_exec = NULL;
-
-		if (is_pipe && *++next_exec == NULL)
-		{
-			ft_fprintf(2, NAME": syntax error `|'\n");
-			return (-1); // syntax error
-		}
-		fd = here_doc_handler(tokens, fd);
-		if (fd == -1)
-			return (-1);
-
-		if (!is_pipe && !prev_is_pipe && is_builtin(get_argv0(tokens)) == 1)
-		{
-			tokens = redirection_handler(tokens, 0);
-			return (handle_builtin(tokens, 0));
-		}
-		else 
-		{
-			proc_pid = exec_command(tokens, fd, &fd, is_pipe);
-			if (proc_pid == -1)
-				return (-1);
-		}
-		prev_is_pipe = is_pipe;
-		tokens = next_exec;
-	}
-	return (wait_children(proc_pid));
 }

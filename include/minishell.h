@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 18:28:08 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 23:44:35 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,8 @@ void    restore_output(int original_fd);
 
 
 char	**redirection_handler(char **tokens, int _dup);
-int 	exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe);
-int		executioner(char **tokens);
+int     command_execution(char **tokens, int in_fd, int *out_fd, int is_pipe, int prev_is_pipe);
+int		pipeline_control(char **tokens);
 int		flow_control(char *chain);
 int     wait_children(int target_pid);
 
@@ -120,7 +120,6 @@ void setup_signals(void);
 void reset_signals(void);
 
 
-
-int	here_doc(char *limiter);
+int	here_doc(char **tokens, int fd);
 
 #endif
