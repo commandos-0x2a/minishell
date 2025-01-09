@@ -1,8 +1,4 @@
+
 #include <stdio.h>
-
-int	main(void)
-{
-	printf("%d\n", getpid());
-	return (0);
-}
-
+#include <unistd.h>
+int main(void){printf("%d\n", getppid());return (0);}

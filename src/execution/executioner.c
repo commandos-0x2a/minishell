@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 15:00:53 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 17:57:46 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,7 @@ int exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe)
 		exit(-1);
 	}
 	if (!*argv) // command not exist
-	{
-		//ft_fprintf(2, NAME": command not exist\n");
 		exit(0);
-	}
 
 
 	// handle sub shell
@@ -192,7 +189,7 @@ int	executioner(char **tokens)
 		if (!is_pipe && !prev_is_pipe && is_builtin(get_argv0(tokens)) == 1)
 		{
 			tokens = redirection_handler(tokens, 0);
-			g_status = handle_builtin(tokens, 0);
+			return (handle_builtin(tokens, 0));
 		}
 		else 
 		{
@@ -203,6 +200,5 @@ int	executioner(char **tokens)
 		prev_is_pipe = is_pipe;
 		tokens = next_exec;
 	}
-	wait_children(proc_pid);
-	return (0);
+	return (wait_children(proc_pid));
 }

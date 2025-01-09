@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expander.c                                         :+:      :+:    :+:   */
+/*   str_expander.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 13:54:21 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 15:23:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 18:00:25 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,9 @@ static char *expand_env_var(char *str, int *i)
     if (str[*i] == '?')  // Handle $? for last exit status
     {
         (*i)++;
-		str = malloc(12);
-		sprintf(str, "%d", g_status);
-        return (str);
+		// str = malloc(12);
+		// sprintf(str, "%d", status);
+        return (strdup("WTF"));
     }
     if (str[*i] == '\0' || str[*i] == ' ' || str[*i] == '\'' || str[*i] == '\"')
         return (ft_strdup("$"));

@@ -6,38 +6,40 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 17:47:06 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 23:17:05 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 17:58:54 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void    wait_children(int target_pid)
+int    wait_children(int target_pid)
 {
     /* wait children */
 
-	int	status = 0;
+	int	wstatus = 0;
+	int	ret = 1;
 	int pid;
-	while ((pid = waitpid(-1, &status, WUNTRACED | WCONTINUED)) != -1)
+	while ((pid = waitpid(-1, &wstatus, WUNTRACED | WCONTINUED)) != -1)
 	{
 		if (pid == target_pid)
 		{
-			if (WIFEXITED(status))
-				g_status = WEXITSTATUS(status);
-			else if (WIFSTOPPED(status))
+			if (WIFEXITED(wstatus))
+				ret = WEXITSTATUS(wstatus);
+			else if (WIFSTOPPED(wstatus))
 			{
 				ft_fprintf(2, "pid: %d stopped\n", pid);
-				g_status = 128 + WTERMSIG(status);
+				ret = 128 + WTERMSIG(wstatus);
 			}
-			else if (WIFCONTINUED(status))
+			else if (WIFCONTINUED(wstatus))
 			{
 				ft_fprintf(2, "pid: %d stopped\n", pid);
-				g_status = 128 + WTERMSIG(status);
+				ret = 128 + WTERMSIG(wstatus);
 			}
-			else if (WIFSIGNALED(status))
-				g_status = 128 + WTERMSIG(status);
+			else if (WIFSIGNALED(wstatus))
+				ret = 128 + WTERMSIG(wstatus);
 			else
-				g_status = status;
+				ret = wstatus;
 		}
 	}
+	return (ret);
 }

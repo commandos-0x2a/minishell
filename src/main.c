@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/09 15:50:31 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 17:56:28 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <strings.h>
 #include <stdlib.h>
 
-int g_status;
 struct termios	save_termios;
 
 

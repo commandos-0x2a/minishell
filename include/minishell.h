@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/09 12:42:53 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 17:59:04 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,6 @@
 # define MAX_PROMPT_STYLE 32
 # define MAX_CONFIG_LINE 256
 
-extern int g_status;
-
 // Environment functions
 int     ft_setenv(const char *name, const char *value, int overwrite);
 int     ft_putenv(char *string);
@@ -90,7 +88,7 @@ char	**redirection_handler(char **tokens, int _dup);
 int 	exec_command(char **tokens, int in_fd, int *out_fd, int is_pipe);
 int		executioner(char **tokens);
 int		flow_control(char *chain);
-void    wait_children(int target_pid);
+int     wait_children(int target_pid);
 
 
 char **handle_wildcards(char **argv);

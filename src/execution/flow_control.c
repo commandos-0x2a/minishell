@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 17:46:09 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/09 17:56:13 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,10 @@ int	flow_control(char *chain)
 		// if have operation check if have anything after it
 		if (test)
 		{
-			if (executioner(tokens) == -1)
+			test = executioner(tokens);
+			if (test == -1)
 				return (-1);
-			test = !g_status; // toggle cuz exec is success return (0)
+			test = !test; // toggle cuz exec is success return (0)
 		}
 		if (op && *++next_flow == NULL) // increment next_flow if operation exist to skip it
 		{
