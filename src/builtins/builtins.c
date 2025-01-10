@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/10 19:40:27 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/10 19:49:49 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,10 @@ int handle_builtin(char **argv, int _exit)
 		ret = ft_cd(argv);
 	else if (ft_strcmp(*argv, "exit") == 0)
 		ret = ft_exit(argv); 
-	// else if (ft_strcmp(*argv, "export") == 0)
-	// 	ret = ft_export(argv);
-	// else if (ft_strcmp(*argv, "unset") == 0)
-	// 	ret = ft_unset(argv);
+	else if (ft_strcmp(*argv, "export") == 0)
+		ret = ft_export(argv);
+	else if (ft_strcmp(*argv, "unset") == 0)
+		ret = ft_unset(argv);
 	else if (ft_strcmp(*argv, "echo") == 0)
 		ret = ft_echo(argv); 
 	else if (ft_strcmp(*argv, "pwd") == 0)

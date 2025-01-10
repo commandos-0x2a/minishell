@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/10 01:04:24 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/10 19:49:24 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,8 @@ void save_config(const t_config *config);
 void setup_signals(void);
 void reset_signals(void);
 
-
+int		ft_export(char **argv);
+int		ft_unset(char **argv);
 int	here_doc(char **tokens, int fd);
 
 #endif

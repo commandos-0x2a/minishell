@@ -41,7 +41,9 @@ FILES = main						\
 		builtins/env		\
 		builtins/exit		\
 		builtins/test 		\
-
+		builtins/export		\
+		builtins/unset		\
+		
 OBJECTS = $(FILES:%=$(BUILD_DIR)/%.o)
 
 all: libft $(NAME)
