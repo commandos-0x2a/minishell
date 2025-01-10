@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_execution.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/10 12:33:18 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/10 19:37:52 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,26 @@
 
 static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 {
-	// close unused read pipe_fd
+	// Close unused read pipe_fd.
 	if (is_pipe)
 		close(pipefd[0]);
 
-	// connect with previous command pipe
+	// Connect with previous command pipe.
 	if (in_fd > 0)
 	{
-		if (dup2(in_fd, STDIN_FILENO))
+		if (dup2(in_fd, STDIN_FILENO) == -1)
 		{
 			perror(NAME"pipe dup2 to STDIN");
 			return (-1);
 		}
-		if (close(in_fd))
+		if (close(in_fd) == -1)
 		{
 			perror(NAME"pipe close to in_fd");
 			return (-1);
 		}
 	}
 
-	// connect with next command pipe
+	// Connect with next command pipe.
 	if (is_pipe)
 	{
 		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
@@ -57,15 +57,16 @@ static void run_command(char **argv)
 
 	if (!argv) // command not exist
 		exit(0);
+	// Check if the first character of the command is an opening parenthesis
 	if ((*argv)[0] == '(')
 	{
 		(*argv)[ft_strlen(*argv) - 1] = '\0';
 		(*argv)++;
 		exit(flow_control(*argv));
 	}
-
-	// Handle quotes for remaining arguments
-	// make malloc for argv
+	// Handle quotes for remaining arguments.
+	// Handle quotes for remaining arguments.
+	// Allocate memory for argv.
 	argv_expander(argv);
 
 	// make malloc for argv
@@ -76,7 +77,7 @@ static void run_command(char **argv)
 		exit(-1);
 	}
 
-	// Check for built-in commands before get full path and execve
+	// Check for built-in commands before getting full path and executing.
 	if (is_builtin(argv[0]))
 	{
 		int exit_status = handle_builtin(argv, 1);
@@ -102,7 +103,7 @@ int command_execution(char **tokens, int in_fd, int *out_fd, int is_pipe, int pr
 	if (in_fd == -1)
 		return (-1);
 
-	// run builtin parent
+	// Run built-in parent.
 	if (!is_pipe && !prev_is_pipe && is_builtin(get_argv0(tokens)) == 1)
 	{
 		redirection_handler(tokens, 0);
@@ -113,12 +114,12 @@ int command_execution(char **tokens, int in_fd, int *out_fd, int is_pipe, int pr
 	if (is_pipe && pipe(pipefd) == -1)
 		return (-1);
 
-	// make fork and return pid to parent process
+	// Fork and return pid to parent process.
 	pid = fork();
 	if (pid != 0)
 	{
-		/* ========== Parent process ==========*/
-		// close unused fd
+		/* ========== Parent Process ==========*/
+		// Close unused file descriptors.
 		if (in_fd > 0)
 			close(in_fd);
 		if (is_pipe)
@@ -135,7 +136,7 @@ int command_execution(char **tokens, int in_fd, int *out_fd, int is_pipe, int pr
 		/* ========== Bye parent ==========*/
     }
 	
-	/* ========== Child process ==========*/
+	/* ========== Child Process ========== */
 	if (pipex_handler(is_pipe, in_fd, pipefd) != 0)
 		exit(1);
 
