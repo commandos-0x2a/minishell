@@ -4,52 +4,83 @@
 #include <stdlib.h>
 #include <signal.h>
 
-void	signal_manager(pid_t process)
-{
-	if (fork() == 0)
-	{
-		sleep(1);
-		kill(process, SIGSTOP);
-		sleep(5);
-		kill(process, SIGCONT);
-		sleep(1);
+#define TEST(pid, baby_pid) (pid == baby_pid ? "baby" : "sitter")
 
-		exit(0);
+pid_t	baby(int play_time)
+{
+	pid_t	pid;
+	int 	i;
+
+	if ((pid = fork()) == 0)
+	{
+		i = 0;
+		while (i < play_time)
+		{
+			printf("- baby play: %i\n", i);
+			sleep(1);
+			i++;
+		}
+		exit(1);
 	}
+	return (pid);
 }
 
-int main()
+pid_t	baby_sitter(pid_t baby)
 {
 	pid_t pid;
 
 	if ((pid = fork()) == 0)
 	{
-		int i = 0;
-		while (i < 10)
-		{
-			printf("[%d] counter: %i\n", getpid(), i);
-			sleep(1);
-			i++;
-		}
+		sleep(2);            // baby play to 2 second
+		kill(baby, SIGSTOP); // baby sleep
+		sleep(10);           // baby sleep to 10 second
+		kill(baby, SIGCONT); // baby wake up
+		sleep(5);            // sitter wait for 2 second before leave
+
 		exit(0);
 	}
+	return (pid);
+}
 
-	pid_t	test;
+int main()
+{
+	pid_t 	pid;
+	pid_t	baby_pid;
+	pid_t	sitter_pid;
 	int		wstatus;
 
-	signal_manager(pid);
-	while ((test = waitpid(pid, &wstatus, WNOHANG | WUNTRACED | WCONTINUED)) != -1) // WNOHANG   WUNTRACED
+	baby_pid 	= baby(12);
+	sitter_pid 	= baby_sitter(baby_pid);
+
+	while ((pid = waitpid(WAIT_ANY, &wstatus, WNOHANG | WUNTRACED | WCONTINUED)) != -1)
 	{
+		if (pid == 0)
+			continue;
 		if (WIFEXITED(wstatus))
-			printf("%d: Exited %d\n", test, WEXITSTATUS(wstatus)); 
+		{
+			if (WEXITSTATUS(wstatus) == 0)
+				printf("%d: Exited %d   # %s leave\n", \
+						pid, WEXITSTATUS(wstatus), TEST(pid, baby_pid));
+			else 
+				printf("%d: Exited %d   # %s died\n", pid, \
+						WEXITSTATUS(wstatus), TEST(pid, baby_pid));
+		}
 		else if (WIFCONTINUED(wstatus))
-			printf("%d: Continued\n",  test); 
+			printf("%d: Continued   # %s wake up\n", \
+					pid, TEST(pid, baby_pid));
 		else if (WIFSTOPPED(wstatus))
-			printf("%d: Stopped %d\n", test, WSTOPSIG(wstatus)); 
+			printf("%d: Stopped %d  # %s sleep\n", pid, \
+					WSTOPSIG(wstatus), TEST(pid, baby_pid));
 		else if (WIFSIGNALED(wstatus))
-			printf("%d: Signaled by %d\n", test , WTERMSIG(wstatus)); 
+		{
+			if (WCOREDUMP(wstatus))
+				printf("%d: COREDUMP 		# %s was killed\n", \
+						pid, TEST(pid, baby_pid));
+			else
+				printf("%d: Signaled by %d  # %s was shocked\n", \
+						pid , WTERMSIG(wstatus), TEST(pid, baby_pid));
+		}
 		else
-			printf("%d: WOW\n", test);
-		sleep(1);
+			printf("%d: WOW\n", pid);
 	}
 }
