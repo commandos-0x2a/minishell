@@ -9,15 +9,15 @@ CFLAGS		:= -Wall -Wextra -Werror -g $(INCLUDES)
 SRC_DIR = src
 BUILD_DIR = build
 
-FILES = main					\
-		ft_join_path			\
-		ft_getenv				\
-		ft_setenv				\
-		get_full_path			\
+FILES = main						\
+		utils/ft_join_path			\
+		utils/ft_getenv				\
+		utils/ft_setenv				\
+		utils/get_full_path			\
 		\
-		readline_handler		\
-		signals					\
-		config					\
+		utils/readline_handler		\
+		utils/signals					\
+		utils/config					\
 		\
 		expanders/str_expander	\
 		expanders/wildcard		\
