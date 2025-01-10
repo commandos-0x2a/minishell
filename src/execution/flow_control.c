@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/10 01:05:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/10 12:19:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ char	**get_next_flow(char **tokens, int *op)
 	*op = 0;
 	while (*tokens)
 	{
-		if (is_flow_control_operator(*tokens))
+		if (ft_strcmp(*tokens, "&&") == 0 
+			|| ft_strcmp(*tokens, "||") == 0)
 		{
 			if (ft_strcmp(*tokens, "&&") == 0)
 				*op = 1;
@@ -49,8 +50,8 @@ int	flow_control(char *line)
 	char	**next_flow;
 	int		op;
 	char	**ptr;
-	char	**ptr;
 	int		test;
+	int		exit_status = 0;
 
 	tokens = tokenizer(line, 0);
 	if (!tokens)
@@ -61,17 +62,18 @@ int	flow_control(char *line)
 	test = 1; // cuz run first time
 	while (*tokens)
 	{
-		next_flow = get_next_flow_control_operator(tokens, &op);
+		next_flow = get_next_flow(tokens, &op);
 		*next_flow = NULL; // replace operation token with NULL to end flow
 		// if have operation check if have anything after it
 		if (test)
 		{
-			test = pipeline_control(tokens);
-			if (test == -1)
+			exit_status = pipeline_control(tokens);
+			if (exit_status == -1)
 			{
 				free(ptr);
 				return (-1);
-			test = !test; // toggle cuz exec when success return (0)
+			}
+			test = !exit_status; // toggle cuz exec when success return (0)
 		}
 		if (op && *++next_flow == NULL) // increment next_flow if operation exist to skip it
 		{
@@ -87,6 +89,5 @@ int	flow_control(char *line)
 			break;
 	}
 	free(ptr);
-	free(ptr);
-	return (0);
+	return (exit_status);
 }

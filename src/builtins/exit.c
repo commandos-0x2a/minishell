@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 21:30:57 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/05 18:25:48 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/10 12:34:05 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	ft_exit(char **argv)
 	ft_printf("exit\n");
 	if (!argv[1])
 	{
-		ft_free(argv);
+		// ft_free(argv);
 		exit(0);
 	}
 	
@@ -47,9 +47,9 @@ int	ft_exit(char **argv)
 	else if (ft_str_is_numeric(argv[1]) == 0)
 	{
 		ft_fprintf(2, "minishell: exit: %s: numeric argument required\n", argv[1]);
-		ft_free(argv);
+		// ft_free(argv);
 		exit(255);
 	}
-	ft_free(argv);
+	// ft_free(argv);
 	exit(status);
 }
