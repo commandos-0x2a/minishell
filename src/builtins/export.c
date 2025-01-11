@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 12:00:00 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/10 20:02:02 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/11 16:37:01 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,13 @@ static int is_valid_identifier(char *str)
 
 static int update_env_var(char *var)
 {
-	extern char **environ;
+	char ***g_env_copy = __init__env();
 	int i;
 	char *name;
 	char *equals;
 	int name_len;
 
-	equals = strchr(var, '=');
+	equals = ft_strchr(var, '=');
 	if (!equals)
 		return (0);
 
@@ -69,15 +69,15 @@ static int update_env_var(char *var)
 	name[name_len] = '\0';
 
 	i = 0;
-	while (environ[i])
+	while ((*g_env_copy)[i])
 	{
-		if (strncmp(environ[i], name, name_len) == 0 &&
-			(environ[i][name_len] == '=' || environ[i][name_len] == '\0'))
+		if (ft_strncmp((*g_env_copy)[i], name, name_len) == 0 &&
+			((*g_env_copy)[i][name_len] == '=' || (*g_env_copy)[i][name_len] == '\0'))
 		{
-			free(environ[i]);
-			environ[i] = ft_strdup_env(var);
+			free((*g_env_copy)[i]);
+			(*g_env_copy)[i] = ft_strdup(var);
 			free(name);
-			return (environ[i] ? 0 : 1);
+			return ((*g_env_copy)[i] ? 0 : 1);
 		}
 		i++;
 	}
@@ -87,51 +87,43 @@ static int update_env_var(char *var)
 
 static int add_env_var(char *var)
 {
-	extern char **environ;
+	char ***g_env_copy = __init__env();
 	char **new_environ;
 	int i, result;
 
-	result = update_env_var(var);
-	if (result != 2) // 2 means variable not found
-		return (result);
-
-	if (!environ)
+	if (!(*g_env_copy))
 	{
-		new_environ = malloc(sizeof(char *) * 2);
-		if (!new_environ)
+		*g_env_copy = create_env_copy();
+		if (!(*g_env_copy))
 			return (1);
-		new_environ[0] = ft_strdup_env(var);
-		if (!new_environ[0])
-		{
-			free(new_environ);
-			return (1);
-		}
-		new_environ[1] = NULL;
-		environ = new_environ;
-		return (0);
 	}
 
+	result = update_env_var(var);
+	if (result != 2)
+		return (result);
+
 	i = 0;
-	while (environ[i])
+	while ((*g_env_copy)[i])
 		i++;
 	new_environ = malloc(sizeof(char *) * (i + 2));
 	if (!new_environ)
 		return (1);
 
 	i = 0;
-	while (environ[i])
+	while ((*g_env_copy)[i])
 	{
-		new_environ[i] = environ[i];
+		new_environ[i] = (*g_env_copy)[i];
 		i++;
 	}
-	new_environ[i] = ft_strdup_env(var);
+	new_environ[i] = ft_strdup(var);
 	if (!new_environ[i])
 	{
 		free(new_environ);
 		return (1);
 	}
 	new_environ[i + 1] = NULL;
-	environ = new_environ;
+	free(*g_env_copy);
+	*g_env_copy = new_environ;
 	return (0);
 }
 
@@ -154,18 +146,17 @@ static int is_critical_var(const char *var)
 
 int ft_export(char **argv)
 {
-	extern char **environ;
+	char ***g_env_copy = __init__env();
 	int i;
 	char *equals;
 
 	if (!argv[1])
 	{
 		i = 0;
-		while (environ[i])
+		while ((*g_env_copy)[i])
 		{
-			write(1, "declare -x ", 11);
-			write(1, environ[i], strlen(environ[i]));
-			write(1, "\n", 1);
+			ft_putstr_fd("declare -x ", 1);
+			ft_putendl_fd((*g_env_copy)[i], 1);
 			i++;
 		}
 		return (0);
