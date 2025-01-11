@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/10 12:19:17 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/10 22:35:38 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,25 @@
  * flow[2] = cmd4 > out
 */
 char	**get_next_flow(char **tokens, int *op)
+{
+	*op = 0;
+	while (*tokens)
+	{
+		if (ft_strcmp(*tokens, "&&") == 0 
+			|| ft_strcmp(*tokens, "||") == 0)
+		{
+			if (ft_strcmp(*tokens, "&&") == 0)
+				*op = 1;
+			else if (ft_strcmp(*tokens, "||") == 0)
+				*op = 2;
+			break ;
+		}
+		tokens++;
+	}
+	return (tokens);
+}
+
+char	**operation_tokenizer(char **tokens, int *op)
 {
 	*op = 0;
 	while (*tokens)
@@ -83,10 +102,7 @@ int	flow_control(char *line)
 		if (op == 2) // is op == OR toggle test
 			test = !test;
 
-		if (next_flow != NULL)
-			tokens = next_flow; 
-		else
-			break;
+		tokens = next_flow; 
 	}
 	free(ptr);
 	return (exit_status);

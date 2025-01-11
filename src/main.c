@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/09 18:30:16 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/10 20:20:12 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,6 @@ int main(int argc, char **argv)
 
 	// Load configuration
 	load_config(&config);
-	setup_signals();
-	terminal_config(0);
 
 	if (ft_strcmp(config.prompt_style, "colorful") == 0)
 	{
@@ -94,6 +92,7 @@ int main(int argc, char **argv)
 		is_test = 1;
 	while (1)
 	{
+		setup_signals();
 		line = readline(get_prompt());
 		if (!line) // ctrl-D handling
 		{
@@ -103,10 +102,13 @@ int main(int argc, char **argv)
 		handle_line(line);
 		if (*line)
 		{
+			terminal_config(0);
+			reset_signals();
 			if (is_test)
 				print_tokenizer(line, 0);
 			else
 				flow_control(line);
+			terminal_reset(0);
 		}
 		free(line);
 	}
