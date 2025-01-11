@@ -6,19 +6,13 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/11 20:28:04 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/11 21:06:54 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <signal.h>
 #include <termios.h>
-
-struct s_sig_handlers
-{
-	struct sigaction old_int;
-	struct sigaction old_quit;
-};
 
 int *heredoc_active(void)
 {
