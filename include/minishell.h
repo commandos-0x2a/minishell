@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/11 18:03:15 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/11 18:39:48 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,17 @@
 // Define maximum sizes for config values
 #define MAX_PROMPT_STYLE 32
 #define MAX_CONFIG_LINE 256
+
+// Add these color definitions before the structs
+#define RESET   "\033[0m"
+#define BLACK   "\033[30m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+#define MAGENTA "\033[35m"
+#define CYAN    "\033[36m"
+#define WHITE   "\033[37m"
 
 // Environment functions
 int ft_setenv(const char *name, const char *value, int overwrite);
@@ -96,10 +107,7 @@ char **handle_wildcards(char **argv);
 typedef struct s_config
 {
 	char prompt_style[MAX_PROMPT_STYLE];
-	int history_size;
-	int tab_width;
 	int color_enabled;
-	int auto_suggest;
 } t_config;
 
 // Modify prototypes
@@ -123,6 +131,10 @@ char **create_env_copy(void);
 char *ft_getenv(const char *name);
 int ft_setenv(const char *name, const char *value, int overwrite);
 void cleanup_env_copy(void);
+
+// Add color function prototype
+void    print_color(char *color, char *str);
+
 // void set_signals_child(void);
 
 #endif

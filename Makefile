@@ -43,6 +43,7 @@ FILES = main						\
 		builtins/test 		\
 		builtins/export		\
 		builtins/unset		\
+		# utils/tab_completion
 		
 OBJECTS = $(FILES:%=$(BUILD_DIR)/%.o)
 
