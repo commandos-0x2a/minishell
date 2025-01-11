@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/11 16:37:13 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/11 18:03:15 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,5 +123,6 @@ char **create_env_copy(void);
 char *ft_getenv(const char *name);
 int ft_setenv(const char *name, const char *value, int overwrite);
 void cleanup_env_copy(void);
+// void set_signals_child(void);
 
 #endif
