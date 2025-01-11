@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 21:20:57 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/11 16:42:15 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/11 20:02:55 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	ft_env(char **argv)
 	env = *(__init__env());
 	if (argv && argv[1])
 	{
-		ft_fprintf(2, "env: '%s': No such file or directory\n", argv[1]);
+		ft_fprintf(2, NAME"'%s': No such file or directory\n", argv[0]);
 		return (127);
 	}
 
