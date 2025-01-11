@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/11 18:39:48 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/11 20:27:50 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,15 +51,50 @@
 #define MAX_CONFIG_LINE 256
 
 // Add these color definitions before the structs
-#define RESET   "\033[0m"
-#define BLACK   "\033[30m"
-#define RED     "\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define BLUE    "\033[34m"
+#define RESET "\033[0m"
+#define BLACK "\033[30m"
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define YELLOW "\033[33m"
+#define BLUE "\033[34m"
 #define MAGENTA "\033[35m"
-#define CYAN    "\033[36m"
-#define WHITE   "\033[37m"
+#define CYAN "\033[36m"
+#define WHITE "\033[37m"
+
+#ifndef FD_MAX
+#define FD_MAX FOPEN_MAX
+#endif
+
+#if FD_MAX > FOPEN_MAX
+#undef FD_MAX
+#define FD_MAX FOPEN_MAX
+#endif
+
+#if FD_MAX < 1
+#undef FD_MAX
+#define FD_MAX FOPEN_MAX
+#endif
+
+#ifndef BUFFER_SIZE
+#define BUFFER_SIZE BUFSIZ
+#endif
+
+#if BUFFER_SIZE > 1000000
+#undef BUFFER_SIZE
+#define BUFFER_SIZE 1000000
+#endif
+
+#if BUFFER_SIZE < 1
+#undef BUFFER_SIZE
+#define BUFFER_SIZE 1
+#endif
+// for the get_next_line function
+char *get_next_line(int fd);
+int ft_gnl_strlen(char *str);
+int ft_gnl_strchr(char *str, char ch);
+char *ft_gnl_strdup(char *original);
+char *ft_gnl_strjoin(char *s1, char *s2);
+char *ft_gnl_substr(char *str, int start, int max);
 
 // Environment functions
 int ft_setenv(const char *name, const char *value, int overwrite);
@@ -133,8 +168,23 @@ int ft_setenv(const char *name, const char *value, int overwrite);
 void cleanup_env_copy(void);
 
 // Add color function prototype
-void    print_color(char *color, char *str);
+void print_color(char *color, char *str);
 
 // void set_signals_child(void);
+
+// Add global variable declaration and new function prototypes
+int *heredoc_active(void);
+
+void save_signal_handlers(void);
+void restore_signal_handlers(void);
+
+// Add this struct and function prototype
+struct s_sig_handlers
+{
+	struct sigaction old_int;
+	struct sigaction old_quit;
+};
+
+struct s_sig_handlers *get_sig_handlers(void);
 
 #endif

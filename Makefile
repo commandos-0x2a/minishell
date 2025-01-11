@@ -43,7 +43,9 @@ FILES = main						\
 		builtins/test 		\
 		builtins/export		\
 		builtins/unset		\
-		# utils/tab_completion
+		\
+		gnl/get_next_line_bonus	\
+		gnl/get_next_line_utils_bonus \
 		
 OBJECTS = $(FILES:%=$(BUILD_DIR)/%.o)
 

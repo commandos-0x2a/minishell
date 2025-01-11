@@ -3,47 +3,80 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/10 01:04:01 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/01/11 20:31:33 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	here_doc_handler(char *limiter, int out_fd)
+static void handle_heredoc_signal(int sig)
 {
-	char	buffer[4096];
-	ssize_t	_read;
-	size_t	limiter_len;
-
-	limiter_len = ft_strlen(limiter);
-	while (1)
+	if (sig == SIGINT)
 	{
-		if (isatty(0))
-			write(1, "> ", 2);
-		_read = read(0, buffer, sizeof(buffer));
-		if (_read == -1)
-			return (-1);
-		if (_read == 0)
-		{
-			if (isatty(0))
-				ft_fprintf(2, "\n"NAME": warning: here-document " \
-							"delimited by end-of-file (wanted `%s`)\n", limiter);
-			break ;
-		}
-		if (ft_strncmp(buffer, limiter, limiter_len - 1) == 0 \
-						&& buffer[limiter_len] == '\n')
-			break ;
-		write(out_fd, buffer, _read);
+		write(1, "\n", 1);
+		// exit(130);
 	}
+}
+
+static int setup_heredoc_signals(void)
+{
+	struct sigaction sa;
+
+	sa.sa_handler = handle_heredoc_signal;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+
+	if (sigaction(SIGINT, &sa, NULL) == -1)
+		return (-1);
 	return (0);
 }
 
-static int	here_doc_handler2(char *limiter)
+static int here_doc_handler(char *limiter, int out_fd)
 {
-	int	pipe_fd[2];
+	char *line;
+	size_t limiter_len;
+
+	limiter_len = ft_strlen(limiter);
+	*heredoc_active() = 1;
+	save_signal_handlers();
+	if (setup_heredoc_signals() == -1)
+	{
+		*heredoc_active() = 0;
+		restore_signal_handlers();
+		return (-1);
+	}
+
+	while (1)
+	{
+		if (isatty(STDIN_FILENO))
+			write(STDOUT_FILENO, "> ", 2);
+		line = get_next_line(STDIN_FILENO);
+		if (!line)
+		{
+			if (isatty(STDIN_FILENO))
+				ft_fprintf(2, "\n" NAME ": warning: here-document delimited by end-of-file (wanted `%s`)\n", limiter);
+			break;
+		}
+		if (ft_strncmp(line, limiter, limiter_len) == 0 &&
+			(line[limiter_len] == '\n' || line[limiter_len] == '\0'))
+		{
+			free(line);
+			break;
+		}
+		write(out_fd, line, ft_strlen(line));
+		free(line);
+	}
+	*heredoc_active() = 0;
+	restore_signal_handlers();
+	return (0);
+}
+
+static int here_doc_handler2(char *limiter)
+{
+	int pipe_fd[2];
 
 	if (pipe(pipe_fd) == -1)
 		return (-1);
@@ -57,7 +90,7 @@ static int	here_doc_handler2(char *limiter)
 	return (pipe_fd[0]);
 }
 
-int	here_doc(char **tokens, int fd)
+int here_doc(char **tokens, int fd)
 {
 	while (*tokens)
 	{
@@ -68,7 +101,7 @@ int	here_doc(char **tokens, int fd)
 			fd = here_doc_handler2(*++tokens);
 			if (fd == -1)
 			{
-				perror(NAME": here_doc");
+				perror(NAME ": here_doc");
 				return (-1);
 			}
 		}
@@ -79,7 +112,7 @@ int	here_doc(char **tokens, int fd)
 			fd = here_doc_handler2(*tokens + 2);
 			if (fd == -1)
 			{
-				perror(NAME": here_doc");
+				perror(NAME ": here_doc");
 				return (-1);
 			}
 		}
