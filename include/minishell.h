@@ -6,106 +6,143 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/10 19:49:24 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/11 20:27:50 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
 #ifndef MINISHELL_H
-# define MINISHELL_H
+#define MINISHELL_H
 
-# include <libft.h>
-# include <stddef.h>
-# include <unistd.h>
-# include <sys/wait.h>
-# include <fcntl.h>
-# include <errno.h>
-# include <string.h>
-# include <stdio.h>
-# ifdef __linux__
-#  include <linux/limits.h>
+#include <libft.h>
+#include <stddef.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
+#include <stdio.h>
+#ifdef __linux__
+#include <linux/limits.h>
 // #  include <bits/termios-c_lflag.h>
 // #  include <asm-generic/termbits.h>
-#  include <bits/sigaction.h>
-#  include <asm-generic/signal-defs.h>
-# else
-#  include <limits.h>
-# endif
+#include <bits/sigaction.h>
+#include <asm-generic/signal-defs.h>
+#else
+#include <limits.h>
+#endif
 
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <sys/types.h>
-# include <termios.h>
-# include <signal.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <sys/types.h>
+#include <termios.h>
+#include <signal.h>
 
+#define NAME "minishell"
 
-# define NAME "minishell"
+#define HOSTNAME_MAX 64
+#define USERNAME_MAX 32
+#define PATH_MAX_LEN 3000
+#define PROMPT_MAX (HOSTNAME_MAX + USERNAME_MAX + PATH_MAX_LEN + 10)
 
-# define HOSTNAME_MAX 64
-# define USERNAME_MAX 32
-# define PATH_MAX_LEN 3000
-# define PROMPT_MAX (HOSTNAME_MAX + USERNAME_MAX + PATH_MAX_LEN + 10)
-
-# define DEFAULT_PROMPT "commandos0x2a$ "
+#define DEFAULT_PROMPT "commandos0x2a$ "
 
 // Define maximum sizes for config values
-# define MAX_PROMPT_STYLE 32
-# define MAX_CONFIG_LINE 256
+#define MAX_PROMPT_STYLE 32
+#define MAX_CONFIG_LINE 256
+
+// Add these color definitions before the structs
+#define RESET "\033[0m"
+#define BLACK "\033[30m"
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define YELLOW "\033[33m"
+#define BLUE "\033[34m"
+#define MAGENTA "\033[35m"
+#define CYAN "\033[36m"
+#define WHITE "\033[37m"
+
+#ifndef FD_MAX
+#define FD_MAX FOPEN_MAX
+#endif
+
+#if FD_MAX > FOPEN_MAX
+#undef FD_MAX
+#define FD_MAX FOPEN_MAX
+#endif
+
+#if FD_MAX < 1
+#undef FD_MAX
+#define FD_MAX FOPEN_MAX
+#endif
+
+#ifndef BUFFER_SIZE
+#define BUFFER_SIZE BUFSIZ
+#endif
+
+#if BUFFER_SIZE > 1000000
+#undef BUFFER_SIZE
+#define BUFFER_SIZE 1000000
+#endif
+
+#if BUFFER_SIZE < 1
+#undef BUFFER_SIZE
+#define BUFFER_SIZE 1
+#endif
+// for the get_next_line function
+char *get_next_line(int fd);
+int ft_gnl_strlen(char *str);
+int ft_gnl_strchr(char *str, char ch);
+char *ft_gnl_strdup(char *original);
+char *ft_gnl_strjoin(char *s1, char *s2);
+char *ft_gnl_substr(char *str, int start, int max);
 
 // Environment functions
-int     ft_setenv(const char *name, const char *value, int overwrite);
-int     ft_putenv(char *string);
-int     ft_test(char **argv);
+int ft_setenv(const char *name, const char *value, int overwrite);
+// int     ft_putenv(char *string);
+int ft_test(char **argv);
 
 // Terminal configuration
-char    *get_prompt(void);
-void    handle_line(char *line);
-void    cleanup_shell(void);
+char *get_prompt(void);
+void handle_line(char *line);
+void cleanup_shell(void);
 
 // tokens and exec
-char	**tokenizer(char *s, int i);
-void	print_tokenizer(char *line, int indent);
-char	*expand_str(char *str);
-void	argv_expander(char **argv);
-char	*get_argv0(char **tokens);
-char    **get_argv(char **tokens);
+char **tokenizer(char *s, int i);
+void print_tokenizer(char *line, int indent);
+char *expand_str(char *str);
+void argv_expander(char **argv);
+char *get_argv0(char **tokens);
+char **get_argv(char **tokens);
 
 // libft function
-size_t	ft_join_path(char *dest, const char *path1, const char *path2);
-int		get_full_path(char *full_path, char **argv, char *command);
-char	*ft_getenv(const char *name);
+size_t ft_join_path(char *dest, const char *path1, const char *path2);
+int get_full_path(char *full_path, char **argv, char *command);
+char *ft_getenv(const char *name);
 
 // Built-in commands
-int		ft_cd(char **argv);
-int		ft_echo(char **argv);
-int		ft_pwd(char **argv);
-int		ft_env(char **argv);
-int		ft_exit(char **argv);
-int 	handle_builtin(char **argv, int _exit);
-int 	is_builtin(char *cmd);
+int ft_cd(char **argv);
+int ft_echo(char **argv);
+int ft_pwd(char **argv);
+int ft_env(char **argv);
+int ft_exit(char **argv);
+int handle_builtin(char **argv, int _exit);
+int is_builtin(char *cmd);
 
-void    restore_output(int original_fd);
+void restore_output(int original_fd);
 
-
-int     redirection_handler(char **tokens, int _dup);
-int     command_execution(char **tokens, int in_fd, int *out_fd, int is_pipe, int prev_is_pipe);
-int		pipeline_control(char **tokens);
-int		flow_control(char *chain);
-int     wait_children(int target_pid);
-
+int redirection_handler(char **tokens, int _dup);
+int command_execution(char **tokens, int in_fd, int *out_fd, int is_pipe, int prev_is_pipe);
+int pipeline_control(char **tokens);
+int flow_control(char *chain);
+int wait_children(int target_pid);
 
 char **handle_wildcards(char **argv);
-
 
 // Modify config structure to use fixed arrays
 typedef struct s_config
 {
-    char    prompt_style[MAX_PROMPT_STYLE];
-    int     history_size;
-    int     tab_width;
-    int     color_enabled;
-    int     auto_suggest;
+	char prompt_style[MAX_PROMPT_STYLE];
+	int color_enabled;
 } t_config;
 
 // Modify prototypes
@@ -119,8 +156,35 @@ void save_config(const t_config *config);
 void setup_signals(void);
 void reset_signals(void);
 
-int		ft_export(char **argv);
-int		ft_unset(char **argv);
-int	here_doc(char **tokens, int fd);
+int ft_export(char **argv);
+int ft_unset(char **argv);
+int here_doc(char **tokens, int fd);
+
+// Environment management functions
+char ***__init__env(void);
+char **create_env_copy(void);
+char *ft_getenv(const char *name);
+int ft_setenv(const char *name, const char *value, int overwrite);
+void cleanup_env_copy(void);
+
+// Add color function prototype
+void print_color(char *color, char *str);
+
+// void set_signals_child(void);
+
+// Add global variable declaration and new function prototypes
+int *heredoc_active(void);
+
+void save_signal_handlers(void);
+void restore_signal_handlers(void);
+
+// Add this struct and function prototype
+struct s_sig_handlers
+{
+	struct sigaction old_int;
+	struct sigaction old_quit;
+};
+
+struct s_sig_handlers *get_sig_handlers(void);
 
 #endif

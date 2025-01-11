@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/10 19:37:52 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/11 18:03:18 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 
 static void run_command(char **argv)
 {
+	// try to change the signals for the child process before executing the command
+	// set_signals_child();
 	char		full_path[PATH_MAX];
 	extern char	**environ;
 

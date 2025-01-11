@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 12:00:00 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/10 20:02:04 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/01/11 16:37:08 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,49 +14,50 @@
 
 static void remove_env_var(char *var)
 {
-    extern char **environ;
-    int i, j;
-    int len;
+	char ***g_env_copy = __init__env();
+	int i, j;
+	int len;
 
-    len = 0;
-    while (var[len] && var[len] != '=')
-        len++;
+	if (!(*g_env_copy))
+		return;
 
-    i = 0;
-    while (environ[i])
-    {
-        if (strncmp(environ[i], var, len) == 0 && environ[i][len] == '=')
-        {
-            free(environ[i]);
-            j = i;
-            while (environ[j])
-            {
-                environ[j] = environ[j + 1];
-                j++;
-            }
-            return;
-        }
-        i++;
-    }
+	len = ft_strlen(var);
+	i = 0;
+	while ((*g_env_copy)[i])
+	{
+		if (ft_strncmp((*g_env_copy)[i], var, len) == 0 &&
+			((*g_env_copy)[i][len] == '=' || (*g_env_copy)[i][len] == '\0'))
+		{
+			free((*g_env_copy)[i]);
+			j = i;
+			while ((*g_env_copy)[j])
+			{
+				(*g_env_copy)[j] = (*g_env_copy)[j + 1];
+				j++;
+			}
+			return;
+		}
+		i++;
+	}
 }
 
 int ft_unset(char **argv)
 {
-    int i;
+	int i;
 
-    if (!argv[1])
-        return (0);
+	if (!argv[1])
+		return (0);
 
-    i = 1;
-    while (argv[i])
-    {
-        if (strchr(argv[i], '='))
-        {
-            write(2, "minishell: unset: not a valid identifier\n", 39);
-            return (1);
-        }
-        remove_env_var(argv[i]);
-        i++;
-    }
-    return (0);
+	i = 1;
+	while (argv[i])
+	{
+		if (ft_strchr(argv[i], '='))
+		{
+			ft_putendl_fd("minishell: unset: not a valid identifier", 2);
+			return (1);
+		}
+		remove_env_var(argv[i]);
+		i++;
+	}
+	return (0);
 }
