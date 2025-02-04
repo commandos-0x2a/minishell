@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/03 20:32:00 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/04 13:07:31 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ char	**tokenizer(char *s, int i)
 			if (!s)
 				break ;
 		}
-		if ((*s == '|' || ft_strncmp(s, "&&", 2) == 0) && nb_bracket == 0)
-			break ;
+		if ((*s == '|' || ft_strncmp(s, "&&", 2) == 0 || *s == '<' || *s == '>') && nb_bracket == 0)
+			break ; 
 		s++;
 	}
 	if (nb_bracket != 0 || s == NULL)
@@ -67,13 +67,16 @@ char	**tokenizer(char *s, int i)
 	}
 	if (p == s && !*s)
 		return (ft_calloc(i + 1, sizeof(char *)));
-	if (ft_strncmp(p, "&&", 2) == 0 || ft_strncmp(p, "||", 2) == 0)
+	if (ft_strncmp(p, "&&", 2) == 0 || ft_strncmp(p, "||", 2) == 0 \
+		|| ft_strncmp(p, ">>", 2) == 0 || ft_strncmp(p, "<<", 2) == 0)
 		s += 2;
-	else if (*p == '|')
+	else if (*p == '|' || *p == '<' || *p == '>')
 		s++;
 	if (!*s \
 		|| *s == '|' || ft_strncmp(s, "&&", 2) == 0 || ft_strncmp(s, "||", 2) == 0 \
-		|| *p == '|' || ft_strncmp(p, "&&", 2) == 0 || ft_strncmp(p, "||", 2) == 0)
+		|| *p == '|' || ft_strncmp(p, "&&", 2) == 0 || ft_strncmp(p, "||", 2) == 0 \
+		|| *s == '<' || *s == '>' || ft_strncmp(s, "<<", 2) == 0 || ft_strncmp(s, ">>", 2) == 0 \
+		|| *p == '>' || *p == '>' || ft_strncmp(p, "<<", 2) == 0 || ft_strncmp(p, ">>", 2) == 0)
 		tokens = tokenizer(s, i + 1);
 	else
 		tokens = tokenizer(s + 1, i + 1);
