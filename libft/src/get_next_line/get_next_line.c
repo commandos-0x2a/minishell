@@ -5,47 +5,93 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/16 11:38:39 by yaltayeh          #+#    #+#             */
-/*   Updated: 2024/11/02 00:46:43 by yaltayeh         ###   ########.fr       */
+/*   Created: 2024/09/27 15:35:34 by mkurkar           #+#    #+#             */
+/*   Updated: 2025/02/07 20:04:16 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*error_handling_gnl(char **new_line, char *buffer)
+static char	*free_fd(char **files, int fd)
 {
-	buffer[0] = '\0';
-	if (*new_line)
+	if (files[fd] != NULL)
 	{
-		free(*new_line);
-		*new_line = NULL;
+		free(files[fd]);
+		files[fd] = NULL;
 	}
 	return (NULL);
 }
 
+static char	*get_line(char **files, int fd)
+{
+	char	*ptr;
+	char	*res;
+	char	*newline;
+
+	if (!files[fd])
+		return (NULL);
+	ptr = files[fd];
+	newline = ft_strchr(files[fd], '\n');
+	if (newline == NULL)
+	{
+		if (ft_strlen(files[fd]) == 0)
+			return (free_fd(files, fd));
+		res = ft_strdup(files[fd]);
+		free_fd(files, fd);
+		return (res);
+	}
+	res = ft_substr(ptr, 0, newline - ptr + 1);
+	if (res == NULL)
+		return (free_fd(files, fd));
+	files[fd] = ft_strdup(newline + 1);
+	free(ptr);
+	return (res);
+}
+
+static void	manage_buffer(char *buf, char **files, int fd, int *read_res)
+{
+	buf = (char *)malloc(BUFFER_SIZE + 1);
+	if (buf == NULL)
+	{
+		free_fd(files, fd);
+		return ;
+	}
+	*read_res = read(fd, buf, BUFFER_SIZE);
+	if (*read_res == -1)
+	{
+		free(buf);
+		free_fd(files, fd);
+		return ;
+	}
+	buf[*read_res] = '\0';
+	files[fd] = ft_gnl_strjoin(files[fd], buf);
+	free(buf);
+}
+
 char	*get_next_line(int fd)
 {
-	static char	buffer[FD_MAX][BUFFER_SIZE + 1];
-	char		*new_line;
-	ssize_t		bytes_read;
+	char		*buf;
+	static char	*files[FD_MAX];
+	int			read_res;
 
-	new_line = NULL;
-	if (fd > FD_MAX || fd < 0)
+	if (fd < 0 || fd > FD_MAX || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (!buffer[fd][0])
-		bytes_read = read(fd, buffer[fd], BUFFER_SIZE);
-	else
-		bytes_read = ft_strlen(buffer[fd]);
-	while (bytes_read)
+	if (files[fd] == NULL)
+		files[fd] = ft_strdup("");
+	if (files[fd] == NULL)
+		return (NULL);
+	read_res = 1;
+	buf = NULL;
+	while (read_res > 0)
 	{
-		if (bytes_read == -1)
-			return (error_handling_gnl(&new_line, buffer[fd]));
-		buffer[fd][bytes_read] = '\0';
-		if (ft_strjoin_gnl(&new_line, buffer[fd]))
-			return (new_line);
-		if (!new_line)
-			return (error_handling_gnl(&new_line, buffer[fd]));
-		bytes_read = read(fd, buffer[fd], BUFFER_SIZE);
+		if (ft_strchr(files[fd], '\n') == NULL)
+		{
+			manage_buffer(buf, files, fd, &read_res);
+			if (files[fd] == NULL)
+				return (free_fd(files, fd));
+		}
+		else
+			return (get_line(files, fd));
 	}
-	return (new_line);
+	return (get_line(files, fd));
 }

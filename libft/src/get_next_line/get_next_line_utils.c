@@ -5,62 +5,38 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/16 11:35:16 by yaltayeh          #+#    #+#             */
-/*   Updated: 2024/11/02 00:46:40 by yaltayeh         ###   ########.fr       */
+/*   Created: 2024/09/27 15:35:26 by mkurkar           #+#    #+#             */
+/*   Updated: 2025/02/07 19:57:33 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static void	ft_strjoin_gnl_help(char **new_line_p, char *buffer, \
-									size_t i1, size_t i2)
+char *ft_gnl_strjoin(char *s1, char *s2)
 {
-	char	*new_line;
-	size_t	len;
-	char	*left;
+	char *str;
+	int i;
+	int j;
 
-	left = buffer + i2;
-	len = i1 + i2;
-	new_line = malloc(len + 1);
-	if (!new_line)
+	if (s1 == NULL || s2 == NULL)
+		return (NULL);
+	i = 0;
+	j = 0;
+	str = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+	if (str != NULL)
 	{
-		if (*new_line_p)
-			free(*new_line_p);
-		*new_line_p = NULL;
-		return ;
+		while (s1[i])
+		{
+			str[i + j] = s1[i];
+			i++;
+		}
+		while (s2[j])
+		{
+			str[i + j] = s2[j];
+			j++;
+		}
+		str[i + j] = '\0';
 	}
-	new_line[len] = '\0';
-	while (i2--)
-		new_line[--len] = buffer[i2];
-	while (i1--)
-		new_line[--len] = (*new_line_p)[i1];
-	if (*new_line_p)
-		free(*new_line_p);
-	*new_line_p = new_line;
-	ft_strlcpy(buffer, left, BUFFER_SIZE + 1);
-}
-
-int	ft_strjoin_gnl(char **new_line, char *buffer)
-{
-	size_t	i1;
-	size_t	i2;
-
-	i1 = 0;
-	i2 = 0;
-	if (*new_line)
-		i1 = ft_strlen(*new_line);
-	while (buffer[i2] != '\n' && buffer[i2] != '\0')
-		i2++;
-	i2 += !!buffer[i2];
-	ft_strjoin_gnl_help(new_line, buffer, i1, i2);
-	if (!*new_line)
-		return (0);
-	i1 = 0;
-	while ((*new_line)[i1] != '\0')
-	{
-		if ((*new_line)[i1] == '\n')
-			return (1);
-		i1++;
-	}
-	return (0);
+	free(s1);
+	return (str);
 }

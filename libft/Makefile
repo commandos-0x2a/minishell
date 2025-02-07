@@ -1,57 +1,88 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/11/02 00:46:59 by yaltayeh          #+#    #+#              #
-#    Updated: 2025/01/04 21:32:41 by mkurkar          ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
-# Set final target name
 NAME	= libft.a
 
-# Compiler settings
-CC		= cc
-CFLAGS	= -Wall -Wextra -Werror -g
+CC			= cc
+CFLAGS		= -Wall -Wextra -Werror -g
+SRCDIR		= src
+OBJDIR		= obj
+CPPFLAGS	+= -I./include
 
-# Set colors variables
-RESET	= \033[0;39m
-RED		= \033[0;91m
-GREEN	= \033[0;92m
-MAGENTA	= \033[0;95m
-YELLOW	= \033[0;93m
+FILES =	\
+		ft_string/ft_isalnum		\
+		ft_string/ft_isascii		\
+		ft_string/ft_isalpha		\
+		ft_string/ft_isdigit		\
+		ft_string/ft_isprint		\
+		ft_string/ft_isspace		\
+		ft_string/ft_itoa			\
+		ft_string/ft_itoa_base		\
+		ft_string/ft_strchr			\
+		ft_string/ft_strdup			\
+		ft_string/ft_striteri		\
+		ft_string/ft_strjoin		\
+		ft_string/ft_strlcat		\
+		ft_string/ft_strlcpy		\
+		ft_string/ft_strlen	 		\
+		ft_string/ft_strmapi		\
+		ft_string/ft_strncmp		\
+		ft_string/ft_strcmp			\
+		ft_string/ft_strnstr		\
+		ft_string/ft_strrchr		\
+		ft_string/ft_strtrim		\
+		ft_string/ft_substr			\
+		ft_string/ft_tolower		\
+		ft_string/ft_toupper		\
+		ft_string/ft_strtok			\
+		ft_string/ft_atoi			\
+		ft_string/ft_atou			\
+		ft_string/ft_str_is_numeric	\
+		\
+		ft_memory/ft_bzero			\
+		ft_memory/ft_memset			\
+		ft_memory/ft_memcpy			\
+		ft_memory/ft_memmove		\
+		ft_memory/ft_memchr			\
+		ft_memory/ft_memcmp			\
+		ft_memory/ft_calloc			\
+		\
+		ft_io/ft_putchar			\
+		ft_io/ft_putstr				\
+		ft_io/ft_putchar_fd			\
+		ft_io/ft_putstr_fd			\
+		ft_io/ft_putendl_fd			\
+		ft_io/ft_putnbr_fd			\
+		ft_io/ft_putbase_fd			\
+		\
+		ft_printf/ft_printf						\
+		ft_printf/ft_fprintf					\
+		ft_printf/ft_vprintf					\
+		ft_printf/ft_vfprintf					\
+		ft_printf/utils/ft_printf_redirect		\
+		ft_printf/utils/ft_flags_parser			\
+		ft_printf/utils/ft_handlers				\
+		ft_printf/utils/ft_handlers2			\
+		ft_printf/utils/ft_decimal_handler		\
+		ft_printf/utils/ft_u_decimal_handler	\
+		ft_printf/utils/ft_flags_apply			\
+		\
+		get_next_line/get_next_line			\
+		get_next_line/get_next_line_utils	\
+#
 
-# Set all rule in first
+OBJECTS	= $(FILES:%=$(OBJDIR)/%.o)
+
 all: $(NAME)
 
-# Include include.mk for load (OBJECTS, SOURCES) variables
-# and load rul for make object files from source files
-include include.mk
-
-# libft.a rule for make target
 $(NAME): $(OBJECTS)
-	@test -f $(NAME) \
-		&& echo "$(MAGENTA)Update archive $(NAME) $(RESET)" \
-		|| echo "$(MAGENTA)Create archive $(NAME) $(RESET)"
 	@ar rcs $(NAME) $?
 
-# Clean all object files only
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+
 clean:
-	@rm -f $(OBJECTS) \
-		&& echo "$(YELLOW)LIBFT: remove all object files$(RESET)"\
-		|| echo "$(RED)LIBFT: Can't remove object files$(RESET)"
+	@rm -f $(OBJECTS)
+	@rm -f $(NAME)
 
-# Clean all object files and archives file
-fclean: clean
-	@rm -f $(NAME) \
-		&& echo "$(YELLOW)LIBFT: Remove $(NAME)$(RESET)"\
-		|| echo "$(RED)LIBFT: Can't remove $(NAME)$(RESET)"
+re: clean all
 
-
-# Clean all object files and archives files and build again
-re: fclean all
-
-.PHONY: all clean fclean re
+.PHONY: all clean re
