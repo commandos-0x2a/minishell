@@ -3,24 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 12:00:00 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/11 16:37:08 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/07 21:43:52 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void remove_env_var(char *var)
+static void	remove_env_var(char *var)
 {
-	char ***g_env_copy = __init__env();
-	int i, j;
-	int len;
+	char	***g_env_copy;
+	int		i;
+	int		j;
+	int		len;
 
+	g_env_copy = __init__env();
 	if (!(*g_env_copy))
-		return;
-
+		return ;
 	len = ft_strlen(var);
 	i = 0;
 	while ((*g_env_copy)[i])
@@ -35,19 +36,18 @@ static void remove_env_var(char *var)
 				(*g_env_copy)[j] = (*g_env_copy)[j + 1];
 				j++;
 			}
-			return;
+			return ;
 		}
 		i++;
 	}
 }
 
-int ft_unset(char **argv)
+int	ft_unset(char **argv)
 {
-	int i;
+	int	i;
 
 	if (!argv[1])
 		return (0);
-
 	i = 1;
 	while (argv[i])
 	{

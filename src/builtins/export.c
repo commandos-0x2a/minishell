@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 12:00:00 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/11 16:37:01 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/07 21:51:45 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char *ft_strdup_env(const char *s)
+static char	*ft_strdup_env(const char *s)
 {
-	char *dup;
-	int len;
+	char	*dup;
+	int		len;
 
 	len = 0;
 	while (s[len])
@@ -33,82 +33,81 @@ static char *ft_strdup_env(const char *s)
 	return (dup);
 }
 
-static int is_valid_identifier(char *str)
+static int	is_valid_identifier(char *str)
 {
 	if (!str || !*str || (*str >= '0' && *str <= '9'))
 		return (0);
 	while (*str && *str != '=')
 	{
-		if (!(((*str >= 'a') && (*str <= 'z')) ||
-			  ((*str >= 'A') && (*str <= 'Z')) ||
-			  ((*str >= '0') && (*str <= '9')) ||
-			  *str == '_'))
+		if (!(((*str >= 'a') && (*str <= 'z')) || \
+				((*str >= 'A') && (*str <= 'Z')) || \
+				((*str >= '0') && (*str <= '9')) || \
+				*str == '_'))
 			return (0);
 		str++;
 	}
 	return (1);
 }
 
-static int update_env_var(char *var)
+static int	update_env_var(char *var)
 {
-	char ***g_env_copy = __init__env();
-	int i;
-	char *name;
-	char *equals;
-	int name_len;
+	char	***g_env_copy;
+	int		i;
+	char	*name;
+	char	*equals;
+	int		name_len;
 
+	g_env_copy = __init__env();
 	equals = ft_strchr(var, '=');
 	if (!equals)
 		return (0);
-
 	name_len = equals - var;
 	name = malloc(name_len + 1);
 	if (!name)
 		return (1);
 	strncpy(name, var, name_len);
 	name[name_len] = '\0';
-
 	i = 0;
 	while ((*g_env_copy)[i])
 	{
-		if (ft_strncmp((*g_env_copy)[i], name, name_len) == 0 &&
-			((*g_env_copy)[i][name_len] == '=' || (*g_env_copy)[i][name_len] == '\0'))
+		if (ft_strncmp((*g_env_copy)[i], name, name_len) == 0 && \
+			((*g_env_copy)[i][name_len] == '=' \
+			|| (*g_env_copy)[i][name_len] == '\0'))
 		{
 			free((*g_env_copy)[i]);
 			(*g_env_copy)[i] = ft_strdup(var);
 			free(name);
-			return ((*g_env_copy)[i] ? 0 : 1);
+			return (!(*g_env_copy)[i]);
 		}
 		i++;
 	}
 	free(name);
-	return (2); // Variable not found
+	return (2);
 }
 
-static int add_env_var(char *var)
+static int	add_env_var(char *var)
 {
-	char ***g_env_copy = __init__env();
-	char **new_environ;
-	int i, result;
+	char	***g_env_copy;
+	char	**new_environ;
+	int		i;
+	int		result;
 
+	g_env_copy = __init__env();
 	if (!(*g_env_copy))
 	{
 		*g_env_copy = create_env_copy();
 		if (!(*g_env_copy))
 			return (1);
 	}
-
 	result = update_env_var(var);
 	if (result != 2)
 		return (result);
-
 	i = 0;
 	while ((*g_env_copy)[i])
 		i++;
 	new_environ = malloc(sizeof(char *) * (i + 2));
 	if (!new_environ)
 		return (1);
-
 	i = 0;
 	while ((*g_env_copy)[i])
 	{
@@ -127,16 +126,19 @@ static int add_env_var(char *var)
 	return (0);
 }
 
-static int is_critical_var(const char *var)
+static int	is_critical_var(const char *var)
 {
-	const char *critical[] = {"PATH", "HOME", "USER", "SHELL", NULL};
-	int i, len;
+	const char	*critical[5];
+	int			i;
+	int			len;
 
+	ft_memcpy(critical, (char *){"PATH", "HOME", "USER", "SHELL", NULL}, \
+				sizeof(critical));
 	i = 0;
 	while (critical[i])
 	{
 		len = strlen(critical[i]);
-		if (strncmp(var, critical[i], len) == 0 &&
+		if (strncmp(var, critical[i], len) == 0 && \
 			(var[len] == '=' || var[len] == '\0'))
 			return (1);
 		i++;
@@ -144,12 +146,14 @@ static int is_critical_var(const char *var)
 	return (0);
 }
 
-int ft_export(char **argv)
+int	ft_export(char **argv)
 {
-	char ***g_env_copy = __init__env();
-	int i;
-	char *equals;
+	char	***g_env_copy;
+	int		i;
+	char	*equals;
+	char	*backup;
 
+	g_env_copy = __init__env();
 	if (!argv[1])
 	{
 		i = 0;
@@ -161,7 +165,6 @@ int ft_export(char **argv)
 		}
 		return (0);
 	}
-
 	i = 1;
 	while (argv[i])
 	{
@@ -175,7 +178,7 @@ int ft_export(char **argv)
 			}
 			if (is_critical_var(argv[i]))
 			{
-				char *backup = ft_strdup_env(argv[i]);
+				backup = ft_strdup_env(argv[i]);
 				if (!backup)
 					return (1);
 				if (add_env_var(argv[i]))

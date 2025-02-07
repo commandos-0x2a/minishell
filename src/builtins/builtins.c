@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/02/07 19:33:42 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/07 21:40:53 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,23 @@
 * Regular built-ins can run in child process (output only)
 * Shell built-ins must run in parent process (modify shell state)
 */
-int is_builtin(char *cmd)
+int	is_builtin(char *cmd)
 {
-    if (!cmd)
+	if (!cmd)
 		return (0);
-
-	if (ft_strcmp(cmd, "cd") == 0 ||
-		ft_strcmp(cmd, "exit") == 0 ||
-		ft_strcmp(cmd, "export") == 0 ||
+	if (ft_strcmp(cmd, "cd") == 0 || \
+		ft_strcmp(cmd, "exit") == 0 || \
+		ft_strcmp(cmd, "export") == 0 || \
 		ft_strcmp(cmd, "unset") == 0)
 		return (1);
-	if (ft_strcmp(cmd, "echo") == 0 ||
-		ft_strcmp(cmd, "pwd") == 0 ||
+	if (ft_strcmp(cmd, "echo") == 0 || \
+		ft_strcmp(cmd, "pwd") == 0 || \
 		ft_strcmp(cmd, "env") == 0)
 		return (2);
-    return (0);
+	return (0);
 }
 
-int handle_builtin(char **argv, int _exit)
+int	handle_builtin(char **argv, int _exit)
 {
 	int	ret;
 
@@ -43,15 +42,15 @@ int handle_builtin(char **argv, int _exit)
 	if (ft_strcmp(*argv, "cd") == 0)
 		ret = ft_cd(argv);
 	else if (ft_strcmp(*argv, "exit") == 0)
-		ret = ft_exit(argv); 
+		ret = ft_exit(argv);
 	else if (ft_strcmp(*argv, "export") == 0)
 		ret = ft_export(argv);
 	else if (ft_strcmp(*argv, "unset") == 0)
 		ret = ft_unset(argv);
 	else if (ft_strcmp(*argv, "echo") == 0)
-		ret = ft_echo(argv); 
+		ret = ft_echo(argv);
 	else if (ft_strcmp(*argv, "pwd") == 0)
-		ret = ft_pwd(argv); 
+		ret = ft_pwd(argv);
 	else if (ft_strcmp(*argv, "env") == 0)
 		ret = ft_env(argv);
 	else

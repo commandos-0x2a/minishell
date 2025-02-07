@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 21:01:46 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/04 21:02:11 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/07 21:54:18 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ int	ft_echo(char **argv)
 			ft_printf(" ");
 		i++;
 	}
-	
 	if (newline)
 		ft_printf("\n");
 	return (0);
