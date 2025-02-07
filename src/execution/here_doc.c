@@ -6,11 +6,14 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 15:40:21 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/07 19:49:27 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "get_next_line.h"
+
+/*
 
 static void handle_heredoc_signal(int sig)
 {
@@ -34,12 +37,6 @@ static int setup_heredoc_signals(void)
 	return (0);
 }
 
-static int here_doc_handler(char *limiter, int out_fd)
-{
-	char *line;
-	size_t limiter_len;
-
-	limiter_len = ft_strlen(limiter);
 	*heredoc_active() = 1;
 	save_signal_handlers();
 	if (setup_heredoc_signals() == -1)
@@ -49,61 +46,63 @@ static int here_doc_handler(char *limiter, int out_fd)
 		return (-1);
 	}
 
+	...
+	
+	*heredoc_active() = 0;
+	restore_signal_handlers();
+*/
+
+static int	here_doc_start_read(char *limiter, int out_fd)
+{
+	char	*line;
+	size_t	limiter_len;
+
+	limiter_len = ft_strlen(limiter);
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
+		if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
 			write(STDOUT_FILENO, "> ", 2);
 		line = get_next_line(STDIN_FILENO);
 		if (!line)
 		{
-			if (isatty(STDIN_FILENO))
-				ft_fprintf(2, "\n" NAME ": warning: here-document delimited by end-of-file (wanted `%s`)\n", limiter);
-			break;
+			if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
+				ft_fprintf(2, "\n" NAME ": warning: " \
+						"here-document delimited by " \
+						"end-of-file (wanted `%s`)\n", limiter);
+			break ;
 		}
-		if (ft_strncmp(line, limiter, limiter_len) == 0 &&
+		if (ft_strncmp(line, limiter, limiter_len) == 0 && \
 			(line[limiter_len] == '\n' || line[limiter_len] == '\0'))
 		{
 			free(line);
-			break;
+			break ;
 		}
 		write(out_fd, line, ft_strlen(line));
 		free(line);
 	}
-	*heredoc_active() = 0;
-	restore_signal_handlers();
 	return (0);
 }
 
-static int here_doc_handler2(char *limiter)
+int	here_doc(char **tokens)
 {
-	int pipe_fd[2];
+	int	fd;
+	int	pipe_fd[2];
 
-	if (pipe(pipe_fd) == -1)
-		return (-1);
-	if (here_doc_handler(limiter, pipe_fd[1]) == -1)
-	{
-		close(pipe_fd[1]);
-		close(pipe_fd[0]);
-		return (-1);
-	}
-	close(pipe_fd[1]);
-	return (pipe_fd[0]);
-}
-
-int here_doc(char **tokens, int fd)
-{
+	fd = -1;
 	while (*tokens)
 	{
 		if (ft_strcmp(*tokens, "<<") == 0)
 		{
-			if (fd > 0)
+			if (fd > -1)
 				close(fd);
-			fd = here_doc_handler2(*++tokens);
-			if (fd == -1)
+			if (pipe(pipe_fd) == -1)
 			{
-				perror(NAME ": here_doc");
-				return (-1);
+				perror(NAME": pipe here doc");
+				return (-2);
 			}
+			here_doc_start_read(*++tokens, pipe_fd[1]);
+			close(pipe_fd[1]);
+			fd = pipe_fd[0];
 		}
 		tokens++;
 	}

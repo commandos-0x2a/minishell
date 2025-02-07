@@ -1,13 +1,12 @@
 NAME	= minishell
 
-# Compiler settings
 CC			= cc
 LDFLAGS		= -L./libft -lft -lreadline -lncurses
-INCLUDES	= -I./libft/include -I./include
-CFLAGS		:= -Wall -Wextra -Werror -g $(INCLUDES)
+CFLAGS		= -Wall -Wextra -Werror -g
+CPPFLAGS	= -I./libft/include -I./include
 
-SRC_DIR = src
-BUILD_DIR = build
+SRCDIR = src
+OBJDIR = build
 
 FILES = main						\
 		utils/ft_join_path			\
@@ -16,8 +15,9 @@ FILES = main						\
 		utils/get_full_path			\
 		\
 		utils/readline_handler		\
-		utils/signals					\
-		utils/config					\
+		utils/signals				\
+		utils/config				\
+		utils/ft_free_array_str		\
 		\
 		expanders/str_expander	\
 		expanders/wildcard		\
@@ -43,11 +43,9 @@ FILES = main						\
 		builtins/test 		\
 		builtins/export		\
 		builtins/unset		\
-		\
-		gnl/get_next_line_bonus	\
-		gnl/get_next_line_utils_bonus \
-		
-OBJECTS = $(FILES:%=$(BUILD_DIR)/%.o)
+#		
+
+OBJECTS = $(FILES:%=$(OBJDIR)/%.o)
 
 all: libft $(NAME)
 
@@ -59,17 +57,16 @@ libft:
 $(NAME): $(OBJECTS) libft/libft.a
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS)
 	$(MAKE) -C libft clean
+	rm -f $(OBJECTS)
 
 fclean: clean
 	rm -f $(NAME)
-	$(MAKE) -C libft fclean
 
 re: fclean all
 

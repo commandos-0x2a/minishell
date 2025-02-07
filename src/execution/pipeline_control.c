@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 15:35:54 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/07 19:29:41 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,14 @@ int	pipeline_check_syntax(char **tokens)
 {
 	char	**next_command;
 	int		is_pipe;
-	
+
 	while (*tokens)
 	{
 		next_command = get_next_command(tokens, &is_pipe);
 		if (is_pipe && *++next_command == NULL)
 		{
 			ft_fprintf(2, NAME": syntax error `|'\n");
-			return (-1); // syntax error
+			return (-1);
 		}
 		tokens = next_command;
 	}
@@ -50,7 +50,7 @@ int	pipeline_control(char **tokens)
 	char	**next_command;
 	int		is_pipe;
 	int		prev_is_pipe;
-    int     fd;
+	int		fd;
 	int		proc_pid;
 
 	fd = 0;
@@ -63,7 +63,7 @@ int	pipeline_control(char **tokens)
 			*next_command++ = NULL;
 		proc_pid = command_execution(tokens, fd, &fd, is_pipe, prev_is_pipe);
 		if (proc_pid == -1)
-			break;
+			break ;
 		prev_is_pipe = is_pipe;
 		tokens = next_command;
 	}

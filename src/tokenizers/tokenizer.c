@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 16:02:06 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/07 16:55:41 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	operation_len(char *s)
 
 static int	is_operation(char *s)
 {
-	return (ft_strncmp(s, "&&", 2) == 0 || *s == '|' || *s == '<' || *s == '>');
+	return (operation_len(s) > 0);
 }
 
 /*
@@ -82,16 +82,16 @@ char	**tokenizer(char *s, int i)
 	if (p == s && !*s)
 		return (ft_calloc(i + 1, sizeof(char *)));
 	s += operation_len(p);
+	p = ft_substr(p, 0, s - p);
+	if (!p)
+		return (NULL);
 	if (!*s || is_operation(p) || is_operation(s) > 0)
 		tokens = tokenizer(s, i + 1);
 	else
 		tokens = tokenizer(s + 1, i + 1);
 	if (!tokens)
-		return (NULL);
-	p = ft_substr(p, 0, s - p);
-	if (!p)
 	{
-		free(tokens);
+		free(p);
 		return (NULL);
 	}
 	tokens[i] = p;

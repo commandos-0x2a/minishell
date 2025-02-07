@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/02/07 15:04:20 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/07 20:23:02 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,6 @@
 #include <stdlib.h>
 
 struct termios	save_termios;
-
-
-
 
 char *ft_itoa_kur(int n);
 

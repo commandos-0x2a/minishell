@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/10 19:49:49 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/07 19:33:42 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int handle_builtin(char **argv, int _exit)
 	else if (ft_strcmp(*argv, "env") == 0)
 		ret = ft_env(argv);
 	else
-		return (1); // Command is not a recognized built-in
+		return (1);
 	if (_exit)
 		exit(ret);
 	return (ret);
