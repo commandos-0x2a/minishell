@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_control.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/10 19:37:29 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/07 15:35:54 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**get_next_pipeline(char **tokens, int *is_pipe)
+static char	**get_next_command(char **tokens, int *is_pipe)
 {
 	*is_pipe = 0;
 	while (*tokens)
@@ -27,9 +27,27 @@ char	**get_next_pipeline(char **tokens, int *is_pipe)
 	return (tokens);
 }
 
+int	pipeline_check_syntax(char **tokens)
+{
+	char	**next_command;
+	int		is_pipe;
+	
+	while (*tokens)
+	{
+		next_command = get_next_command(tokens, &is_pipe);
+		if (is_pipe && *++next_command == NULL)
+		{
+			ft_fprintf(2, NAME": syntax error `|'\n");
+			return (-1); // syntax error
+		}
+		tokens = next_command;
+	}
+	return (0);
+}
+
 int	pipeline_control(char **tokens)
 {
-	char	**next_pipeline;
+	char	**next_command;
 	int		is_pipe;
 	int		prev_is_pipe;
     int     fd;
@@ -37,24 +55,17 @@ int	pipeline_control(char **tokens)
 
 	fd = 0;
 	prev_is_pipe = 0;
-	proc_pid = -1;
+	proc_pid = 0;
 	while (*tokens)
 	{
-		next_pipeline = get_next_pipeline(tokens, &is_pipe);
-
-		*next_pipeline = NULL;
-
-		if (is_pipe && *++next_pipeline == NULL)
-		{
-			ft_fprintf(2, NAME": syntax error `|'\n");
-			return (-1); // syntax error
-		}
+		next_command = get_next_command(tokens, &is_pipe);
+		if (is_pipe)
+			*next_command++ = NULL;
 		proc_pid = command_execution(tokens, fd, &fd, is_pipe, prev_is_pipe);
 		if (proc_pid == -1)
 			break;
-		
 		prev_is_pipe = is_pipe;
-		tokens = next_pipeline;
+		tokens = next_command;
 	}
 	return (wait_children(proc_pid));
 }

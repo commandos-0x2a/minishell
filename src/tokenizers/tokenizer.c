@@ -6,10 +6,9 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 09:28:14 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/07 16:02:06 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "minishell.h"
 
@@ -27,7 +26,6 @@ static int	is_operation(char *s)
 {
 	return (ft_strncmp(s, "&&", 2) == 0 || *s == '|' || *s == '<' || *s == '>');
 }
-
 
 /*
 * Let me explain what this function does:
@@ -73,7 +71,7 @@ char	**tokenizer(char *s, int i)
 				break ;
 		}
 		if (is_operation(s) && nb_bracket == 0)
-			break ; 
+			break ;
 		s++;
 	}
 	if (nb_bracket != 0 || s == NULL)

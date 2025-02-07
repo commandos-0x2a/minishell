@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:19:51 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/07 13:20:13 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/07 16:00:54 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,6 @@ char	*get_argv0(char **tokens)
 			|| !ft_strcmp(*tokens, "<") \
 			|| !ft_strcmp(*tokens, ">"))
 			tokens++;
-		else if (!ft_strncmp(*tokens, "<<", 2) \
-				|| !ft_strncmp(*tokens, ">>", 2) \
-				|| !ft_strncmp(*tokens, "<", 1) \
-				|| !ft_strncmp(*tokens, ">", 1))
-			;
 		else
 			return (*tokens);
 		tokens++;

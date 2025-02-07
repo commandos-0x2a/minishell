@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/11 20:31:33 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/07 15:40:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,17 +99,6 @@ int here_doc(char **tokens, int fd)
 			if (fd > 0)
 				close(fd);
 			fd = here_doc_handler2(*++tokens);
-			if (fd == -1)
-			{
-				perror(NAME ": here_doc");
-				return (-1);
-			}
-		}
-		else if (ft_strncmp(*tokens, "<<", 2) == 0)
-		{
-			if (fd > 0)
-				close(fd);
-			fd = here_doc_handler2(*tokens + 2);
 			if (fd == -1)
 			{
 				perror(NAME ": here_doc");

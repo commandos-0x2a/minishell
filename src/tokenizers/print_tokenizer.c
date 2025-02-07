@@ -1,23 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   print_tokenizer.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/07 16:00:58 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/02/07 16:01:10 by yaltayeh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	print_tokenizer(char *line, int indent)
 {
-	char	**argv;
+	char	**tokens;
 	int		i;
 
-	argv = tokenizer(line, 0);
-	if (!argv)
+	tokens = tokenizer(line, 0);
+	if (!tokens)
 		return ;
 	i = 0;
-	while (argv[i])
+	while (tokens[i])
 	{
-		if (argv[i][0] == '(')
-			{
-				argv[i][ft_strlen(argv[i]) - 1] = '\0';
-				print_tokenizer(argv[i] + 1, indent + 4);
-			}
+		if (tokens[i][0] == '(')
+		{
+			tokens[i][ft_strlen(tokens[i]) - 1] = '\0';
+			tokens[i]++;
+			print_tokenizer(tokens[i], indent + 4);
+		}
 		else
-			printf("%-*s%i: %s\n", indent, "", i, argv[i]);
+			printf("%-*s%i: %s\n", indent, "", i, tokens[i]);
 		i++;
 	}
 }

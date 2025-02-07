@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_handler.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/10 19:34:22 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/07 15:54:44 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	in_redirection(char *token, int _dup)
+static int	in_redirection(char *token, int _dup)
 {
 	int	fd;
 	char	*file;
@@ -40,7 +40,7 @@ int	in_redirection(char *token, int _dup)
 	return (0);
 }
 
-int	out_append(char *token, int _dup)
+static int	out_append(char *token, int _dup)
 {
 	int fd;
 	char	*file;
@@ -69,7 +69,7 @@ int	out_append(char *token, int _dup)
 	return (0);
 }
 
-int	out_redirection(char *token, int _dup)
+static int	out_redirection(char *token, int _dup)
 {
 	int 	fd;
 	char	*file;
@@ -105,25 +105,15 @@ int	redirection_handler(char **tokens, int _dup)
 	while (*tokens)
 	{
 		if (ft_strcmp(*tokens, "<<") == 0)
-			tokens++;
-		else if (ft_strncmp(*tokens, "<<", 2) == 0)
-			/* handle here-document redirection */;
+			++tokens; /* handle here-document redirection */
 		else if (ft_strcmp(*tokens, "<") == 0)
 			status = in_redirection(*++tokens, _dup);
-		else if (ft_strncmp(*tokens, "<", 1) == 0)
-			status = in_redirection(*tokens + 1, _dup);
 		else if (ft_strcmp(*tokens, ">>") == 0)
 			status = out_append(*++tokens, _dup);
-		else if (ft_strncmp(*tokens, ">>", 2) == 0)
-			status = out_append(*tokens + 2, _dup);
 		else if (ft_strcmp(*tokens, ">") == 0)
 			status = out_redirection(*++tokens, _dup);
-		else if (ft_strncmp(*tokens, ">", 1) == 0)
-			status = out_redirection(*tokens + 1, _dup);
-			
 		if (status != 0)
 			return (status);
-
 		tokens++;
 	}
 	return (0);
