@@ -6,12 +6,28 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/04 13:07:31 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/07 09:28:14 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "minishell.h"
+
+static int	operation_len(char *s)
+{
+	if (ft_strncmp(s, "&&", 2) == 0 || ft_strncmp(s, "||", 2) == 0 \
+		|| ft_strncmp(s, ">>", 2) == 0 || ft_strncmp(s, "<<", 2) == 0)
+		return (2);
+	else if (*s == '|' || *s == '<' || *s == '>')
+		return (1);
+	return (0);
+}
+
+static int	is_operation(char *s)
+{
+	return (ft_strncmp(s, "&&", 2) == 0 || *s == '|' || *s == '<' || *s == '>');
+}
+
 
 /*
 * Let me explain what this function does:
@@ -56,7 +72,7 @@ char	**tokenizer(char *s, int i)
 			if (!s)
 				break ;
 		}
-		if ((*s == '|' || ft_strncmp(s, "&&", 2) == 0 || *s == '<' || *s == '>') && nb_bracket == 0)
+		if (is_operation(s) && nb_bracket == 0)
 			break ; 
 		s++;
 	}
@@ -67,20 +83,11 @@ char	**tokenizer(char *s, int i)
 	}
 	if (p == s && !*s)
 		return (ft_calloc(i + 1, sizeof(char *)));
-	if (ft_strncmp(p, "&&", 2) == 0 || ft_strncmp(p, "||", 2) == 0 \
-		|| ft_strncmp(p, ">>", 2) == 0 || ft_strncmp(p, "<<", 2) == 0)
-		s += 2;
-	else if (*p == '|' || *p == '<' || *p == '>')
-		s++;
-	if (!*s \
-		|| *s == '|' || ft_strncmp(s, "&&", 2) == 0 || ft_strncmp(s, "||", 2) == 0 \
-		|| *p == '|' || ft_strncmp(p, "&&", 2) == 0 || ft_strncmp(p, "||", 2) == 0 \
-		|| *s == '<' || *s == '>' || ft_strncmp(s, "<<", 2) == 0 || ft_strncmp(s, ">>", 2) == 0 \
-		|| *p == '>' || *p == '>' || ft_strncmp(p, "<<", 2) == 0 || ft_strncmp(p, ">>", 2) == 0)
+	s += operation_len(p);
+	if (!*s || is_operation(p) || is_operation(s) > 0)
 		tokens = tokenizer(s, i + 1);
 	else
 		tokens = tokenizer(s + 1, i + 1);
-
 	if (!tokens)
 		return (NULL);
 	p = ft_substr(p, 0, s - p);
