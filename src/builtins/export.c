@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 12:00:00 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/02/07 21:51:45 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 07:41:34 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ static int	is_critical_var(const char *var)
 	int			i;
 	int			len;
 
-	ft_memcpy(critical, (char *){"PATH", "HOME", "USER", "SHELL", NULL}, \
+	ft_memcpy(critical, (char *[]){"PATH", "HOME", "USER", "SHELL", NULL}, \
 				sizeof(critical));
 	i = 0;
 	while (critical[i])

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/01/10 11:55:45 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 16:31:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,7 +220,7 @@ char	*expand_str(char *str)
 * echo "Path: $PATH"   -> Path: /usr/bin:/bin
 * echo $?             -> 0 (or last exit status)
 */
-void argv_expander(char **argv)
+char	**argv_expander(char **argv)
 {
 	char	*expanded;
 	int		i;
@@ -232,4 +232,5 @@ void argv_expander(char **argv)
 		argv[i] = expanded;
 		i++;
 	}
+	return (argv);
 }

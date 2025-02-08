@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/02/07 20:23:02 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 16:30:52 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,32 +68,29 @@ int	terminal_reset(int fd)
 
 int main(int argc, char **argv)
 {
-	char *line;
-	int is_test;
-	t_config config;
+	char		*line;
+	int			is_test;
+	t_config	config;
 
 	is_test = 0;
-
 	// Load configuration
 	load_config(&config);
 	setup_signals();
+	init_shell_level();
 	// terminal_config(STDIN_FILENO);
 
 	if (ft_strcmp(config.prompt_style, "colorful") == 0)
-	{
 		ft_fprintf(2, "colorful\n");
-	}
 	else
-	{
 		ft_fprintf(2, "normal\n");
-	}
 	if (argc == 2 && ft_strcmp(argv[1], "test") == 0)
 		is_test = 1;
 	while (1)
 	{
-		setup_signals();
+		// setup_signals();
 		line = readline(get_prompt());
-		reset_signals();
+		// reset_signals();
+
 		if (!line) // ctrl-D handling
 		{
 			printf("\nexit\n");
@@ -103,14 +100,15 @@ int main(int argc, char **argv)
 		if (*line)
 		{
 			// terminal_config(STDIN_FILENO);
-			reset_signals();
+			// reset_signals();
 			if (is_test)
 				print_tokenizer(line, 0);
 			else
 				flow_control(line);
-			terminal_reset(STDIN_FILENO);
+			// terminal_reset(STDIN_FILENO);
 		}
-		free(line);
+		else
+			free(line);
 	}
 
 	// Save config before exit

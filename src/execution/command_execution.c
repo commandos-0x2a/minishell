@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 19:36:03 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 16:23:52 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 {
 	if (is_pipe)
 		close(pipefd[0]);
-	if (in_fd > 0)
+	if (is_pipe & IS_PREV_PIPE)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
 		{
@@ -26,7 +26,7 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 		if (close(in_fd) == -1)
 			perror(NAME"pipex close (in_fd)");
 	}
-	if (is_pipe)
+	if (is_pipe & IS_PIPE)
 	{
 		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
 		{
@@ -44,20 +44,31 @@ static void	run_command(char **argv)
 	char		full_path[PATH_MAX];
 	extern char	**environ;
 	int			err;
+	char		*tmp;
 
 	if (!argv) // command not exist
 		exit(0);
 	// Check if the first character of the command is an opening parenthesis
 	if ((*argv)[0] == '(')
 	{
-		(*argv)[ft_strlen(*argv) - 1] = '\0';
-		(*argv)++;
-		exit(flow_control(*argv));
+		tmp = *argv;
+		tmp[ft_strlen(tmp) - 1] = '\0';
+		tmp++;
+		tmp = ft_strdup(tmp);
+		if (!tmp)
+		{
+			perror(NAME"allocate subshell line");
+			exit(1);
+		}
+		exit(flow_control(tmp));
 	}
-	// Allocate memory for argv.
-	argv_expander(argv);
 
-	// make malloc for argv
+	argv = argv_expander(argv);
+	if (!argv)
+	{
+		perror(NAME": wildcards expander");
+		exit(-1);
+	}
 	argv = handle_wildcards(argv);
 	if (!argv)
 	{
@@ -71,63 +82,85 @@ static void	run_command(char **argv)
 	if (err == 0)
 	{
 		execve(full_path, argv, environ);
-		perror(NAME);
+		perror(NAME"execve");
 		err = 1;
 	}
 	exit(err);
 }
 
-int command_execution(char **tokens, int in_fd, int *out_fd, int is_pipe, int prev_is_pipe)
+int command_execution(t_data *data, char **tokens, \
+						int *fd,\
+						int is_pipe)
 {
 	int			pid;
 	int			pipefd[2];
 	int			here_doc_fd;
 
-	here_doc_fd = here_doc(tokens);
-	if (here_doc_fd == -2)
-		return (-1);
-
+	(void)data;
 	// Run built-in parent.
-	if (!is_pipe && !prev_is_pipe && is_builtin(get_argv0(tokens)) == 1)
+	if ((is_pipe & IS_PIPE_MASK) == 0 && is_builtin(get_argv0(tokens)) == 1)
 	{
+		here_doc_fd = here_doc(tokens);
+		if (here_doc_fd == -2)
+		{
+			if (is_pipe & IS_PREV_PIPE)
+				close(*fd);
+			return (-1);
+		}
 		redirection_handler(tokens, here_doc_fd, 0);
 		if (here_doc_fd > -1)
-		close(here_doc_fd);
+			close(here_doc_fd);
 		return (handle_builtin(get_argv(tokens), 0));
 	}
-
-	*out_fd = 0;
-	if (is_pipe && pipe(pipefd) == -1)
-		return (-1);
-
-	// Fork and return pid to parent process.
-	pid = fork();
-	if (pid != 0)
+	if ((is_pipe & IS_PIPE) && pipe(pipefd) == -1)
 	{
-		/* ========== Parent Process ==========*/
-		// Close unused file descriptors.
-		if (in_fd > 0)
-			close(in_fd);
-		if (is_pipe)
+		if (is_pipe & IS_PREV_PIPE)
 		{
-			close(pipefd[1]);
-			*out_fd = pipefd[0];
-			if (pid == -1)
+			close(*fd);
+			*fd = -1;
+		}
+		return (-1);
+	}
+	pid = fork();
+	if (pid == 0)
+	{
+		/* ========== Child Process ========== */
+		here_doc_fd = here_doc(tokens);
+		if (here_doc_fd == -2)
+		{
+			if (is_pipe & IS_PIPE)
 			{
 				close(pipefd[0]);
-				*out_fd = 0;
+				close(pipefd[1]);
 			}
+			if (is_pipe & IS_PREV_PIPE)
+				close(*fd);
+			exit(1);
 		}
-		return (pid);
-		/* ========== Bye parent ==========*/
-    }
-	
-	/* ========== Child Process ========== */
-	if (pipex_handler(is_pipe, in_fd, pipefd) != 0)
-		exit(1);
+		if (pipex_handler(is_pipe, *fd, pipefd) != 0)
+			exit(1);
 
-	if (redirection_handler(tokens, here_doc_fd, 1) != 0)
-		exit(-1);
-	run_command(get_argv(tokens));
-	exit(1);
+		if (redirection_handler(tokens, here_doc_fd, 1) != 0)
+			exit(-1);
+		if (here_doc_fd > -1)
+			close(here_doc_fd);
+		run_command(get_argv(tokens));
+		exit(1);
+	}
+	/* ========== Parent Process ==========*/
+	// Close unused file descriptors.
+	if (is_pipe & IS_PREV_PIPE) // is_prev_pipe
+		close(*fd);
+	*fd = -1;
+	if (is_pipe & IS_PIPE) // is_pipe
+	{
+		close(pipefd[1]);
+		*fd = pipefd[0];
+		if (pid == -1)
+		{
+			close(pipefd[0]);
+			*fd = -1;
+		}
+	}
+	return (pid);
 }

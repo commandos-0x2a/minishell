@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 17:47:06 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 17:22:30 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 07:57:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,7 @@ int	wait_children(int target_pid)
 		}
 		child_pid = waitpid(-1, &wstatus, WUNTRACED);
 	}
+	if (target_pid == -1)
+		return (1);
 	return (exit_code);
 }

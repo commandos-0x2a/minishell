@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 17:26:15 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/02/07 21:54:11 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 07:40:11 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	ft_test(char **argv)
 	value = ft_getenv("MY_VAR");
 	ft_fprintf(2, "Current MY_VAR=%s\n", value);
 	free(value);
-	i++;
+	i = 0;
 	while (environ[i])
 	{
 		if (ft_strncmp(environ[i], "MY_VAR=", 7) == 0)

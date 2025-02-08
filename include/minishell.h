@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 19:49:03 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 07:33:14 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,13 @@
 # define CYAN "\033[36m"
 # define WHITE "\033[37m"
 
+typedef struct s_data
+{
+	char	**tokens;
+	int		nb_tokens;
+}	t_data;
+
+
 // Terminal configuration
 char *get_prompt(void);
 void handle_line(char *line);
@@ -75,17 +82,23 @@ char *get_argv0(char **tokens);
 char **get_argv(char **tokens);
 
 /*  expander  */
-char *expand_str(char *str);
-void argv_expander(char **argv);
+char	*expand_str(char *str);
+char	**argv_expander(char **argv);
 
 /*  wildcarda  */
 char **handle_wildcards(char **argv);
 
 /*  execution  */
+# define IS_PIPE		0b01
+# define IS_PREV_PIPE	0b10
+# define IS_PIPE_MASK	0b11
+
 int	redirection_handler(char **tokens, int here_doc_fd, int change_std);
-int command_execution(char **tokens, int in_fd, int *out_fd, int is_pipe, int prev_is_pipe);
-int pipeline_control(char **tokens);
-int flow_control(char *chain);
+int command_execution(t_data *data, char **tokens, \
+						int *fd,\
+						int is_pipe);
+int	pipeline_control(t_data *data, char **pipeline);
+int flow_control(char *line);
 int wait_children(int target_pid);
 int here_doc(char **tokens);
 
