@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/08 17:52:11 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 20:41:49 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ static void	run_command(t_tokens *tok, char **argv)
 		tmp[ft_strlen(tmp) - 1] = '\0';
 		tmp++;
 		tmp = ft_strdup(tmp);
+		free_tokens(tok);
 		if (!tmp)
 		{
 			perror(NAME"allocate subshell line");
@@ -64,6 +65,7 @@ static void	run_command(t_tokens *tok, char **argv)
 	}
 
 	argv = argv_expander(argv);
+	free_tokens(tok);
 	if (!argv)
 	{
 		perror(NAME": wildcards expander");
@@ -88,9 +90,24 @@ static void	run_command(t_tokens *tok, char **argv)
 	exit(err);
 }
 
-int command_execution(t_tokens *tok, char **tokens, \
-						int *fd,\
-						int is_pipe)
+static int	run_builtin_command(t_tokens *tok, char **tokens, int fd, int is_pipe)
+{
+	int	here_doc_fd;
+
+	here_doc_fd = here_doc(tokens);
+	if (here_doc_fd == -2)
+	{
+		if (is_pipe & IS_PREV_PIPE)
+			close(fd);
+		return (-1);
+	}
+	redirection_handler(tokens, here_doc_fd, 0);
+	if (here_doc_fd > -1)
+		close(here_doc_fd);
+	return (handle_builtin(tok, get_argv(tokens), 0));
+}
+
+int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 {
 	int	pid;
 	int	pipefd[2];
@@ -98,19 +115,10 @@ int command_execution(t_tokens *tok, char **tokens, \
 
 	// Run built-in parent.
 	if ((is_pipe & IS_PIPE_MASK) == 0 && is_builtin(get_argv0(tokens)) == 1)
-	{
-		here_doc_fd = here_doc(tokens);
-		if (here_doc_fd == -2)
-		{
-			if (is_pipe & IS_PREV_PIPE)
-				close(*fd);
-			return (-1);
-		}
-		redirection_handler(tokens, here_doc_fd, 0);
-		if (here_doc_fd > -1)
-			close(here_doc_fd);
-		return (handle_builtin(tok, get_argv(tokens), 0));
-	}
+		return (run_builtin_command(tok, tokens, *fd, is_pipe));
+	
+	
+	
 	if ((is_pipe & IS_PIPE) && pipe(pipefd) == -1)
 	{
 		if (is_pipe & IS_PREV_PIPE)
@@ -120,6 +128,9 @@ int command_execution(t_tokens *tok, char **tokens, \
 		}
 		return (-1);
 	}
+
+
+	
 	pid = fork();
 	if (pid == 0)
 	{
