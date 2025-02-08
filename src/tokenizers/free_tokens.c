@@ -1,38 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
+/*   free_tokens.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/04 21:30:57 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/02/08 17:51:29 by yaltayeh         ###   ########.fr       */
+/*   Created: 2025/02/08 17:32:23 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/02/08 17:34:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_exit(char **argv, int *_exit)
+void	free_tokens(t_tokens *tok)
 {
-	int	status;
+	int	i;
 
-	ft_printf("exit\n");
-	if (!argv[1])
+	i = 0;
+	if (tok->tokens)
 	{
-		*_exit = 1;
-		return (0);
+		while (i < tok->nb_tokens)
+		{
+			if (tok->tokens[i])
+				free(tok->tokens[i]);
+			tok->tokens[i] = NULL;
+			i++;
+		}
+		free(tok->tokens);
+		tok->tokens = NULL;
 	}
-	status = ft_atoi(argv[1]);
-	if (argv[2])
-	{
-		ft_fprintf(2, NAME": exit: too many arguments\n");
-		return (1);
-	}
-	else if (ft_str_is_numeric(argv[1]) == 0)
-	{
-		ft_fprintf(2, NAME": exit: %s: numeric argument required\n", argv[1]);
-		status = 255;
-	}
-	*_exit = 1;
-	return (status);
+	tok->nb_tokens = 0;
 }

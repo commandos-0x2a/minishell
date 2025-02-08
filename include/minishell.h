@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/08 07:33:14 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 17:51:41 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,11 @@
 # define CYAN "\033[36m"
 # define WHITE "\033[37m"
 
-typedef struct s_data
+typedef struct s_tokens
 {
 	char	**tokens;
 	int		nb_tokens;
-}	t_data;
+}	t_tokens;
 
 
 // Terminal configuration
@@ -76,10 +76,12 @@ void handle_line(char *line);
 void cleanup_shell(void);
 
 /*  tokenizer  */
-void print_tokenizer(char *line, int indent);
-char **tokenizer(char *s, int i);
-char *get_argv0(char **tokens);
-char **get_argv(char **tokens);
+void		print_tokenizer(char *line, int indent);
+t_tokens	tokenizer(char *s);
+char		*get_argv0(char **tokens);
+char		**get_argv(char **tokens);
+void		free_tokens(t_tokens *tok);
+
 
 /*  expander  */
 char	*expand_str(char *str);
@@ -94,22 +96,22 @@ char **handle_wildcards(char **argv);
 # define IS_PIPE_MASK	0b11
 
 int	redirection_handler(char **tokens, int here_doc_fd, int change_std);
-int command_execution(t_data *data, char **tokens, \
+int command_execution(t_tokens *tok, char **tokens, \
 						int *fd,\
 						int is_pipe);
-int	pipeline_control(t_data *data, char **pipeline);
+int	pipeline_control(t_tokens *tok, char **pipeline);
 int flow_control(char *line);
 int wait_children(int target_pid);
 int here_doc(char **tokens);
 
 /*  Built-in commands  */
+int	handle_builtin(t_tokens *tok, char **argv, int _exit);
+int		is_builtin(char *cmd);
 int		ft_cd(char **argv);
 int		ft_echo(char **argv);
 int		ft_pwd(char **argv);
 int		ft_env(char **argv);
-int		ft_exit(char **argv);
-int		handle_builtin(char **argv, int _exit);
-int		is_builtin(char *cmd);
+int		ft_exit(char **argv, int *_exit);
 int		ft_test(char **argv);
 int		ft_export(char **argv);
 int		ft_unset(char **argv);

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 19:25:44 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 17:41:52 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ int	redirection_handler(char **tokens, int here_doc_fd, int change_std)
 		if (ft_strcmp(*tokens, "<<") == 0)
 		{
 			++tokens;
-			if (change_std && here_doc_fd > -1)
+			if (change_std && here_doc_fd > 0)
 				status = dup2(here_doc_fd, STDIN_FILENO);
 		}
 		else if (ft_strcmp(*tokens, "<") == 0)

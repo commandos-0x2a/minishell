@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/08 16:23:31 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 17:54:38 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	pipeline_check_syntax(char **tokens)
 	return (0);
 }
 
-int	pipeline_control(t_data *data, char **pipeline)
+int	pipeline_control(t_tokens *tok, char **pipeline)
 {
 	int		is_pipe;
 	int		fd;
@@ -61,8 +61,7 @@ int	pipeline_control(t_data *data, char **pipeline)
 		next_command = get_next_command(pipeline, &is_pipe);
 		if (is_pipe & IS_PIPE)
 			*next_command++ = NULL;
-		proc_pid = command_execution(data, pipeline, &fd, is_pipe);
-		ft_fprintf(2, "proc: %d\n", proc_pid);
+		proc_pid = command_execution(tok, pipeline, &fd, is_pipe);
 		if (proc_pid == -1)
 			break ;
 		is_pipe <<= 1;

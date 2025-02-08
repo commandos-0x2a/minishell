@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/08 07:57:50 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 17:45:42 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,19 +80,22 @@ static int	flow_check_syntax(char **tokens)
 
 int	flow_control(char *line)
 {
-	int		op;
-	int		test;
-	char	**pipeline;
-	char	**next_pipeline;
-	t_data	data;
+	int			op;
+	int			test;
+	char		**pipeline;
+	char		**next_pipeline;
+	t_tokens	tok;
 
-	data.tokens = tokenizer(line, 0);
+	tok = tokenizer(line);
 	free(line);
-	if (!data.tokens)
+	if (!tok.tokens)
 		return (-1);
-	if (flow_check_syntax(data.tokens) == -1)
-		return (ft_free_array_str(data.tokens));
-	pipeline = data.tokens;
+	if (flow_check_syntax(tok.tokens) == -1)
+	{
+		free_tokens(&tok);
+		return (-1);
+	}
+	pipeline = tok.tokens;
 	test = 1; // cuz run first time
 	while (*pipeline)
 	{
@@ -103,11 +106,11 @@ int	flow_control(char *line)
 			*next_pipeline++ = NULL; // set operation token NULL and skip it
 		}
 		if (test)
-			test = !pipeline_control(&data, pipeline); // toggle cuz exec when success return (0)
+			test = !pipeline_control(&tok, pipeline); // toggle cuz exec when success return (0)
 		if (op == 2) // is op == OR toggle test
 			test = !test;
 		pipeline = next_pipeline;
 	}
-	// free tokens
+	free_tokens(&tok);
 	return (0);
 }

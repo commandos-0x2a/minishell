@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/08 16:23:52 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/08 17:52:11 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 	return (0);
 }
 
-static void	run_command(char **argv)
+static void	run_command(t_tokens *tok, char **argv)
 {
 	char		full_path[PATH_MAX];
 	extern char	**environ;
@@ -77,7 +77,7 @@ static void	run_command(char **argv)
 	}
 	// Check for built-in commands before getting full path and executing.
 	if (is_builtin(argv[0]))
-		handle_builtin(argv, 1);
+		handle_builtin(tok, argv, 1);
 	err = get_full_path(full_path, argv, "");
 	if (err == 0)
 	{
@@ -88,15 +88,14 @@ static void	run_command(char **argv)
 	exit(err);
 }
 
-int command_execution(t_data *data, char **tokens, \
+int command_execution(t_tokens *tok, char **tokens, \
 						int *fd,\
 						int is_pipe)
 {
-	int			pid;
-	int			pipefd[2];
-	int			here_doc_fd;
+	int	pid;
+	int	pipefd[2];
+	int	here_doc_fd;
 
-	(void)data;
 	// Run built-in parent.
 	if ((is_pipe & IS_PIPE_MASK) == 0 && is_builtin(get_argv0(tokens)) == 1)
 	{
@@ -110,7 +109,7 @@ int command_execution(t_data *data, char **tokens, \
 		redirection_handler(tokens, here_doc_fd, 0);
 		if (here_doc_fd > -1)
 			close(here_doc_fd);
-		return (handle_builtin(get_argv(tokens), 0));
+		return (handle_builtin(tok, get_argv(tokens), 0));
 	}
 	if ((is_pipe & IS_PIPE) && pipe(pipefd) == -1)
 	{
@@ -126,7 +125,7 @@ int command_execution(t_data *data, char **tokens, \
 	{
 		/* ========== Child Process ========== */
 		here_doc_fd = here_doc(tokens);
-		if (here_doc_fd == -2)
+		if (here_doc_fd == -1)
 		{
 			if (is_pipe & IS_PIPE)
 			{
@@ -142,13 +141,13 @@ int command_execution(t_data *data, char **tokens, \
 
 		if (redirection_handler(tokens, here_doc_fd, 1) != 0)
 			exit(-1);
-		if (here_doc_fd > -1)
+		if (here_doc_fd > 0)
 			close(here_doc_fd);
-		run_command(get_argv(tokens));
+		run_command(tok, get_argv(tokens));
 		exit(1);
 	}
 	/* ========== Parent Process ==========*/
-	// Close unused file descriptors.
+	// Close unused file descriptors from previous pipe.
 	if (is_pipe & IS_PREV_PIPE) // is_prev_pipe
 		close(*fd);
 	*fd = -1;
