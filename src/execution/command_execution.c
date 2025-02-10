@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_execution.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/08 20:41:49 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/10 21:30:41 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ static int	run_builtin_command(t_tokens *tok, char **tokens, int fd, int is_pipe
 	redirection_handler(tokens, here_doc_fd, 0);
 	if (here_doc_fd > -1)
 		close(here_doc_fd);
+
 	return (handle_builtin(tok, get_argv(tokens), 0));
 }
 
@@ -136,7 +137,7 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 	{
 		/* ========== Child Process ========== */
 		here_doc_fd = here_doc(tokens);
-		if (here_doc_fd == -1)
+		if (here_doc_fd == -2)
 		{
 			if (is_pipe & IS_PIPE)
 			{

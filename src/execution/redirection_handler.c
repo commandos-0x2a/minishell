@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_handler.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/08 17:41:52 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/10 21:27:40 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ int	redirection_handler(char **tokens, int here_doc_fd, int change_std)
 	int		status;
 
 	status = 0;
+
 	while (*tokens)
 	{
 		if (ft_strcmp(*tokens, "<<") == 0)
