@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_control.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/10 21:30:03 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/13 22:01:19 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static char	**get_next_command(char **tokens, int *is_pipe)
 	{
 		if (ft_strcmp(*tokens, "|") == 0)
 		{
+			*is_pipe <<= 1;
 			*is_pipe |= 1;
 			break ;
 		}
@@ -40,7 +41,6 @@ int	pipeline_check_syntax(char **tokens)
 			ft_fprintf(2, NAME": syntax error `|'\n");
 			return (-1);
 		}
-		is_pipe <<= 1;
 		tokens = next_command;
 	}
 	return (0);
@@ -64,7 +64,6 @@ int	pipeline_control(t_tokens *tok, char **pipeline)
 		proc_pid = command_execution(tok, pipeline, &fd, is_pipe);
 		if (proc_pid == -1)
 			break ;
-		is_pipe <<= 1;
 		pipeline = next_command;
 	}
 	return (wait_children(proc_pid));

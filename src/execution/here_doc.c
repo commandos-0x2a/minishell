@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/10 21:29:28 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/14 16:55:06 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,28 +83,27 @@ static int	here_doc_start_read(char *limiter, int out_fd)
 	return (0);
 }
 
-int	here_doc(char **tokens)
+int	here_doc(char **tokens, int *here_doc_fd)
 {
-	int	fd;
 	int	pipe_fd[2];
 
-	fd = -1;
+	*here_doc_fd = -1;
 	while (*tokens)
 	{
 		if (ft_strcmp(*tokens, "<<") == 0)
 		{
-			if (fd > -1)
-				close(fd);
+			if (*here_doc_fd > -1)
+				close(*here_doc_fd);
 			if (pipe(pipe_fd) == -1)
 			{
 				perror(NAME": pipe here doc");
-				return (-2);
+				return (-1);
 			}
 			here_doc_start_read(*++tokens, pipe_fd[1]);
 			close(pipe_fd[1]);
-			fd = pipe_fd[0];
+			*here_doc_fd = pipe_fd[0];
 		}
 		tokens++;
 	}
-	return (fd);
+	return (0);
 }
