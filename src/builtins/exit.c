@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 21:30:57 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/02/08 17:51:29 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/15 22:49:35 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ int	ft_exit(char **argv, int *_exit)
 {
 	int	status;
 
-	ft_printf("exit\n");
+	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
+		ft_printf("exit\n");
 	if (!argv[1])
 	{
 		*_exit = 1;

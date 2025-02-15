@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_control.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/13 22:01:19 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/15 22:50:03 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,21 @@ static char	**get_next_command(char **tokens, int *is_pipe)
 		{
 			*is_pipe <<= 1;
 			*is_pipe |= 1;
-			break ;
+			return (tokens);
 		}
 		tokens++;
 	}
+	*is_pipe <<= 1;
 	return (tokens);
 }
 
-int	pipeline_check_syntax(char **tokens)
+int	pipeline_check_syntax(char **tokens, char **tokens_brk)
 {
 	char	**next_command;
 	int		is_pipe;
 
 	is_pipe = 0;
-	while (*tokens)
+	while (*tokens && tokens < tokens_brk)
 	{
 		next_command = get_next_command(tokens, &is_pipe);
 		if ((is_pipe & IS_PIPE) && *++next_command == NULL)
