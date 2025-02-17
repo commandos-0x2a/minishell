@@ -3,17 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_control.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-<<<<<<< HEAD
 /*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
+/*   Created: 2025/01/04 23:32:02 by mkurkar          #+#    #+#             */
 /*   Updated: 2025/02/13 22:01:19 by mkurkar          ###   ########.fr       */
-=======
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/15 22:50:03 by yaltayeh         ###   ########.fr       */
->>>>>>> refs/remotes/origin/dev
 /*                                                                            */
 /* ************************************************************************** */
 
