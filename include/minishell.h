@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/08 17:51:41 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/14 15:53:49 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int command_execution(t_tokens *tok, char **tokens, \
 int	pipeline_control(t_tokens *tok, char **pipeline);
 int flow_control(char *line);
 int wait_children(int target_pid);
-int here_doc(char **tokens);
+int here_doc(char **tokens, int *here_doc_fd);
 
 /*  Built-in commands  */
 int	handle_builtin(t_tokens *tok, char **argv, int _exit);

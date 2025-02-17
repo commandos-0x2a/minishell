@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_execution.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/10 21:30:41 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/14 16:46:24 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,21 +90,10 @@ static void	run_command(t_tokens *tok, char **argv)
 	exit(err);
 }
 
-static int	run_builtin_command(t_tokens *tok, char **tokens, int fd, int is_pipe)
+static int	run_builtin_command(t_tokens *tok, char **tokens, int here_doc_fd)
 {
-	int	here_doc_fd;
-
-	here_doc_fd = here_doc(tokens);
-	if (here_doc_fd == -2)
-	{
-		if (is_pipe & IS_PREV_PIPE)
-			close(fd);
-		return (-1);
-	}
-	redirection_handler(tokens, here_doc_fd, 0);
-	if (here_doc_fd > -1)
-		close(here_doc_fd);
-
+	if (redirection_handler(tokens, here_doc_fd, 0) != 0)
+		return (1);
 	return (handle_builtin(tok, get_argv(tokens), 0));
 }
 
@@ -115,8 +104,11 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 	int	here_doc_fd;
 
 	// Run built-in parent.
+	if (here_doc(tokens, &here_doc_fd) != 0)
+		return (1);
+
 	if ((is_pipe & IS_PIPE_MASK) == 0 && is_builtin(get_argv0(tokens)) == 1)
-		return (run_builtin_command(tok, tokens, *fd, is_pipe));
+		return (run_builtin_command(tok, tokens, here_doc_fd));
 	
 	
 	
@@ -127,6 +119,8 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 			close(*fd);
 			*fd = -1;
 		}
+		if (here_doc_fd > -1)
+			close(here_doc_fd);
 		return (-1);
 	}
 
@@ -136,34 +130,19 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 	if (pid == 0)
 	{
 		/* ========== Child Process ========== */
-		here_doc_fd = here_doc(tokens);
-		if (here_doc_fd == -2)
-		{
-			if (is_pipe & IS_PIPE)
-			{
-				close(pipefd[0]);
-				close(pipefd[1]);
-			}
-			if (is_pipe & IS_PREV_PIPE)
-				close(*fd);
-			exit(1);
-		}
 		if (pipex_handler(is_pipe, *fd, pipefd) != 0)
 			exit(1);
-
 		if (redirection_handler(tokens, here_doc_fd, 1) != 0)
-			exit(-1);
-		if (here_doc_fd > 0)
-			close(here_doc_fd);
+			exit(126);
 		run_command(tok, get_argv(tokens));
 		exit(1);
 	}
 	/* ========== Parent Process ==========*/
 	// Close unused file descriptors from previous pipe.
-	if (is_pipe & IS_PREV_PIPE) // is_prev_pipe
+	if (is_pipe & IS_PREV_PIPE)
 		close(*fd);
 	*fd = -1;
-	if (is_pipe & IS_PIPE) // is_pipe
+	if (is_pipe & IS_PIPE)
 	{
 		close(pipefd[1]);
 		*fd = pipefd[0];
