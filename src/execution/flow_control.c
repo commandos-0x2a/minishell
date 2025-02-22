@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/15 22:48:31 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/22 22:45:10 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static char	**get_next_pipeline(char **tokens, int *op)
 	return (tokens);
 }
 
-static int	flow_check_syntax(char **tokens)
+int	flow_check_syntax(char **tokens)
 {
 	char	**next_pipeline;
 	int		op;
@@ -68,7 +68,7 @@ static int	flow_check_syntax(char **tokens)
 		next_pipeline = get_next_pipeline(tokens, &op);
 		if (op && *++next_pipeline == NULL)
 		{
-			ft_fprintf(2, NAME": syntax error in flow control\n");
+			ft_fprintf(2, PREFIX"syntax error in flow control\n");
 			return (-1);
 		}
 		if (pipeline_check_syntax(tokens, next_pipeline) != 0)

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 16:00:58 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/08 17:29:08 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/22 22:33:10 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,14 @@ void	print_tokenizer(char *line, int indent)
 	int		i;
 
 	tok = tokenizer(line);
+	free(line);
 	if (!tok.tokens)
 		return ;
+	if (flow_check_syntax(tok.tokens) == -1)
+	{
+		free_tokens(&tok);
+		return ;
+	}
 	i = 0;
 	while (tok.tokens[i])
 	{

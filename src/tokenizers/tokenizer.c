@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/08 17:32:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/22 21:58:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ static char	**tokenizer_helper(char *s, int i)
 	}
 	if (nb_bracket != 0 || s == NULL)
 	{
-		write(2, NAME": syntax error\n", sizeof(NAME": syntax error\n") - 1);
+		write(2, PREFIX"syntax error\n", sizeof(PREFIX"syntax error\n") - 1);
 		return (NULL);
 	}
 	if (p == s && !*s)

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/14 15:53:49 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/22 22:34:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@
 
 #include "minishell_utils.h"
 
-#define NAME "minishell"
+#define PREFIX "minishell: "
 
 #define HOSTNAME_MAX 64
 #define USERNAME_MAX 32
@@ -67,6 +67,12 @@ typedef struct s_tokens
 {
 	char	**tokens;
 	int		nb_tokens;
+	struct s_pipeline
+	{
+		int		count;
+		int		*heredoc_fds;
+		int		i;
+	}	pipeline;
 }	t_tokens;
 
 
@@ -96,16 +102,17 @@ char **handle_wildcards(char **argv);
 # define IS_PIPE_MASK	0b11
 
 int	redirection_handler(char **tokens, int here_doc_fd, int change_std);
-int command_execution(t_tokens *tok, char **tokens, \
+int	command_execution(t_tokens *tok, char **tokens, \
 						int *fd,\
 						int is_pipe);
 int	pipeline_control(t_tokens *tok, char **pipeline);
-int flow_control(char *line);
-int wait_children(int target_pid);
-int here_doc(char **tokens, int *here_doc_fd);
+int	flow_control(char *line);
+int	flow_check_syntax(char **tokens);
+int	wait_children(int target_pid);
+int	*run_all_heredoc(char **tokens, int nb_pipeline);
 
 /*  Built-in commands  */
-int	handle_builtin(t_tokens *tok, char **argv, int _exit);
+int		handle_builtin(t_tokens *tok, char **argv, int _exit);
 int		is_builtin(char *cmd);
 int		ft_cd(char **argv);
 int		ft_echo(char **argv);
