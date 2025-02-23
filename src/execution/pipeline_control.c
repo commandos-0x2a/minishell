@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/22 22:51:48 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/23 23:54:38 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,14 +84,14 @@ int	pipeline_control(t_tokens *tok, char **pipeline)
 	int		proc_pid;
 	char	**next_command;
 
-	tok->pipeline.count = get_nb_pipeline(tok->tokens);
-	tok->pipeline.heredoc_fds = run_all_heredoc(tok->tokens, tok->pipeline.count);
-	if (!tok->pipeline.heredoc_fds)
+	tok->nb_heredoc = get_nb_pipeline(tok->tokens);
+	tok->heredoc_fds = run_all_heredoc(tok->tokens, tok->nb_heredoc);
+	if (!tok->heredoc_fds)
 		return (-1);
 	fd = -1;
 	proc_pid = 0;
 	is_pipe = 0;
-	tok->pipeline.i = 0;
+	tok->i = 0;
 	while (*pipeline)
 	{
 		next_command = get_next_command(pipeline, &is_pipe);
@@ -104,7 +104,7 @@ int	pipeline_control(t_tokens *tok, char **pipeline)
 		if (proc_pid == -1)
 			break ;
 		pipeline = next_command;
-		tok->pipeline.i++;
+		tok->i++;
 	}
 	return (wait_children(proc_pid));
 }

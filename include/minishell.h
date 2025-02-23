@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/22 22:34:21 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/23 23:53:58 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,9 @@ typedef struct s_tokens
 {
 	char	**tokens;
 	int		nb_tokens;
-	struct s_pipeline
-	{
-		int		count;
-		int		*heredoc_fds;
-		int		i;
-	}	pipeline;
+	int		nb_heredoc;
+	int		*heredoc_fds;
+	int		i;
 }	t_tokens;
 
 

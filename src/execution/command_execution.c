@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/22 21:57:35 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/23 23:55:35 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,16 +99,27 @@ static int	run_builtin_command(t_tokens *tok, char **tokens, int here_doc_fd)
 	return (handle_builtin(tok, get_argv(tokens), 0));
 }
 
+void	close_unused(t_tokens *tok)
+{
+	int	i;
+
+	i = tok->i + 1; // skip current
+	while (i < tok->nb_heredoc)
+	{
+		if (tok->heredoc_fds[i] > -1)
+			close(tok->heredoc_fds[i]);
+		i++;
+	}
+}
+
 int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 {
 	int	pid;
 	int	pipefd[2];
 	int	here_doc_fd;
-	struct	s_pipeline *pl;
 	
-	pl = &tok->pipeline;
-	here_doc_fd = pl->heredoc_fds[pl->i];
-	pl->heredoc_fds[pl->i] = -1;
+	here_doc_fd = tok->heredoc_fds[tok->i];
+	tok->heredoc_fds[tok->i] = -1;
 
 	
 	// Run built-in in parent.
@@ -130,19 +141,18 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 	}
 
 
-	
+
 	pid = fork();
 	if (pid == 0)
 	{
+		close_unused(tok);
 		/* ========== Child Process ========== */
 		if (pipex_handler(is_pipe, *fd, pipefd) != 0)
 		{
-			
 			exit(1);
 		}
 		if (redirection_handler(tokens, here_doc_fd, 1) != 0)
 		{
-
 			exit(126);
 		}
 		run_command(tok, get_argv(tokens));
@@ -152,6 +162,8 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 	// Close unused file descriptors from previous pipe.
 	if (is_pipe & IS_PREV_PIPE)
 		close(*fd);
+	if (here_doc_fd > -1)
+		close(here_doc_fd);
 	*fd = -1;
 	if (is_pipe & IS_PIPE)
 	{
@@ -159,7 +171,7 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 		*fd = pipefd[0];
 		if (pid == -1)
 		{
-			close(pipefd[0]);
+			close(*fd);
 			*fd = -1;
 		}
 	}
