@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/15 21:36:58 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/15 21:40:38 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,14 @@ static int	check_ambiguous(char *token)
 	s = expand_str_no_quote(token);
 	if (!s)
 	{
-		ft_fprintf(2, NAME": check_ambiguous: %s\n", strerror(errno));
+		ft_fprintf(2, PREFIX"check_ambiguous: %s\n", strerror(errno));
 		return (1);
 	}
 	while (*s)
 	{
 		if (*s == '*')
 		{
-			ft_fprintf(2, NAME": %s: ambiguous redirect\n", token);
+			ft_fprintf(2, PREFIX"%s: ambiguous redirect\n", token);
 			return (1);
 		}
 		if (*s == '\'' || *s == '"')
@@ -49,7 +49,7 @@ static int	in_redirection(char *token, int change_std)
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
 	{
-		ft_fprintf(2, NAME": %s: %s\n", file, strerror(errno));
+		ft_fprintf(2, PREFIX"%s: %s\n", file, strerror(errno));
 		free(file);
 		return (-1);
 	}

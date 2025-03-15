@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/15 21:37:13 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/15 21:41:03 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void		free_tokens(t_tokens *tok);
 /*  expander  */
 char	*expand_str(char *str);
 char	*expand_str_no_quote(char *str);
-void	argv_expander(char **argv);
+char	**argv_expander(char **argv);
 
 /*  wildcarda  */
 char **handle_wildcards(char **argv);
