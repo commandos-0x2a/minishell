@@ -23,7 +23,7 @@ int	ft_test(char **argv)
 	value = ft_getenv("MY_VAR");
 	ft_fprintf(2, "Current MY_VAR=%s\n", value);
 	free(value);
-	i++;
+	i = 0;
 	while (environ[i])
 	{
 		if (ft_strncmp(environ[i], "MY_VAR=", 7) == 0)

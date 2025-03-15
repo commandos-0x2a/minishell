@@ -12,9 +12,12 @@
 
 #include "minishell.h"
 
+char	*expand_str_no_quote(char *str);
+
 void	print_tokenizer(char *line, int indent)
 {
 	char	**tokens;
+	char	*str;
 	int		i;
 
 	tokens = tokenizer(line, 0);
@@ -23,14 +26,17 @@ void	print_tokenizer(char *line, int indent)
 	i = 0;
 	while (tokens[i])
 	{
-		if (tokens[i][0] == '(')
-		{
-			tokens[i][ft_strlen(tokens[i]) - 1] = '\0';
-			tokens[i]++;
-			print_tokenizer(tokens[i], indent + 4);
-		}
-		else
-			printf("%-*s%i: %s\n", indent, "", i, tokens[i]);
+		str = expand_str_no_quote(tokens[i]);
+
+		// if (tokens[i][0] == '(')
+		// {
+		// 	tokens[i][ft_strlen(tokens[i]) - 1] = '\0';
+		// 	tokens[i]++;
+		// 	print_tokenizer(tokens[i], indent + 4);
+		// }
+		// else
+		printf("%-*s%i: %s\n", indent, "", i, str);
+		free(str);
 		i++;
 	}
 }

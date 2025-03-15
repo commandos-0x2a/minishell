@@ -75,8 +75,9 @@ char *get_argv0(char **tokens);
 char **get_argv(char **tokens);
 
 /*  expander  */
-char *expand_str(char *str);
-void argv_expander(char **argv);
+char	*expand_str(char *str);
+char	*expand_str_no_quote(char *str);
+void	argv_expander(char **argv);
 
 /*  wildcarda  */
 char **handle_wildcards(char **argv);

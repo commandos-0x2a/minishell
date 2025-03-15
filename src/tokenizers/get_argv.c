@@ -34,8 +34,10 @@ char	**get_argv(char **tokens)
 			|| ft_strcmp(*tokens, ">>") == 0 \
 			|| ft_strcmp(*tokens, ">") == 0)
 		{
+			free(*tokens);
 			*tokens = NULL;
 			*++tokens = NULL;
+			free(*tokens);
 		}
 		else if (!argv)
 		{

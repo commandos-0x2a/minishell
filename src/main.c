@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/02/07 20:23:02 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/17 14:30:55 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 	// Load configuration
 	load_config(&config);
 	setup_signals();
-	// terminal_config(STDIN_FILENO);
+	terminal_config(STDIN_FILENO);
 
 	if (ft_strcmp(config.prompt_style, "colorful") == 0)
 	{
@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 		handle_line(line);
 		if (*line)
 		{
-			// terminal_config(STDIN_FILENO);
+			terminal_config(STDIN_FILENO);
 			reset_signals();
 			if (is_test)
 				print_tokenizer(line, 0);

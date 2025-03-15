@@ -132,7 +132,7 @@ static int	is_critical_var(const char *var)
 	int			i;
 	int			len;
 
-	ft_memcpy(critical, (char *){"PATH", "HOME", "USER", "SHELL", NULL}, \
+	ft_memcpy(critical, (char *[]){"PATH", "HOME", "USER", "SHELL", NULL}, \
 				sizeof(critical));
 	i = 0;
 	while (critical[i])

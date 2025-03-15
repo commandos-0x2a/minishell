@@ -6,30 +6,50 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 19:25:44 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/15 21:34:24 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int	check_ambiguous(char *token)
+{
+	char	*s;
+
+	s = expand_str_no_quote(token);
+	if (!s)
+	{
+		ft_fprintf(2, NAME": check_ambiguous: %s\n", strerror(errno));
+		return (1);
+	}
+	while (*s)
+	{
+		if (*s == '*')
+		{
+			ft_fprintf(2, NAME": %s: ambiguous redirect\n", token);
+			return (1);
+		}
+		if (*s == '\'' || *s == '"')
+			s = ft_strchr(s + 1, *s);
+		s++;
+	}
+	return (0);
+}
 
 static int	in_redirection(char *token, int change_std)
 {
 	int		fd;
 	char	*file;
 
+	if (check_ambiguous(token))
+		return (1);
 	file = expand_str(token);
 	if (!file)
 		return (-1);
-	if (ft_strcmp(file, "*") == 0)
-	{
-		ft_fprintf(2, NAME": %s: ambiguous redirect\n", token);
-		free(file);
-		return (1);
-	}
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
 	{
-		ft_fprintf(2, NAME": %s\n", strerror(errno));
+		ft_fprintf(2, NAME": %s: %s\n", file, strerror(errno));
 		free(file);
 		return (-1);
 	}
@@ -45,15 +65,11 @@ static int	out_append(char *token, int change_std)
 	int		fd;
 	char	*file;
 
+	if (check_ambiguous(token))
+		return (1);
 	file = expand_str(token);
 	if (!file)
 		return (-1);
-	if (ft_strcmp(file, "*") == 0)
-	{
-		ft_fprintf(2, NAME": %s: ambiguous redirect\n", token);
-		free(file);
-		return (1);
-	}
 	fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd == -1)
 	{
@@ -73,15 +89,11 @@ static int	out_redirection(char *token, int change_std)
 	int		fd;
 	char	*file;
 
+	if (check_ambiguous(token))
+		return (1);
 	file = expand_str(token);
 	if (!file)
 		return (-1);
-	if (ft_strcmp(file, "*") == 0)
-	{
-		ft_fprintf(2, NAME": %s: ambiguous redirect\n", token);
-		free(file);
-		return (1);
-	}
 	fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 	{

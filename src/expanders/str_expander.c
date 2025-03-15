@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/01/10 11:55:45 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/15 21:34:33 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,16 @@ char *ft_itoa_kur(int n);
  * │
  * └── Final Output: "Welcome mkurkar to /home/mkurkar"
  */
+
+// static int	get_env_var_name_len(char *str)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+// 		i++;
+// 	return (i);
+// }
 
 static char *expand_env_var(char *str, int *i)
 {
@@ -196,6 +206,44 @@ char	*expand_str(char *str)
 				result = join_and_free(result, temp);
 				i += 2;
 			}
+			continue;
+		}
+
+		// Normal character
+		temp = ft_substr(str, i, 1);
+		result = join_and_free(result, temp);
+		i++;
+	}
+	return (result);
+}
+
+char	*expand_str_no_quote(char *str)
+{
+	char	*result;
+	char	*temp;
+	char	quote_char;
+	int		i;
+
+
+	result = ft_strdup("");
+	quote_char = 0;
+	i = 0;
+	while (str[i])
+	{
+		if (!result) // to detect all result malloc failed
+			return (NULL);
+		// Handle quotes
+		if ((str[i] == '\'' || str[i] == '\"') && !quote_char)
+			quote_char = str[i];
+		else if (str[i] == quote_char)
+			quote_char = 0;
+
+		// Handle environment variables
+		else if (str[i] == '$' && quote_char != '\'')
+		{
+			temp = expand_env_var(str, &i);
+			if (temp)
+				result = join_and_free(result, temp);
 			continue;
 		}
 
