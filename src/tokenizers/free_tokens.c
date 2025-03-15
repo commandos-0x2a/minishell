@@ -1,37 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.c                                             :+:      :+:    :+:   */
+/*   free_tokens.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/05 17:26:15 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/02/08 07:40:11 by yaltayeh         ###   ########.fr       */
+/*   Created: 2025/02/08 17:32:23 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/02/08 17:34:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_test(char **argv)
+void	free_tokens(t_tokens *tok)
 {
-	extern char	**environ;
-	char		*value;
-	int			i;
+	int	i;
 
-	(void)argv;
-	ft_setenv("MY_VAR", "my_value", 1);
-	value = ft_getenv("MY_VAR");
-	ft_fprintf(2, "Current MY_VAR=%s\n", value);
-	free(value);
 	i = 0;
-	while (environ[i])
+	if (tok->tokens)
 	{
-		if (ft_strncmp(environ[i], "MY_VAR=", 7) == 0)
+		while (i < tok->nb_tokens)
 		{
-			ft_fprintf(2, "Found in environ: %s\n", environ[i]);
-			break ;
+			if (tok->tokens[i])
+				free(tok->tokens[i]);
+			tok->tokens[i] = NULL;
+			i++;
 		}
-		i++;
+		free(tok->tokens);
+		tok->tokens = NULL;
 	}
-	return (0);
+	tok->nb_tokens = 0;
 }

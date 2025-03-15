@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/01/08 17:56:41 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/02/08 21:11:24 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,6 @@
 
 #include "minishell.h"
 #include <dirent.h>
-
-void ft_free_array(char **arr)
-{
-	int i;
-
-	i = 0;
-	while (arr[i])
-	{
-		free(arr[i]);
-		i++;
-	}
-	free(arr);
-}
 
 /*
  * This function is like playing a matching game!
@@ -168,19 +155,29 @@ char **expand_wildcard(char *pattern)
     // Check if pattern contains wildcards
     has_wildcard = (ft_strchr(pattern, '*') || ft_strchr(pattern, '?'));
     if (!has_wildcard)
-        return (NULL);  // Return NULL to keep original argument
+	{
+		files = malloc(sizeof(char *));	
+		if (!files)
+			return (NULL);
+		files[0] = ft_strdup(pattern);
+		if (!files[0])
+		{
+			free(files);
+			return (NULL);
+		}
+        return (files);  // keep original argument
+	}
 
     dir = opendir(".");
     if (!dir)
         return (NULL);
 
-    files = malloc(sizeof(char *));
+    files = ft_calloc(1, sizeof(char *));
     if (!files)
     {
         closedir(dir);
         return (NULL);
     }
-    files[0] = NULL;
     size = 0;
 
     while ((entry = readdir(dir)) != NULL)
@@ -237,18 +234,20 @@ char **handle_wildcards(char **argv)
 	while (argv[i])
 	{
 		expanded = expand_wildcard(argv[i]);
-		if (expanded)
+		free(argv[i]);
+		argv[i] = NULL;
+		if (!expanded)
 		{
-			j = 0;
-			while (expanded[j])
-			{
-				new_argv = add_to_array(new_argv, expanded[j], &total);
-				j++;
-			}
-			ft_free_array(expanded);
+			ft_free_array_str(new_argv);
+			return (NULL);
 		}
-		else
-			new_argv = add_to_array(new_argv, argv[i], &total);
+		j = 0;
+		while (expanded[j])
+		{
+			new_argv = add_to_array(new_argv, expanded[j], &total);
+			j++;
+		}
+		ft_free_array_str(expanded);
 		i++;
 	}
 	return (new_argv);

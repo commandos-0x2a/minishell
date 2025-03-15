@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 19:29:41 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/23 23:54:38 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,58 +14,97 @@
 
 static char	**get_next_command(char **tokens, int *is_pipe)
 {
-	*is_pipe = 0;
 	while (*tokens)
 	{
 		if (ft_strcmp(*tokens, "|") == 0)
 		{
-			*is_pipe = 1;
-			break ;
+			*is_pipe <<= 1;
+			*is_pipe |= 1;
+			return (tokens);
 		}
 		tokens++;
 	}
+	*is_pipe <<= 1;
 	return (tokens);
 }
 
-int	pipeline_check_syntax(char **tokens)
+int	pipeline_check_syntax(char **tokens, char **tokens_brk)
 {
 	char	**next_command;
 	int		is_pipe;
 
-	while (*tokens)
+	is_pipe = 0;
+	while (*tokens && tokens < tokens_brk)
 	{
 		next_command = get_next_command(tokens, &is_pipe);
-		if (is_pipe && *++next_command == NULL)
+		if ((is_pipe & IS_PIPE) && *++next_command == NULL)
 		{
-			ft_fprintf(2, NAME": syntax error `|'\n");
+			ft_fprintf(2, PREFIX"syntax error `|'\n");
 			return (-1);
 		}
+		// while (*tokens && tokens != next_command)
+		// {
+		// 	if (ft_strcmp(*tokens, "<<") == 0 \
+		// 		|| ft_strcmp(*tokens, "<") == 0 \
+		// 		|| ft_strcmp(*tokens, ">>") == 0 \
+		// 		|| ft_strcmp(*tokens, ">") == 0)
+		// 			tokens++;
+		// 	if (tokens == next_command)
+		// 	{
+		// 		ft_fprintf(2, PREFIX"syntax error op `|'\n");
+		// 		return (-1);	
+		// 	}
+		// 	tokens++;
+		// }
+		// if (is_pipe & IS_PIPE)
+		// 	tokens++;
 		tokens = next_command;
 	}
 	return (0);
 }
 
-int	pipeline_control(char **tokens)
+static int	get_nb_pipeline(char **tokens)
 {
-	char	**next_command;
-	int		is_pipe;
-	int		prev_is_pipe;
-	int		fd;
-	int		proc_pid;
+	int	nb_pipeline;
 
-	fd = 0;
-	prev_is_pipe = 0;
-	proc_pid = 0;
+	nb_pipeline = 1;
 	while (*tokens)
 	{
-		next_command = get_next_command(tokens, &is_pipe);
-		if (is_pipe)
+		if (ft_strcmp(*tokens, "|") == 0)
+			nb_pipeline++;
+		tokens++;
+	}
+	return (nb_pipeline);
+}
+
+int	pipeline_control(t_tokens *tok, char **pipeline)
+{
+	int		is_pipe;
+	int		fd;
+	int		proc_pid;
+	char	**next_command;
+
+	tok->nb_heredoc = get_nb_pipeline(tok->tokens);
+	tok->heredoc_fds = run_all_heredoc(tok->tokens, tok->nb_heredoc);
+	if (!tok->heredoc_fds)
+		return (-1);
+	fd = -1;
+	proc_pid = 0;
+	is_pipe = 0;
+	tok->i = 0;
+	while (*pipeline)
+	{
+		next_command = get_next_command(pipeline, &is_pipe);
+		if (is_pipe & IS_PIPE)
+		{
+			free(*next_command);
 			*next_command++ = NULL;
-		proc_pid = command_execution(tokens, fd, &fd, is_pipe, prev_is_pipe);
+		}
+		proc_pid = command_execution(tok, pipeline, &fd, is_pipe);
 		if (proc_pid == -1)
 			break ;
-		prev_is_pipe = is_pipe;
-		tokens = next_command;
+		pipeline = next_command;
+		tok->i++;
 	}
 	return (wait_children(proc_pid));
 }

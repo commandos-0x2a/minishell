@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/15 14:31:59 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/15 21:38:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static int	is_operation(char *s)
 * It's like taking a long piece of paper and cutting it into smaller pieces,
 * where each piece has one word! ✂️
 */
-char	**tokenizer(char *s, int i)
+static char	**tokenizer_helper(char *s, int i)
 {
 	char	*p;
 	char	**tokens;
@@ -76,7 +76,7 @@ char	**tokenizer(char *s, int i)
 	}
 	if (nb_bracket != 0 || s == NULL)
 	{
-		write(2, NAME": syntax error\n", sizeof(NAME": syntax error\n") - 1);
+		write(2, PREFIX"syntax error\n", sizeof(PREFIX"syntax error\n") - 1);
 		return (NULL);
 	}
 	if (p == s && !*s)
@@ -85,10 +85,10 @@ char	**tokenizer(char *s, int i)
 	p = ft_substr(p, 0, s - p);
 	if (!p)
 		return (NULL);
-	if (!*s || is_operation(p) || is_operation(s) > 0)
-		tokens = tokenizer(s, i + 1);
+	if (!*s || is_operation(p) || is_operation(s))
+		tokens = tokenizer_helper(s, i + 1);
 	else
-		tokens = tokenizer(s + 1, i + 1);
+		tokens = tokenizer_helper(s + 1, i + 1);
 	if (!tokens)
 	{
 		free(p);
@@ -96,4 +96,18 @@ char	**tokenizer(char *s, int i)
 	}
 	tokens[i] = p;
 	return (tokens);
+}
+
+t_tokens	tokenizer(char *s)
+{
+	t_tokens	tok;
+	int			i;
+
+	tok.tokens = tokenizer_helper(s, 0);
+	i = 0;
+	if (tok.tokens)
+		while (tok.tokens[i])
+			i++;
+	tok.nb_tokens = i;
+	return (tok);
 }

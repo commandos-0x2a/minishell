@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/02/07 21:40:53 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/10 21:26:05 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-int	handle_builtin(char **argv, int _exit)
+int	handle_builtin(t_tokens *tok, char **argv, int _exit)
 {
 	int	ret;
 
@@ -42,7 +42,7 @@ int	handle_builtin(char **argv, int _exit)
 	if (ft_strcmp(*argv, "cd") == 0)
 		ret = ft_cd(argv);
 	else if (ft_strcmp(*argv, "exit") == 0)
-		ret = ft_exit(argv);
+		ret = ft_exit(argv, &_exit);
 	else if (ft_strcmp(*argv, "export") == 0)
 		ret = ft_export(argv);
 	else if (ft_strcmp(*argv, "unset") == 0)
@@ -56,6 +56,9 @@ int	handle_builtin(char **argv, int _exit)
 	else
 		return (1);
 	if (_exit)
+	{
+		free_tokens(tok);
 		exit(ret);
+	}
 	return (ret);
 }

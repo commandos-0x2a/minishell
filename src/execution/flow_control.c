@@ -6,13 +6,13 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 19:40:40 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/02/22 22:45:10 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	pipeline_check_syntax(char **tokens);
+int	pipeline_check_syntax(char **tokens, char **tokens_brk);
 
 /**
  * flow is part from operation and next operation (&& or ||)
@@ -38,7 +38,7 @@ int	pipeline_check_syntax(char **tokens);
  * 		2: [cmd4, >, out]
  * 
 */
-static char	**get_next_command(char **tokens, int *op)
+static char	**get_next_pipeline(char **tokens, int *op)
 {
 	*op = 0;
 	while (*tokens)
@@ -58,20 +58,20 @@ static char	**get_next_command(char **tokens, int *op)
 	return (tokens);
 }
 
-static int	flow_check_syntax(char **tokens)
+int	flow_check_syntax(char **tokens)
 {
 	char	**next_pipeline;
 	int		op;
 
 	while (*tokens)
 	{
-		next_pipeline = get_next_command(tokens, &op);
+		next_pipeline = get_next_pipeline(tokens, &op);
 		if (op && *++next_pipeline == NULL)
 		{
-			ft_fprintf(2, NAME": syntax error in flow control\n");
+			ft_fprintf(2, PREFIX"syntax error in flow control\n");
 			return (-1);
 		}
-		if (pipeline_check_syntax(tokens) != 0)
+		if (pipeline_check_syntax(tokens, next_pipeline) != 0)
 			return (-1);
 		tokens = next_pipeline;
 	}
@@ -80,30 +80,39 @@ static int	flow_check_syntax(char **tokens)
 
 int	flow_control(char *line)
 {
-	char	**tokens;
-	char	**next_pipeline;
-	int		op;
-	char	**pipeline;
-	int		test;
+	int			op;
+	int			test;
+	char		**pipeline;
+	char		**next_pipeline;
+	t_tokens	tok;
 
-	tokens = tokenizer(line, 0);
-	if (!tokens)
+	tok = tokenizer(line);
+	free(line);
+	if (!tok.tokens)
 		return (-1);
-	if (flow_check_syntax(tokens) == -1)
-		return (ft_free_array_str(tokens));
-	pipeline = tokens;
+	if (flow_check_syntax(tok.tokens) == -1)
+	{
+		free_tokens(&tok);
+		return (-1);
+	}
+	pipeline = tok.tokens;
 	test = 1; // cuz run first time
 	while (*pipeline)
 	{
-		next_pipeline = get_next_command(pipeline, &op);
+		next_pipeline = get_next_pipeline(pipeline, &op);
 		if (op)
+		{
+			free(*next_pipeline);
 			*next_pipeline++ = NULL; // set operation token NULL and skip it
+		}
 		if (test)
-			test = !pipeline_control(pipeline); // toggle cuz exec when success return (0)
+		{
+			test = !pipeline_control(&tok, pipeline); // toggle cuz exec when success return (0)
+		}
 		if (op == 2) // is op == OR toggle test
 			test = !test;
 		pipeline = next_pipeline;
 	}
-	// free tokens
+	free_tokens(&tok);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 19:49:03 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/15 21:37:13 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@
 
 #include "minishell_utils.h"
 
-#define NAME "minishell"
+#define PREFIX "minishell: "
 
 #define HOSTNAME_MAX 64
 #define USERNAME_MAX 32
@@ -63,16 +63,28 @@
 # define CYAN "\033[36m"
 # define WHITE "\033[37m"
 
+typedef struct s_tokens
+{
+	char	**tokens;
+	int		nb_tokens;
+	int		nb_heredoc;
+	int		*heredoc_fds;
+	int		i;
+}	t_tokens;
+
+
 // Terminal configuration
 char *get_prompt(void);
 void handle_line(char *line);
 void cleanup_shell(void);
 
 /*  tokenizer  */
-void print_tokenizer(char *line, int indent);
-char **tokenizer(char *s, int i);
-char *get_argv0(char **tokens);
-char **get_argv(char **tokens);
+void		print_tokenizer(char *line, int indent);
+t_tokens	tokenizer(char *s);
+char		*get_argv0(char **tokens);
+char		**get_argv(char **tokens);
+void		free_tokens(t_tokens *tok);
+
 
 /*  expander  */
 char	*expand_str(char *str);
@@ -83,21 +95,28 @@ void	argv_expander(char **argv);
 char **handle_wildcards(char **argv);
 
 /*  execution  */
+# define IS_PIPE		0b01
+# define IS_PREV_PIPE	0b10
+# define IS_PIPE_MASK	0b11
+
 int	redirection_handler(char **tokens, int here_doc_fd, int change_std);
-int command_execution(char **tokens, int in_fd, int *out_fd, int is_pipe, int prev_is_pipe);
-int pipeline_control(char **tokens);
-int flow_control(char *chain);
-int wait_children(int target_pid);
-int here_doc(char **tokens);
+int	command_execution(t_tokens *tok, char **tokens, \
+						int *fd,\
+						int is_pipe);
+int	pipeline_control(t_tokens *tok, char **pipeline);
+int	flow_control(char *line);
+int	flow_check_syntax(char **tokens);
+int	wait_children(int target_pid);
+int	*run_all_heredoc(char **tokens, int nb_pipeline);
 
 /*  Built-in commands  */
+int		handle_builtin(t_tokens *tok, char **argv, int _exit);
+int		is_builtin(char *cmd);
 int		ft_cd(char **argv);
 int		ft_echo(char **argv);
 int		ft_pwd(char **argv);
 int		ft_env(char **argv);
-int		ft_exit(char **argv);
-int		handle_builtin(char **argv, int _exit);
-int		is_builtin(char *cmd);
+int		ft_exit(char **argv, int *_exit);
 int		ft_test(char **argv);
 int		ft_export(char **argv);
 int		ft_unset(char **argv);

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/03/15 21:34:33 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/15 21:37:53 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,16 +268,32 @@ char	*expand_str_no_quote(char *str)
 * echo "Path: $PATH"   -> Path: /usr/bin:/bin
 * echo $?             -> 0 (or last exit status)
 */
-void argv_expander(char **argv)
+char	**argv_expander(char **argv)
 {
-	char	*expanded;
 	int		i;
+	int		len;
+	char	**new_argv;
 
 	i = 0;
+	len = 0;
+	while (argv[len])
+		len++;
+	new_argv = ft_calloc(len + 1, sizeof(char *));
+	if (!new_argv)
+		return (NULL);
 	while (argv[i])
 	{
-		expanded = expand_str(argv[i]);
-		argv[i] = expanded;
+		new_argv[i] = expand_str(argv[i]);
+		free(argv[i]);
+		argv[i] = NULL;
+		if (!new_argv[i])
+		{
+			while (--i >= 0)
+				free(new_argv[i]);
+			free(new_argv);
+			return (NULL);
+		}
 		i++;
 	}
+	return (new_argv);
 }
