@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   minishell_bonus.h                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/16 14:25:44 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:25:03 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-#define MINISHELL_H
+#ifndef MINISHELL_BONUS_H
+#define MINISHELL_BONUS_H
 
 #include <libft.h>
 #include <stddef.h>
@@ -91,6 +91,9 @@ char	*expand_str(char *str);
 char	*expand_str_no_quote(char *str);
 char	**argv_expander(char **argv);
 
+/*  wildcarda  */
+char **handle_wildcards(char **argv);
+
 /*  execution  */
 # define IS_PIPE		0b01
 # define IS_PREV_PIPE	0b10
@@ -101,6 +104,8 @@ int	command_execution(t_tokens *tok, char **tokens, \
 						int *fd,\
 						int is_pipe);
 int	pipeline_control(t_tokens *tok, char **pipeline);
+int	flow_control(char *line);
+int	flow_check_syntax(char **tokens);
 int	wait_children(int target_pid);
 int	*run_all_heredoc(char **tokens, int nb_pipeline);
 

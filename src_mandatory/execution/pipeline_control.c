@@ -1,0 +1,117 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipeline_control.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/03/16 17:14:08 by yaltayeh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+static char	**get_next_command(char **tokens, int *is_pipe)
+{
+	while (*tokens)
+	{
+		if (ft_strcmp(*tokens, "|") == 0)
+		{
+			*is_pipe <<= 1;
+			*is_pipe |= 1;
+			return (tokens);
+		}
+		tokens++;
+	}
+	*is_pipe <<= 1;
+	return (tokens);
+}
+
+int	pipeline_check_syntax(char **tokens, char **tokens_brk)
+{
+	char	**next_command;
+	int		is_pipe;
+
+	is_pipe = 0;
+	while (*tokens && tokens < tokens_brk)
+	{
+		next_command = get_next_command(tokens, &is_pipe);
+		if ((is_pipe & IS_PIPE) && *++next_command == NULL)
+		{
+			ft_fprintf(2, PREFIX"syntax error `|'\n");
+			return (-1);
+		}
+		// while (*tokens && tokens != next_command)
+		// {
+		// 	if (ft_strcmp(*tokens, "<<") == 0 \
+		// 		|| ft_strcmp(*tokens, "<") == 0 \
+		// 		|| ft_strcmp(*tokens, ">>") == 0 \
+		// 		|| ft_strcmp(*tokens, ">") == 0)
+		// 			tokens++;
+		// 	if (tokens == next_command)
+		// 	{
+		// 		ft_fprintf(2, PREFIX"syntax error op `|'\n");
+		// 		return (-1);	
+		// 	}
+		// 	tokens++;
+		// }
+		// if (is_pipe & IS_PIPE)
+		// 	tokens++;
+		tokens = next_command;
+	}
+	return (0);
+}
+
+static int	get_nb_pipeline(char **tokens)
+{
+	int	nb_pipeline;
+
+	nb_pipeline = 1;
+	while (*tokens)
+	{
+		if (ft_strcmp(*tokens, "|") == 0)
+			nb_pipeline++;
+		tokens++;
+	}
+	return (nb_pipeline);
+}
+
+int	pipeline_control(char *line)
+{
+	int			is_pipe;
+	int			fd;
+	int			proc_pid;
+	char		**next_command;
+	char		**pipeline;
+	t_tokens	tok;
+
+	tok = tokenizer(line);
+	free(line);
+	if (!tok.tokens)
+		return (-1);
+	tok.nb_heredoc = get_nb_pipeline(tok.tokens);
+	tok.heredoc_fds = run_all_heredoc(tok.tokens, tok.nb_heredoc);
+	if (!tok.heredoc_fds)
+		return (-1);
+	fd = -1;
+	proc_pid = 0;
+	is_pipe = 0;
+	tok.i = 0;
+	pipeline = tok.tokens;
+	while (*pipeline)
+	{
+		next_command = get_next_command(pipeline, &is_pipe);
+		if (is_pipe & IS_PIPE)
+		{
+			free(*next_command);
+			*next_command++ = NULL;
+		}
+		proc_pid = command_execution(&tok, pipeline, &fd, is_pipe);
+		if (proc_pid == -1)
+			break ;
+		pipeline = next_command;
+		tok.i++;
+	}
+	return (wait_children(proc_pid));
+}

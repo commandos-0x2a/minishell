@@ -44,7 +44,40 @@ FILES = main						\
 		builtins/test 		\
 		builtins/export		\
 		builtins/unset		\
-#		
+#
+
+BONUS_FILES = bonus_src/main		\
+		utils/readline_handler		\
+		utils/signals				\
+		utils/config				\
+		utils/ft_free_array_str		\
+		\
+		expanders/str_expander	\
+		expanders/wildcard		\
+		\
+		tokenizers/print_tokenizer		\
+		tokenizers/tokenizer			\
+		tokenizers/get_argv0			\
+		tokenizers/get_argv				\
+		tokenizers/free_tokens			\
+		\
+		execution/flow_control			\
+		execution/here_doc				\
+		execution/pipeline_control		\
+		execution/wait_children			\
+		execution/command_execution		\
+		execution/redirection_handler	\
+		\
+		builtins/cd			\
+		builtins/builtins	\
+		builtins/echo		\
+		builtins/pwd		\
+		builtins/env		\
+		builtins/exit		\
+		builtins/test 		\
+		builtins/export		\
+		builtins/unset		\
+#
 
 OBJECTS = $(FILES:%=$(OBJDIR)/%.o)
 
