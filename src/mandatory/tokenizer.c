@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/16 14:35:10 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/17 12:45:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,15 @@ static int	is_operation(char *s)
 * It's like taking a long piece of paper and cutting it into smaller pieces,
 * where each piece has one word! ✂️
 */
-static char	**tokenizer_iter(char *s, int i)
+static char	**tokenizer_helper(char *s, int i)
 {
 	char	*p;
 	char	**tokens;
-	int		nb_bracket;
 
 	while (*s == ' ')
 		s++;
 	p = s;
-	nb_bracket = 0;
-	while (*s)
+	while (*s && *s != ' ')
 	{
 		if (*s == '\'' || *s == '\"')
 		{
@@ -79,9 +77,9 @@ static char	**tokenizer_iter(char *s, int i)
 	if (!p)
 		return (NULL);
 	if (!*s || is_operation(p) || is_operation(s))
-		tokens = tokenizer_iter(s, i + 1);
+		tokens = tokenizer_helper(s, i + 1);
 	else
-		tokens = tokenizer_iter(s + 1, i + 1);
+		tokens = tokenizer_helper(s + 1, i + 1);
 	if (!tokens)
 	{
 		free(p);
@@ -96,7 +94,7 @@ t_tokens	tokenizer(char *s)
 	t_tokens	tok;
 	int			i;
 
-	tok.tokens = tokenizer_iter(s, 0);
+	tok.tokens = tokenizer_helper(s, 0);
 	i = 0;
 	if (tok.tokens)
 		while (tok.tokens[i])

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/15 21:37:29 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/17 12:40:16 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 			if (is_test)
 				print_tokenizer(line, 0);
 			else
-				flow_control(line);
+				pipeline_control(line);
 			// terminal_reset(STDIN_FILENO);
 		}
 		else

@@ -1,4 +1,5 @@
-NAME	= minishell
+NAME		= minishell
+NAME_BONUS	= minishell_bonus
 
 CC			= cc
 LDFLAGS		= -L./libft -lft -lreadline -lncurses
@@ -8,88 +9,66 @@ CPPFLAGS	= -I./libft/include -I./include
 SRCDIR = src
 OBJDIR = build
 
-FILES = main						\
-		utils/ft_join_path			\
-		utils/ft_getenv				\
-		utils/ft_setenv				\
-		utils/get_full_path			\
-		\
-		utils/readline_handler		\
-		utils/signals				\
-		utils/config				\
-		utils/ft_free_array_str		\
-		\
-		expanders/str_expander	\
-		expanders/wildcard		\
-		\
-		tokenizers/print_tokenizer		\
-		tokenizers/tokenizer			\
-		tokenizers/get_argv0			\
-		tokenizers/get_argv				\
-		tokenizers/free_tokens			\
-		\
-		execution/flow_control			\
-		execution/here_doc				\
-		execution/pipeline_control		\
-		execution/wait_children			\
-		execution/command_execution		\
-		execution/redirection_handler	\
-		\
-		builtins/cd			\
-		builtins/builtins	\
-		builtins/echo		\
-		builtins/pwd		\
-		builtins/env		\
-		builtins/exit		\
-		builtins/test 		\
-		builtins/export		\
-		builtins/unset		\
+FILES = builtins/builtins			\
+			builtins/cd				\
+			builtins/echo			\
+			builtins/env			\
+			builtins/exit			\
+			builtins/export			\
+			builtins/pwd			\
+			builtins/test			\
+			builtins/unset			\
+			utils/config			\
+			utils/ft_free_array_str	\
+			utils/ft_getenv			\
+			utils/ft_join_path		\
+			utils/ft_setenv			\
+			utils/get_full_path		\
+			utils/readline_handler	\
+			str_expander			\
+			utils/signals			\
+			wait_children			\
+			here_doc				\
+			free_tokens				\
+			get_argv				\
+			get_argv0				\
 #
 
-BONUS_FILES = bonus_src/main		\
-		utils/readline_handler		\
-		utils/signals				\
-		utils/config				\
-		utils/ft_free_array_str		\
-		\
-		expanders/str_expander	\
-		expanders/wildcard		\
-		\
-		tokenizers/print_tokenizer		\
-		tokenizers/tokenizer			\
-		tokenizers/get_argv0			\
-		tokenizers/get_argv				\
-		tokenizers/free_tokens			\
-		\
-		execution/flow_control			\
-		execution/here_doc				\
-		execution/pipeline_control		\
-		execution/wait_children			\
-		execution/command_execution		\
-		execution/redirection_handler	\
-		\
-		builtins/cd			\
-		builtins/builtins	\
-		builtins/echo		\
-		builtins/pwd		\
-		builtins/env		\
-		builtins/exit		\
-		builtins/test 		\
-		builtins/export		\
-		builtins/unset		\
+BONUS_FILES = main							\
+			execution/command_execution		\
+			execution/flow_control			\
+			execution/pipeline_control		\
+			execution/redirection_handler	\
+			wildcard				\
+			print_tokenizer		\
+			tokenizer			\
 #
 
-OBJECTS = $(FILES:%=$(OBJDIR)/%.o)
+MANDATORY_FILES = main						\
+			execution/command_execution		\
+			execution/pipeline_control		\
+			execution/redirection_handler	\
+			print_tokenizer		\
+			tokenizer			\
+#
+
+OBJECTS 			= $(FILES:%=$(OBJDIR)/%.o)
+MANDATORY_OBJECTS	= $(MANDATORY_FILES:%=$(OBJDIR)/mandatory/%.o)
+BONUS_OBJECTS 		= $(BONUS_FILES:%=$(OBJDIR)/bonus/%.o)
+
 
 all: libft $(NAME)
 
-bonus: libft $(NAME)
+bonus: libft $(NAME_BONUS)
 
 libft:
 	@$(MAKE) -C libft
 
-$(NAME): $(OBJECTS) libft/libft.a
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+$(NAME): $(OBJECTS) $(MANDATORY_OBJECTS) libft/libft.a
+	$(CC) $(OBJECTS) $(MANDATORY_OBJECTS) $(LDFLAGS) -o $@
+
+$(NAME_BONUS): $(OBJECTS) $(BONUS_OBJECTS) libft/libft.a
+	$(CC) $(OBJECTS) $(BONUS_OBJECTS) $(LDFLAGS) -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(dir $@)
@@ -97,10 +76,10 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 clean:
 	$(MAKE) -C libft clean
-	rm -f $(OBJECTS)
+	rm -f $(OBJECTS) $(MANDATORY_OBJECTS) $(BONUS_OBJECTS)
 
 fclean: clean
-	rm -f $(NAME)
+	rm -f $(NAME) $(NAME_BONUS)
 
 re: fclean all
 

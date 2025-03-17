@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/16 14:25:44 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/17 12:40:38 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int	redirection_handler(char **tokens, int here_doc_fd, int change_std);
 int	command_execution(t_tokens *tok, char **tokens, \
 						int *fd,\
 						int is_pipe);
-int	pipeline_control(t_tokens *tok, char **pipeline);
+int	pipeline_control(char *line);
 int	wait_children(int target_pid);
 int	*run_all_heredoc(char **tokens, int nb_pipeline);
 

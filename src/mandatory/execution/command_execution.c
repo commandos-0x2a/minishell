@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/23 23:55:35 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/17 12:41:01 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,37 +44,15 @@ static void	run_command(t_tokens *tok, char **argv)
 	char		full_path[PATH_MAX];
 	extern char	**environ;
 	int			err;
-	char		*tmp;
 
 	if (!argv) // command not exist
 		exit(0);
-	// Check if the first character of the command is an opening parenthesis
-	if ((*argv)[0] == '(')
-	{
-		tmp = *argv;
-		tmp[ft_strlen(tmp) - 1] = '\0';
-		tmp++;
-		tmp = ft_strdup(tmp);
-		free_tokens(tok);
-		if (!tmp)
-		{
-			perror(PREFIX"allocate subshell line");
-			exit(1);
-		}
-		exit(flow_control(tmp));
-	}
-
+		
 	argv = argv_expander(argv);
 	free_tokens(tok);
 	if (!argv)
 	{
-		perror(PREFIX"wildcards expander");
-		exit(-1);
-	}
-	argv = handle_wildcards(argv);
-	if (!argv)
-	{
-		perror(PREFIX"wildcards allocate");
+		perror(PREFIX"argv expander");
 		exit(-1);
 	}
 	// Check for built-in commands before getting full path and executing.
