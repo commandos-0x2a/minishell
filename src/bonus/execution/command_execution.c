@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/19 02:35:35 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/20 21:56:49 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ static void	run_subshell(char *subshell_line)
 static void	run_command(char **argv)
 {
 	char		full_path[PATH_MAX];
-	extern char	**environ;
 	int			err;
 
 	if (!argv) // command not exist
@@ -86,7 +85,8 @@ static void	run_command(char **argv)
 	err = get_full_path(full_path, argv, "");
 	if (err == 0)
 	{
-		execve(full_path, argv, environ);
+		execve(full_path, argv, *__init__env());
+		cleanup_env_copy();
 		perror(PREFIX"execve");
 		err = 1;
 	}
@@ -95,14 +95,18 @@ static void	run_command(char **argv)
 
 static int	run_builtin_command(t_tokens *tok, char **tokens, int here_doc_fd)
 {
+	char	**argv;
+
 	if (here_doc_fd > -1)
 		close(here_doc_fd);
 	if (redirection_handler(tokens, -1, 0) != 0)
 		return (1);
+	argv = get_argv(tokens);
+	
 	return (handle_builtin(get_argv(tokens), 0));
 }
 
-void	close_unused(t_tokens *tok)
+void	close_unused_fds(t_tokens *tok)
 {
 	int	i;
 
@@ -119,7 +123,7 @@ void	close_unused(t_tokens *tok)
 void	free_trash_data(t_tokens *tok, char **used_tokens)
 {
 	int		i;
-	char	j;
+	int		j;
 
 	i = 0;
 	while (i < tok->nb_tokens)
@@ -138,6 +142,7 @@ void	free_trash_data(t_tokens *tok, char **used_tokens)
 		}
 		i++;
 	}
+	free(tok->tokens);
 }
 
 int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
@@ -189,6 +194,9 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 		run_command(argv);
 		exit(1);
 	}
+
+
+
 	/* ========== Parent Process ==========*/
 	// Close unused file descriptors from previous pipe.
 	if (is_pipe & IS_PREV_PIPE)

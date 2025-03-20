@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/17 12:47:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/20 21:29:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,18 +70,18 @@ int main(int argc, char **argv)
 {
 	char		*line;
 	int			is_test;
-	t_config	config;
+	// t_config	config;
 
-	is_test = 0;
 	// Load configuration
-	load_config(&config);
-	setup_signals();
-	terminal_config(STDIN_FILENO);
-
-	if (ft_strcmp(config.prompt_style, "colorful") == 0)
-		ft_fprintf(2, "colorful\n");
-	else
-		ft_fprintf(2, "normal\n");
+	// load_config(&config);
+	// setup_signals();
+	// terminal_config(STDIN_FILENO);
+	
+	// if (ft_strcmp(config.prompt_style, "colorful") == 0)
+	// 	ft_fprintf(2, "colorful\n");
+	// else
+	// 	ft_fprintf(2, "normal\n");
+	is_test = 0;
 	if (argc == 2 && ft_strcmp(argv[1], "test") == 0)
 		is_test = 1;
 	while (1)
@@ -98,8 +98,8 @@ int main(int argc, char **argv)
 		handle_line(line);
 		if (*line)
 		{
-			terminal_config(STDIN_FILENO);
-			reset_signals();
+			// terminal_config(STDIN_FILENO);
+			// reset_signals();
 			if (is_test)
 				print_tokenizer(line, 0);
 			else
@@ -111,6 +111,6 @@ int main(int argc, char **argv)
 	}
 
 	// Save config before exit
-	save_config(&config);
+	// save_config(&config);
 	return (0);
 }

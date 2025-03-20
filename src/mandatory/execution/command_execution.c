@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/17 12:41:01 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/20 21:30:25 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 static void	run_command(t_tokens *tok, char **argv)
 {
 	char		full_path[PATH_MAX];
-	extern char	**environ;
 	int			err;
 
 	if (!argv) // command not exist
@@ -61,7 +60,8 @@ static void	run_command(t_tokens *tok, char **argv)
 	err = get_full_path(full_path, argv, "");
 	if (err == 0)
 	{
-		execve(full_path, argv, environ);
+		execve(full_path, argv, *__init__env());
+		
 		perror(PREFIX"execve");
 		err = 1;
 	}
@@ -123,7 +123,7 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 	pid = fork();
 	if (pid == 0)
 	{
-		close_unused(tok);
+		close_unused_fds(tok);
 		/* ========== Child Process ========== */
 		if (pipex_handler(is_pipe, *fd, pipefd) != 0)
 		{
