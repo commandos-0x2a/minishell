@@ -6,12 +6,13 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/17 12:47:26 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/18 21:30:56 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell_bonus.h"
 
+/*
 static char	**get_next_command(char **tokens, int *is_pipe)
 {
 	while (*tokens)
@@ -26,6 +27,18 @@ static char	**get_next_command(char **tokens, int *is_pipe)
 	}
 	*is_pipe <<= 1;
 	return (tokens);
+}
+*/
+
+static char	**get_next_command(char **tokens, int *is_pipe)
+{
+	char	**next;
+
+	next = ft_tokpbrk(tokens, "|", NULL);
+	*is_pipe <<= 1;
+	if (*next)
+		*is_pipe |= 1;
+	return (next);
 }
 
 int	pipeline_check_syntax(char **tokens, char **tokens_brk)

@@ -25,6 +25,7 @@ FILES = builtins/builtins			\
 			utils/ft_setenv			\
 			utils/get_full_path		\
 			utils/readline_handler	\
+			utils/ft_tokpbrk		\
 			str_expander			\
 			utils/signals			\
 			wait_children			\

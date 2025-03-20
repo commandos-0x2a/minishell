@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/02/10 21:26:05 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/03/19 02:27:12 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-int	handle_builtin(t_tokens *tok, char **argv, int _exit)
+int	handle_builtin(char **argv, int _exit)
 {
 	int	ret;
 
@@ -56,9 +56,6 @@ int	handle_builtin(t_tokens *tok, char **argv, int _exit)
 	else
 		return (1);
 	if (_exit)
-	{
-		free_tokens(tok);
 		exit(ret);
-	}
 	return (ret);
 }

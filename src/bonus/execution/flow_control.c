@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/17 12:47:23 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/19 00:03:31 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ int	pipeline_check_syntax(char **tokens, char **tokens_brk);
  * 		2: [cmd4, >, out]
  * 
 */
+
+/*
 static char	**get_next_pipeline(char **tokens, int *op)
 {
 	*op = 0;
@@ -56,6 +58,27 @@ static char	**get_next_pipeline(char **tokens, int *op)
 		tokens++;
 	}
 	return (tokens);
+}
+*/
+
+static int	get_operation_type(char *op_str)
+{
+	if (!op_str)
+		return (0);
+	if (ft_strcmp(op_str, "&&") == 0)
+		return (1);
+	else if (ft_strcmp(op_str, "||") == 0)
+		return (2);
+	return (0);
+}
+
+static char	**get_next_pipeline(char **tokens, int *op)
+{
+	char	**next;
+
+	next = ft_tokpbrk(tokens, "&&", "||", NULL);
+	*op = get_operation_type(*next);
+	return (next);
 }
 
 int	flow_check_syntax(char **tokens)
@@ -89,7 +112,10 @@ int	flow_control(char *line)
 	tok = tokenizer(line);
 	free(line);
 	if (!tok.tokens)
+	{
+		PRINT_ALLOCATE_ERROR;
 		return (-1);
+	}
 	if (flow_check_syntax(tok.tokens) == -1)
 	{
 		free_tokens(&tok);

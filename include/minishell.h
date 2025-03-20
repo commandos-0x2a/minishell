@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/17 12:40:38 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/19 02:22:46 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@
 
 #include "minishell_utils.h"
 
-#define PREFIX "minishell: "
 
 #define HOSTNAME_MAX 64
 #define USERNAME_MAX 32

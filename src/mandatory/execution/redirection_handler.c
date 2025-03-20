@@ -6,43 +6,17 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/15 21:40:38 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/18 17:59:57 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static int	check_ambiguous(char *token)
-{
-	char	*s;
-
-	s = expand_str_no_quote(token);
-	if (!s)
-	{
-		ft_fprintf(2, PREFIX"check_ambiguous: %s\n", strerror(errno));
-		return (1);
-	}
-	while (*s)
-	{
-		if (*s == '*')
-		{
-			ft_fprintf(2, PREFIX"%s: ambiguous redirect\n", token);
-			return (1);
-		}
-		if (*s == '\'' || *s == '"')
-			s = ft_strchr(s + 1, *s);
-		s++;
-	}
-	return (0);
-}
 
 static int	in_redirection(char *token, int change_std)
 {
 	int		fd;
 	char	*file;
 
-	if (check_ambiguous(token))
-		return (1);
 	file = expand_str(token);
 	if (!file)
 		return (-1);
@@ -65,8 +39,6 @@ static int	out_append(char *token, int change_std)
 	int		fd;
 	char	*file;
 
-	if (check_ambiguous(token))
-		return (1);
 	file = expand_str(token);
 	if (!file)
 		return (-1);
@@ -89,8 +61,6 @@ static int	out_redirection(char *token, int change_std)
 	int		fd;
 	char	*file;
 
-	if (check_ambiguous(token))
-		return (1);
 	file = expand_str(token);
 	if (!file)
 		return (-1);

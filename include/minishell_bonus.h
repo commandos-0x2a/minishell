@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/16 14:25:03 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/19 02:27:24 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ int	wait_children(int target_pid);
 int	*run_all_heredoc(char **tokens, int nb_pipeline);
 
 /*  Built-in commands  */
-int		handle_builtin(t_tokens *tok, char **argv, int _exit);
+int		handle_builtin(char **argv, int _exit);
 int		is_builtin(char *cmd);
 int		ft_cd(char **argv);
 int		ft_echo(char **argv);

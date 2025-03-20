@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/17 12:47:20 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/19 02:35:35 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,47 +39,50 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 	return (0);
 }
 
-static void	run_command(t_tokens *tok, char **argv)
+static void	run_subshell(char *subshell_line)
+{
+	char	*line;
+
+	line = subshell_line;
+	line[ft_strlen(line) - 1] = '\0';
+	line++;
+	line = ft_strdup(line);
+	if (!line)
+	{
+		PRINT_ALLOCATE_ERROR;
+		exit(1);
+	}
+	exit(flow_control(line));
+}
+
+static void	run_command(char **argv)
 {
 	char		full_path[PATH_MAX];
 	extern char	**environ;
 	int			err;
-	char		*tmp;
 
 	if (!argv) // command not exist
 		exit(0);
+	
 	// Check if the first character of the command is an opening parenthesis
 	if ((*argv)[0] == '(')
-	{
-		tmp = *argv;
-		tmp[ft_strlen(tmp) - 1] = '\0';
-		tmp++;
-		tmp = ft_strdup(tmp);
-		free_tokens(tok);
-		if (!tmp)
-		{
-			perror(PREFIX"allocate subshell line");
-			exit(1);
-		}
-		exit(flow_control(tmp));
-	}
+		run_subshell(*argv);
 
 	argv = argv_expander(argv);
-	free_tokens(tok);
 	if (!argv)
 	{
-		perror(PREFIX"wildcards expander");
+		PRINT_ALLOCATE_ERROR;
 		exit(-1);
 	}
 	argv = handle_wildcards(argv);
 	if (!argv)
 	{
-		perror(PREFIX"wildcards allocate");
+		PRINT_ALLOCATE_ERROR;
 		exit(-1);
 	}
 	// Check for built-in commands before getting full path and executing.
 	if (is_builtin(argv[0]))
-		handle_builtin(tok, argv, 1);
+		handle_builtin(argv, 1);
 	err = get_full_path(full_path, argv, "");
 	if (err == 0)
 	{
@@ -96,7 +99,7 @@ static int	run_builtin_command(t_tokens *tok, char **tokens, int here_doc_fd)
 		close(here_doc_fd);
 	if (redirection_handler(tokens, -1, 0) != 0)
 		return (1);
-	return (handle_builtin(tok, get_argv(tokens), 0));
+	return (handle_builtin(get_argv(tokens), 0));
 }
 
 void	close_unused(t_tokens *tok)
@@ -108,15 +111,41 @@ void	close_unused(t_tokens *tok)
 	{
 		if (tok->heredoc_fds[i] > -1)
 			close(tok->heredoc_fds[i]);
+		tok->heredoc_fds[i] = -1;
+		i++;
+	}
+}
+
+void	free_trash_data(t_tokens *tok, char **used_tokens)
+{
+	int		i;
+	char	j;
+
+	i = 0;
+	while (i < tok->nb_tokens)
+	{
+		j = 0;
+		while (used_tokens[j] && tok->tokens[i])
+		{
+			if (tok->tokens[i] == used_tokens[j])
+				break;
+			j++;
+		}
+		if (!used_tokens[j] && tok->tokens[i])
+		{
+			free(tok->tokens[i]);
+			tok->tokens[i] = NULL;
+		}
 		i++;
 	}
 }
 
 int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 {
-	int	pid;
-	int	pipefd[2];
-	int	here_doc_fd;
+	int		pid;
+	int		pipefd[2];
+	int		here_doc_fd;
+	char	**argv;
 	
 	here_doc_fd = tok->heredoc_fds[tok->i];
 	tok->heredoc_fds[tok->i] = -1;
@@ -155,7 +184,9 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 		{
 			exit(126);
 		}
-		run_command(tok, get_argv(tokens));
+		argv = get_argv(tokens);
+		free_trash_data(tok, argv);
+		run_command(argv);
 		exit(1);
 	}
 	/* ========== Parent Process ==========*/

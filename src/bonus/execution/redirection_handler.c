@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/17 12:47:29 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/19 00:02:37 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	check_ambiguous(char *token)
 	s = expand_str_no_quote(token);
 	if (!s)
 	{
-		ft_fprintf(2, PREFIX"check_ambiguous: %s\n", strerror(errno));
+		PRINT_ALLOCATE_ERROR;
 		return (1);
 	}
 	while (*s)
@@ -39,21 +39,24 @@ static int	check_ambiguous(char *token)
 static int	in_redirection(char *token, int change_std)
 {
 	int		fd;
-	char	*file;
+	char	*filename;
 
 	if (check_ambiguous(token))
 		return (1);
-	file = expand_str(token);
-	if (!file)
-		return (-1);
-	fd = open(file, O_RDONLY);
-	if (fd == -1)
+	filename = expand_str(token);
+	if (!filename)
 	{
-		ft_fprintf(2, PREFIX"%s: %s\n", file, strerror(errno));
-		free(file);
+		PRINT_ALLOCATE_ERROR;
 		return (-1);
 	}
-	free(file);
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
+	{
+		PRINT_FILE_ERROR(filename);
+		free(filename);
+		return (-1);
+	}
+	free(filename);
 	if (change_std)
 		dup2(fd, STDIN_FILENO);
 	close(fd);
@@ -63,21 +66,24 @@ static int	in_redirection(char *token, int change_std)
 static int	out_append(char *token, int change_std)
 {
 	int		fd;
-	char	*file;
+	char	*filename;
 
 	if (check_ambiguous(token))
 		return (1);
-	file = expand_str(token);
-	if (!file)
-		return (-1);
-	fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	if (fd == -1)
+	filename = expand_str(token);
+	if (!filename)
 	{
-		ft_fprintf(2, PREFIX"%s\n", strerror(errno));
-		free(file);
+		PRINT_ALLOCATE_ERROR;
 		return (-1);
 	}
-	free(file);
+	fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (fd == -1)
+	{
+		PRINT_FILE_ERROR(filename);
+		free(filename);
+		return (-1);
+	}
+	free(filename);
 	if (change_std)
 		dup2(fd, STDOUT_FILENO);
 	close(fd);
@@ -87,21 +93,24 @@ static int	out_append(char *token, int change_std)
 static int	out_redirection(char *token, int change_std)
 {
 	int		fd;
-	char	*file;
+	char	*filename;
 
 	if (check_ambiguous(token))
 		return (1);
-	file = expand_str(token);
-	if (!file)
-		return (-1);
-	fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
+	filename = expand_str(token);
+	if (!filename)
 	{
-		ft_fprintf(2, PREFIX"%s\n", strerror(errno));
-		free(file);
+		PRINT_ALLOCATE_ERROR;
 		return (-1);
 	}
-	free(file);
+	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd == -1)
+	{
+		PRINT_FILE_ERROR(filename);
+		free(filename);
+		return (-1);
+	}
+	free(filename);
 	if (change_std)
 		dup2(fd, STDOUT_FILENO);
 	close(fd);
