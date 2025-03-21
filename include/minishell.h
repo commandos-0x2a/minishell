@@ -71,6 +71,15 @@ typedef struct s_tokens
 	int		nb_command;
 }	t_tokens;
 
+typedef struct s_mdata
+{
+	char	*line;
+	char	**tokens;
+	pid_t	*command_pid;
+	int		nb_commands;
+}	t_mdata;
+
+
 
 // Terminal configuration
 char *get_prompt(void);
@@ -98,12 +107,12 @@ char **handle_wildcards(char **argv);
 # define IS_PIPE_MASK	0b11
 
 /*  execution  */
-int	command_execution(char **tokens, \
+int	command_execution(t_mdata *mdata, char **tokens, \
 	int *fd,\
 	int is_pipe);
 
-int	pipeline_control(char **pipeline);
-int	flow_control(char *line);
+int	pipeline_control(t_mdata *mdata, char **pipeline);
+int	flow_control(t_mdata *mdata);
 int	flow_check_syntax(char **tokens);
 int	wait_children(int target_pid);
 	

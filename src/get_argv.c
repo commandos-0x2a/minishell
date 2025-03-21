@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 19:32:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 18:23:43 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 20:57:46 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,7 @@ char	**get_argv(char **tokens)
 			swap_args(++last_argv, tokens);
 		tokens++;
 	}
+	if (!argv)
+		return (tokens);
 	return (argv);
 }

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/21 18:35:54 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 20:13:02 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,9 @@ int	terminal_reset(int fd)
 int main(int argc, char **argv)
 {
 	char		*line;
-	char		*line2;
 	int			is_test;
+	t_mdata		mdata;
+
 	// t_config	config;
 
 	// Load configuration
@@ -89,6 +90,7 @@ int main(int argc, char **argv)
 		is_test = 1;
 	while (1)
 	{
+		ft_bzero(&mdata, sizeof(mdata));
 		// setup_signals();
 		line = readline(get_prompt());
 		
@@ -100,19 +102,19 @@ int main(int argc, char **argv)
 			break;
 		}
 		handle_line(line);
-		line2 = add_space_to_line(line);
+		mdata.line = add_space_to_line(line);
 		free(line);
-		if (*line2)
+		if (*mdata.line)
 		{
 			// terminal_config(STDIN_FILENO);
 			// reset_signals();
 			if (is_test)
-				print_tokenizer(line2, 0);
+				print_tokenizer(mdata.line, 0);
 			else
-				flow_control(line2);
+				flow_control(&mdata);
 			// terminal_reset(STDIN_FILENO);
 		}
-		free(line2);
+		free(mdata.line);
 	}
 
 	// Save config before exit

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 18:42:35 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 21:33:06 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ static void	run_subshell(char *subshell_line)
 		PRINT_ALLOCATE_ERROR;
 		exit(1);
 	}
-	exit(flow_control(line));
+	exit(0);
+	// exit(flow_control(line));
 }
 
 static int	run_builtin_command(char **tokens)
@@ -63,18 +64,29 @@ static int	run_builtin_command(char **tokens)
 char	**copy_dptr(char **dptr)
 {
 	char	**ptr;
-	char	**new_dptr;
+	char	**dst;
 
 	ptr = dptr;
 	while (*ptr)
 		ptr++;
-	new_dptr = ft_calloc(ptr - dptr + 1, sizeof(char *));
-	if (!new_dptr)
+	dst = ft_calloc(ptr - dptr + 1, sizeof(char *));
+	if (!dst)
 		return (NULL);
-	ptr = new_dptr;
+	ptr = dst;
 	while (*dptr)
-		*ptr++ = *dptr++;
-	return (new_dptr);
+	{
+		*ptr = ft_strdup(*dptr++);
+		if (*ptr == NULL)
+		{
+			ptr = dst;
+			while (*ptr)
+				free(*ptr++);
+			free(dst);
+			return (NULL);
+		}
+		ptr++;
+	}
+	return (dst);
 }
 
 char	**copy_used_tokens(t_tokens *tok, char **used_tokens)
@@ -104,6 +116,10 @@ char	**copy_used_tokens(t_tokens *tok, char **used_tokens)
 	return (used_tokens);
 }
 
+
+// allocate:
+//	- char **argv
+//	- char	**env # global
 static void	run_command(char **argv)
 {
 	char		full_path[PATH_MAX];
@@ -142,7 +158,24 @@ static void	run_command(char **argv)
 	exit(err);
 }
 
-int command_execution(char **tokens, int *fd, int is_pipe)
+void	clean_and_exit(t_mdata *mdata, int exit_status)
+{
+	if (mdata->command_pid)
+		free(mdata->command_pid);
+	if (mdata->line)
+		free(mdata->line);
+	if (mdata->tokens)
+		free(mdata->tokens);
+	cleanup_env_copy();
+	exit(exit_status);
+}
+
+// allocate:
+//	- char	*line
+//	- char	**tokens
+//	- pid_t	*children_pid
+//	- char	**env # global
+int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 {
 	int		pid;
 	int		pipefd[2];
@@ -169,6 +202,17 @@ int command_execution(char **tokens, int *fd, int is_pipe)
 	pid = fork();
 	if (pid == 0)
 	{
+		/* ========== HEAP Memory ========== */
+		// allocate:
+		//	- char	*line
+		//	- char	**tokens
+		//	- pid_t	*children_pid
+
+		
+		//	- pid_t	*children_pid
+		free(mdata->command_pid);
+		mdata->command_pid = NULL;
+		
 		/* ========== Child Process ========== */
 		if (is_pipe)
 			close(pipefd[0]);
@@ -177,19 +221,24 @@ int command_execution(char **tokens, int *fd, int is_pipe)
 		kill(getpid(), SIGSTOP); 
 		
 		if (redirection_handler(tokens, heredoc_fd, 1) != 0)
-		{
-			exit(126);
-		}
+			clean_and_exit(mdata, 126);
 		close(heredoc_fd);
 		if (pipex_handler(is_pipe, *fd, pipefd) != 0)
-		{
-			exit(1);
-		}
+			clean_and_exit(mdata, 1);
 
-		argv = get_argv(tokens);
-		// argv = copy_used_tokens(tok, argv);
+		argv = copy_dptr(get_argv(tokens));
+
+		// destroy mdata
+		//	- char	**tokens
+		free(mdata->tokens);
+		mdata->tokens = NULL;
+		//	- char	*line
+		free(mdata->line);
+		mdata->line = NULL;
+		
+
 		if (!argv)
-			exit(1);
+			clean_and_exit(mdata, 1);
 
 		run_command(argv);
 		exit(1);

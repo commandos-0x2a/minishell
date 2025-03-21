@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 18:25:55 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 21:16:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,18 +90,22 @@ static int	get_nb_command(char **tokens)
 	return (nb_pipeline);
 }
 
-int	pipeline_control(char **pipeline)
+
+// allocate:
+//	- char *line
+//	- char **tokens
+//	- char	**env # global
+
+int	pipeline_control(t_mdata *mdata, char **pipeline)
 {
 	int		is_pipe;
 	int		fd;
 	char	**next_command;
 	int		i;
-	int		nb_command;
-	pid_t	*children_pid;
 
-	nb_command = get_nb_command(pipeline);
-	children_pid = ft_calloc(nb_command, sizeof(pid_t));
-	if (!children_pid)
+	mdata->nb_commands = get_nb_command(pipeline);
+	mdata->command_pid = ft_calloc(mdata->nb_commands, sizeof(pid_t));
+	if (!mdata->command_pid)
 		return (-1);
 	
 	fd = -1;
@@ -112,19 +116,19 @@ int	pipeline_control(char **pipeline)
 		next_command = get_next_command(pipeline, &is_pipe);
 		if (is_pipe & IS_PIPE)
 			*next_command++ = NULL;
-		children_pid[i] = command_execution(pipeline, &fd, is_pipe);
-		if (children_pid[i] == -1)
+		mdata->command_pid[i] = command_execution(mdata, pipeline, &fd, is_pipe);
+		if (mdata->command_pid[i] == -1)
 			break ;
-		if (waitpid(children_pid[i], NULL, WUNTRACED) == -1)
+		if (waitpid(mdata->command_pid[i], NULL, WUNTRACED) == -1)
 			break ;
 		pipeline = next_command;
 		i++;
 	}
 	while (i--)
 	{
-		kill(children_pid[i], SIGCONT);
-		waitpid(children_pid[i], NULL, WCONTINUED);
+		kill(mdata->command_pid[i], SIGCONT);
+		waitpid(mdata->command_pid[i], NULL, WCONTINUED);
 	}
-	free(children_pid);
+	free(mdata->command_pid);
 	return (wait_children(-1));
 }
