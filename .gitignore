@@ -8,6 +8,8 @@ out/
 *.dll
 *.dylib
 *.exe
+./cat2
+./info
 
 # Dependencies
 node_modules/

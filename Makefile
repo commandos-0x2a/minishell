@@ -1,5 +1,5 @@
-NAME		= minishell
-NAME_BONUS	= minishell_bonus
+NAME		= minishell_mad
+NAME_BONUS	= minishell
 
 CC			= cc
 LDFLAGS		= -L./libft -lft -lreadline -lncurses
@@ -45,12 +45,8 @@ BONUS_FILES = main							\
 			tokenizer			\
 #
 
-MANDATORY_FILES = main						\
-			execution/command_execution		\
-			execution/pipeline_control		\
-			execution/redirection_handler	\
-			print_tokenizer		\
-			tokenizer			\
+MANDATORY_FILES = 
+
 #
 
 OBJECTS 			= $(FILES:%=$(OBJDIR)/%.o)
@@ -58,9 +54,9 @@ MANDATORY_OBJECTS	= $(MANDATORY_FILES:%=$(OBJDIR)/mandatory/%.o)
 BONUS_OBJECTS 		= $(BONUS_FILES:%=$(OBJDIR)/bonus/%.o)
 
 
-all: libft $(NAME)
+# all: libft $(NAME)
 
-bonus: libft $(NAME_BONUS)
+all: libft $(NAME_BONUS)
 
 libft:
 	@$(MAKE) -C libft
@@ -76,7 +72,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
-	$(MAKE) -C libft clean
+#	$(MAKE) -C libft clean
 	rm -f $(OBJECTS) $(MANDATORY_OBJECTS) $(BONUS_OBJECTS)
 
 fclean: clean

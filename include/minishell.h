@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   minishell.h                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:15:08 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/20 21:31:37 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 12:35:02 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@
 
 #include "minishell_utils.h"
 
+#define PREFIX "minishell: "
 
 #define HOSTNAME_MAX 64
 #define USERNAME_MAX 32
@@ -66,9 +67,8 @@ typedef struct s_tokens
 {
 	char	**tokens;
 	int		nb_tokens;
-	int		nb_heredoc;
-	int		*heredoc_fds;
-	int		i;
+	pid_t	*children_pid;
+	int		nb_command;
 }	t_tokens;
 
 
@@ -90,18 +90,28 @@ char	*expand_str(char *str);
 char	*expand_str_no_quote(char *str);
 char	**argv_expander(char **argv);
 
-/*  execution  */
+/*  wildcarda  */
+char **handle_wildcards(char **argv);
+
 # define IS_PIPE		0b01
 # define IS_PREV_PIPE	0b10
 # define IS_PIPE_MASK	0b11
 
-int	redirection_handler(char **tokens, int here_doc_fd, int change_std);
+/*  execution  */
 int	command_execution(t_tokens *tok, char **tokens, \
-						int *fd,\
-						int is_pipe);
-int	pipeline_control(char *line);
+	int *fd,\
+	int is_pipe);
+
+int	pipeline_control(t_tokens *tok, char **pipeline);
+int	flow_control(char *line);
+int	flow_check_syntax(char **tokens);
 int	wait_children(int target_pid);
-int	*run_all_heredoc(char **tokens, int nb_pipeline);
+	
+/*  Redirection handling  */
+int	redirection_handler(char **tokens, int heredoc_fd, int change_std);
+int	heredoc_start_read(char *limiter, int out_fd);
+int	heredoc_forever(char **tokens);
+
 
 /*  Built-in commands  */
 int		handle_builtin(char **argv, int _exit);

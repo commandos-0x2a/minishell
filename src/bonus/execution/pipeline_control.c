@@ -6,11 +6,11 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/18 21:30:56 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 15:23:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell_bonus.h"
+#include "minishell.h"
 
 /*
 static char	**get_next_command(char **tokens, int *is_pipe)
@@ -76,7 +76,7 @@ int	pipeline_check_syntax(char **tokens, char **tokens_brk)
 	return (0);
 }
 
-static int	get_nb_pipeline(char **tokens)
+static int	get_nb_command(char **tokens)
 {
 	int	nb_pipeline;
 
@@ -94,17 +94,16 @@ int	pipeline_control(t_tokens *tok, char **pipeline)
 {
 	int		is_pipe;
 	int		fd;
-	int		proc_pid;
 	char	**next_command;
+	int		i;
 
-	tok->nb_heredoc = get_nb_pipeline(tok->tokens);
-	tok->heredoc_fds = run_all_heredoc(tok->tokens, tok->nb_heredoc);
-	if (!tok->heredoc_fds)
+	tok->nb_command = get_nb_command(tok->tokens);
+	tok->children_pid = ft_calloc(tok->nb_command, sizeof(pid_t));
+	if (!tok->children_pid)
 		return (-1);
 	fd = -1;
-	proc_pid = 0;
 	is_pipe = 0;
-	tok->i = 0;
+	i = 0;
 	while (*pipeline)
 	{
 		next_command = get_next_command(pipeline, &is_pipe);
@@ -113,11 +112,19 @@ int	pipeline_control(t_tokens *tok, char **pipeline)
 			free(*next_command);
 			*next_command++ = NULL;
 		}
-		proc_pid = command_execution(tok, pipeline, &fd, is_pipe);
-		if (proc_pid == -1)
+		tok->children_pid[i] = command_execution(tok, pipeline, &fd, is_pipe);
+		if (tok->children_pid[i] == -1)
+			break ;
+		if (waitpid(tok->children_pid[i], NULL, WUNTRACED) == -1)
 			break ;
 		pipeline = next_command;
-		tok->i++;
+		i++;
 	}
-	return (wait_children(proc_pid));
+	while (i--)
+	{
+		kill(tok->children_pid[i], SIGCONT);
+		waitpid(tok->children_pid[i], NULL, WCONTINUED);
+		// i++;
+	}
+	return (wait_children(tok->children_pid[i - 1]));
 }
