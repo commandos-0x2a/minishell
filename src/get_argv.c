@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 19:32:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 12:39:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 18:23:43 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,8 @@ char	**get_argv(char **tokens)
 			|| ft_strcmp(*tokens, ">>") == 0 \
 			|| ft_strcmp(*tokens, ">") == 0)
 		{
-			free(*tokens);
 			*tokens = NULL;
 			*++tokens = NULL;
-			free(*tokens);
 		}
 		else if (!argv)
 		{

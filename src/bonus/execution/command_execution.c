@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 15:45:08 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 18:42:35 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,20 +142,18 @@ static void	run_command(char **argv)
 	exit(err);
 }
 
-int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
+int command_execution(char **tokens, int *fd, int is_pipe)
 {
 	int		pid;
 	int		pipefd[2];
 	char	**argv;
 	int		heredoc_fd;
-
-
 	
 	// Run built-in in parent.
 	if ((is_pipe & IS_PIPE_MASK) == 0 && is_builtin(get_argv0(tokens)) == 1)
 		return (run_builtin_command(tokens));
 
-		
+
 	if ((is_pipe & IS_PIPE) && pipe(pipefd) == -1)
 	{
 		if (is_pipe & IS_PREV_PIPE)
@@ -171,12 +169,12 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 	pid = fork();
 	if (pid == 0)
 	{
-		// close_unused_fds(tok);
 		/* ========== Child Process ========== */
 		if (is_pipe)
 			close(pipefd[0]);
 		heredoc_fd = heredoc_forever(tokens);
-		kill(getpid(), SIGSTOP);
+		
+		kill(getpid(), SIGSTOP); 
 		
 		if (redirection_handler(tokens, heredoc_fd, 1) != 0)
 		{
@@ -187,12 +185,12 @@ int command_execution(t_tokens *tok, char **tokens, int *fd, int is_pipe)
 		{
 			exit(1);
 		}
-		
 
 		argv = get_argv(tokens);
-		argv = copy_used_tokens(tok, argv);
+		// argv = copy_used_tokens(tok, argv);
 		if (!argv)
 			exit(1);
+
 		run_command(argv);
 		exit(1);
 	}

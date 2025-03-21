@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 12:39:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 18:19:25 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,21 +107,17 @@ int	flow_control(char *line)
 	int			test;
 	char		**pipeline;
 	char		**next_pipeline;
-	t_tokens	tok;
+	char		**tokens;
 
-	tok = tokenizer(line);
-	free(line);
-	if (!tok.tokens)
+	tokens = tokenizer(line);
+	if (!tokens)
 	{
 		PRINT_ALLOCATE_ERROR;
 		return (-1);
 	}
-	if (flow_check_syntax(tok.tokens) == -1)
-	{
-		free_tokens(&tok);
+	if (flow_check_syntax(tokens) == -1)
 		return (-1);
-	}
-	pipeline = tok.tokens;
+	pipeline = tokens;
 	test = 1; // cuz run first time
 	while (*pipeline)
 	{
@@ -133,12 +129,11 @@ int	flow_control(char *line)
 		}
 		if (test)
 		{
-			test = !pipeline_control(&tok, pipeline); // toggle cuz exec when success return (0)
+			test = !pipeline_control(pipeline); // toggle cuz exec when success return (0)
 		}
 		if (op == 2) // is op == OR toggle test
 			test = !test;
 		pipeline = next_pipeline;
 	}
-	free_tokens(&tok);
 	return (0);
 }

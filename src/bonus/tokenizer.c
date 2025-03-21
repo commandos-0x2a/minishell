@@ -6,26 +6,11 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 12:39:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 18:16:09 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static int	operation_len(char *s)
-{
-	if (ft_strncmp(s, "&&", 2) == 0 || ft_strncmp(s, "||", 2) == 0 \
-		|| ft_strncmp(s, ">>", 2) == 0 || ft_strncmp(s, "<<", 2) == 0)
-		return (2);
-	else if (*s == '|' || *s == '<' || *s == '>')
-		return (1);
-	return (0);
-}
-
-static int	is_operation(char *s)
-{
-	return (operation_len(s) > 0);
-}
 
 /*
 * Let me explain what this function does:
@@ -46,15 +31,15 @@ static int	is_operation(char *s)
 * It's like taking a long piece of paper and cutting it into smaller pieces,
 * where each piece has one word! ✂️
 */
-static char	**tokenizer_helper(char *s, int i)
+static char	**tokenizer_iter(char *s, int i)
 {
-	char	*p;
+	char	*start;
 	char	**tokens;
 	int		nb_bracket;
 
 	while (*s == ' ')
 		s++;
-	p = s;
+	start = s;
 	nb_bracket = 0;
 	while (*s && (*s != ' ' || nb_bracket))
 	{
@@ -70,8 +55,6 @@ static char	**tokenizer_helper(char *s, int i)
 			if (!s)
 				break ;
 		}
-		if (is_operation(s) && nb_bracket == 0)
-			break ;
 		s++;
 	}
 	if (nb_bracket != 0 || s == NULL)
@@ -79,35 +62,17 @@ static char	**tokenizer_helper(char *s, int i)
 		write(2, PREFIX"syntax error\n", sizeof(PREFIX"syntax error\n") - 1);
 		return (NULL);
 	}
-	if (p == s && !*s)
+	if (start == s && !*s)
 		return (ft_calloc(i + 1, sizeof(char *)));
-	s += operation_len(p);
-	p = ft_substr(p, 0, s - p);
-	if (!p)
-		return (NULL);
-	if (!*s || is_operation(p) || is_operation(s))
-		tokens = tokenizer_helper(s, i + 1);
-	else
-		tokens = tokenizer_helper(s + 1, i + 1);
+	tokens = tokenizer_iter(s + !!*s, i + 1);
 	if (!tokens)
-	{
-		free(p);
 		return (NULL);
-	}
-	tokens[i] = p;
+	tokens[i] = start;
+	*s = '\0';
 	return (tokens);
 }
 
-t_tokens	tokenizer(char *s)
+char	**tokenizer(char *s)
 {
-	t_tokens	tok;
-	int			i;
-
-	tok.tokens = tokenizer_helper(s, 0);
-	i = 0;
-	if (tok.tokens)
-		while (tok.tokens[i])
-			i++;
-	tok.nb_tokens = i;
-	return (tok);
+	return (tokenizer_iter(s, 0));
 }

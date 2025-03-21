@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/21 12:39:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 18:35:54 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include <stdlib.h>
 
 struct termios	save_termios;
+
+char	*add_space_to_line(const char *s);
 
 char *ft_itoa_kur(int n);
 
@@ -69,6 +71,7 @@ int	terminal_reset(int fd)
 int main(int argc, char **argv)
 {
 	char		*line;
+	char		*line2;
 	int			is_test;
 	// t_config	config;
 
@@ -88,6 +91,7 @@ int main(int argc, char **argv)
 	{
 		// setup_signals();
 		line = readline(get_prompt());
+		
 		// reset_signals();
 
 		if (!line) // ctrl-D handling
@@ -96,18 +100,19 @@ int main(int argc, char **argv)
 			break;
 		}
 		handle_line(line);
-		if (*line)
+		line2 = add_space_to_line(line);
+		free(line);
+		if (*line2)
 		{
 			// terminal_config(STDIN_FILENO);
 			// reset_signals();
 			if (is_test)
-				print_tokenizer(line, 0);
+				print_tokenizer(line2, 0);
 			else
-				flow_control(line);
+				flow_control(line2);
 			// terminal_reset(STDIN_FILENO);
 		}
-		else
-			free(line);
+		free(line2);
 	}
 
 	// Save config before exit

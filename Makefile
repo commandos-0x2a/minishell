@@ -33,6 +33,7 @@ FILES = builtins/builtins			\
 			free_tokens				\
 			get_argv				\
 			get_argv0				\
+			add_space_to_line		\
 #
 
 BONUS_FILES = main							\
@@ -40,9 +41,9 @@ BONUS_FILES = main							\
 			execution/flow_control			\
 			execution/pipeline_control		\
 			execution/redirection_handler	\
-			wildcard				\
-			print_tokenizer		\
-			tokenizer			\
+			wildcard						\
+			print_tokenizer					\
+			tokenizer						\
 #
 
 MANDATORY_FILES = 

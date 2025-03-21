@@ -79,7 +79,7 @@ void cleanup_shell(void);
 
 /*  tokenizer  */
 void		print_tokenizer(char *line, int indent);
-t_tokens	tokenizer(char *s);
+char	**tokenizer(char *s);
 char		*get_argv0(char **tokens);
 char		**get_argv(char **tokens);
 void		free_tokens(t_tokens *tok);
@@ -98,11 +98,11 @@ char **handle_wildcards(char **argv);
 # define IS_PIPE_MASK	0b11
 
 /*  execution  */
-int	command_execution(t_tokens *tok, char **tokens, \
+int	command_execution(char **tokens, \
 	int *fd,\
 	int is_pipe);
 
-int	pipeline_control(t_tokens *tok, char **pipeline);
+int	pipeline_control(char **pipeline);
 int	flow_control(char *line);
 int	flow_check_syntax(char **tokens);
 int	wait_children(int target_pid);

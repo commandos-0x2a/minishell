@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 16:00:58 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 12:39:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 18:17:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,18 @@ char	*expand_str_no_quote(char *str);
 
 void	print_tokenizer(char *line, int indent)
 {
-	t_tokens tok;
+	char	**tokens;
 	int		i;
 
-	tok = tokenizer(line);
-	free(line);
-	if (!tok.tokens)
+	tokens = tokenizer(line);
+	if (!tokens)
 		return ;
-	if (flow_check_syntax(tok.tokens) == -1)
+	if (flow_check_syntax(tokens) == -1)
 	{
-		free_tokens(&tok);
 		return ;
 	}
 	i = 0;
-	while (tok.tokens[i])
+	while (tokens[i])
 	{
 		// if (tokens[i][0] == '(')
 		// {
@@ -38,7 +36,7 @@ void	print_tokenizer(char *line, int indent)
 		// 	print_tokenizer(tokens[i], indent + 4);
 		// }
 		// else
-		printf("%-*s%i: %s\n", indent, "", i, tok.tokens[i]);
+		printf("%-*s%i: %s\n", indent, "", i, tokens[i]);
 		i++;
 	}
 }
