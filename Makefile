@@ -26,11 +26,11 @@ FILES = builtins/builtins			\
 			utils/get_full_path		\
 			utils/readline_handler	\
 			utils/ft_tokpbrk		\
+			utils/ft_split			\
 			str_expander			\
 			utils/signals			\
 			wait_children			\
 			here_doc				\
-			free_tokens				\
 			get_argv				\
 			get_argv0				\
 			add_space_to_line		\
@@ -38,6 +38,7 @@ FILES = builtins/builtins			\
 
 BONUS_FILES = main							\
 			execution/command_execution		\
+			execution/run_command			\
 			execution/flow_control			\
 			execution/pipeline_control		\
 			execution/redirection_handler	\

@@ -6,60 +6,13 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 21:16:32 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/21 21:44:00 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 int	pipeline_check_syntax(char **tokens, char **tokens_brk);
-
-/**
- * flow is part from operation and next operation (&& or ||)
- * 
- * another way split line by operation
- * 
- * Example: 
- * > cmd1 && cmd2 | cmd3 || cmd4 > out
- * 
- * tokens:
- * 		0: cmd1
- * 		1: &&
- * 		2: cmd2
- * 		3: |
- * 		4: cmd3
- * 		5: ||
- * 		6: cmd4
- * 		7: >
- * 		8: out
- * flows:
- * 		0: [cmd1]			OP: AND
- * 		1: [cmd2, |, cmd3]	OP: OR
- * 		2: [cmd4, >, out]
- * 
-*/
-
-/*
-static char	**get_next_pipeline(char **tokens, int *op)
-{
-	*op = 0;
-	while (*tokens)
-	{
-		if (ft_strcmp(*tokens, "&&") == 0)
-		{
-			*op = 1;
-			break ;
-		}
-		else if (ft_strcmp(*tokens, "||") == 0)
-		{
-			*op = 2;
-			break ;
-		}
-		tokens++;
-	}
-	return (tokens);
-}
-*/
 
 static int	get_operation_type(char *op_str)
 {

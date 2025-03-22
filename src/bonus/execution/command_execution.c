@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 21:33:06 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/22 11:00:26 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +35,6 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 		close(pipefd[1]);
 	}
 	return (0);
-}
-
-static void	run_subshell(char *subshell_line)
-{
-	char	*line;
-
-	line = subshell_line;
-	line[ft_strlen(line) - 1] = '\0';
-	line++;
-	line = ft_strdup(line);
-	if (!line)
-	{
-		PRINT_ALLOCATE_ERROR;
-		exit(1);
-	}
-	exit(0);
-	// exit(flow_control(line));
 }
 
 static int	run_builtin_command(char **tokens)
@@ -89,75 +72,6 @@ char	**copy_dptr(char **dptr)
 	return (dst);
 }
 
-char	**copy_used_tokens(t_tokens *tok, char **used_tokens)
-{
-	int		i;
-	int		j;
-
-	i = 0;
-	while (i < tok->nb_tokens)
-	{
-		j = 0;
-		while (used_tokens[j] && tok->tokens[i])
-		{
-			if (tok->tokens[i] == used_tokens[j])
-				break;
-			j++;
-		}
-		if (!used_tokens[j] && tok->tokens[i])
-		{
-			free(tok->tokens[i]);
-			tok->tokens[i] = NULL;
-		}
-		i++;
-	}
-	used_tokens = copy_dptr(used_tokens);
-	free(tok->tokens);
-	return (used_tokens);
-}
-
-
-// allocate:
-//	- char **argv
-//	- char	**env # global
-static void	run_command(char **argv)
-{
-	char		full_path[PATH_MAX];
-	int			err;
-
-	if (!*argv) // command not exist
-		exit(0);
-		
-	// Check if the first character of the command is an opening parenthesis
-	if ((*argv)[0] == '(')
-		run_subshell(*argv);
-	
-	argv = argv_expander(argv);
-	if (!argv)
-	{
-		PRINT_ALLOCATE_ERROR;
-		exit(-1);
-	}
-	argv = handle_wildcards(argv);
-	if (!argv)
-	{
-		PRINT_ALLOCATE_ERROR;
-		exit(-1);
-	}
-	// Check for built-in commands before getting full path and executing.
-	if (is_builtin(argv[0]))
-		handle_builtin(argv, 1);
-	err = get_full_path(full_path, argv, "");
-	if (err == 0)
-	{
-		execve(full_path, argv, *__init__env());
-		cleanup_env_copy();
-		perror(PREFIX"execve");
-		err = 1;
-	}
-	exit(err);
-}
-
 void	clean_and_exit(t_mdata *mdata, int exit_status)
 {
 	if (mdata->command_pid)
@@ -190,10 +104,7 @@ int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 	if ((is_pipe & IS_PIPE) && pipe(pipefd) == -1)
 	{
 		if (is_pipe & IS_PREV_PIPE)
-		{
 			close(*fd);
-			*fd = -1;
-		}
 		return (-1);
 	}
 
@@ -222,7 +133,8 @@ int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 		
 		if (redirection_handler(tokens, heredoc_fd, 1) != 0)
 			clean_and_exit(mdata, 126);
-		close(heredoc_fd);
+		if (heredoc_fd > -1)
+			close(heredoc_fd);
 		if (pipex_handler(is_pipe, *fd, pipefd) != 0)
 			clean_and_exit(mdata, 1);
 
@@ -247,16 +159,12 @@ int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 	// Close unused file descriptors from previous pipe.
 	if (is_pipe & IS_PREV_PIPE)
 		close(*fd);
-	*fd = -1;
 	if (is_pipe & IS_PIPE)
 	{
 		close(pipefd[1]);
 		*fd = pipefd[0];
 		if (pid == -1)
-		{
 			close(*fd);
-			*fd = -1;
-		}
 	}
 	return (pid);
 }

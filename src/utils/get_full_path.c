@@ -6,82 +6,78 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 21:33:51 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 12:39:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/22 12:16:08 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <sys/stat.h>
 
-static int	check_exist(char *full_path, char *command)
-{
-	if (ft_strlcpy(full_path, command, PATH_MAX) >= PATH_MAX)
-	{
-		ft_fprintf(2, PREFIX"%s: command is too long\n", command);
-		return (-1);
-	}
-	if (access(full_path, F_OK) != 0)
-		return (0);
-	if (ft_strncmp(full_path, "./", 2) == 0 \
-		|| ft_strncmp(full_path, "/", 1) == 0)
-	{
-		if (access(full_path, F_OK) != 0)
-		{
-			ft_fprintf(2, PREFIX"%s: %s\n", full_path, strerror(errno));
-			return (-127);
-		}
-		if (access(full_path, X_OK) == 0)
-			return (1);
-		ft_fprintf(2, PREFIX"%s: %s\n", full_path, strerror(errno));
-		return (-126);
-	}
-	return (0);
-}
-
-static int	get_command_full_path(char *full_path, const char *command)
+static int	search_command_path(char full_path[PATH_MAX], char *cmd)
 {
 	char	*path_env;
-	char	*token;
-
+	char	*path;
+	
+	if (ft_strncmp(cmd, "/", 1) == 0
+		|| ft_strncmp(cmd, "./", 2) == 0 
+		|| ft_strncmp(cmd, "../", 3) == 0)
+	{
+		if (ft_strlcpy(full_path, cmd, PATH_MAX) >= PATH_MAX)
+		{
+			errno = ENAMETOOLONG;
+			return (-1);
+		}
+		return (0);
+	}
 	path_env = ft_getenv("PATH");
 	if (!path_env)
 		return (-1);
-	token = ft_strtok(path_env, ":");
-	while (token)
+	path = ft_strtok(path_env, ":");
+	while (path)
 	{
-		if (ft_join_path(full_path, token, command) < PATH_MAX \
-					&& access(full_path, X_OK) == 0)
-		{
-			free(path_env);
-			return (1);
-		}
-		token = ft_strtok(NULL, ":");
+		if (snprintf(full_path, PATH_MAX, "%s/%s", path, cmd) < PATH_MAX \
+				&& access(full_path, X_OK) == 0)
+		// if (ft_strlcpy(full_path, path, PATH_MAX) < PATH_MAX
+		// 	&& ft_strlcat(full_path, "/", PATH_MAX) < PATH_MAX
+		// 	&& ft_strlcat(full_path, cmd, PATH_MAX) < PATH_MAX
+		// 	&& access(full_path, X_OK) == 0)
+			{
+				free(path_env);
+				return (0);
+			}
+		path = ft_strtok(NULL, ":");
 	}
 	free(path_env);
+	return (1);
+}
+
+int check_permission(char full_path[PATH_MAX])
+{
+	struct stat buf;
+
+	if (stat(full_path, &buf) == -1)
+	{
+		PRINT_SYSCALL_ERROR;
+		return (1);
+	}
+	if (buf.st_flags)
 	return (0);
 }
 
-int	get_full_path(char *full_path, char **argv, char *command)
+int	get_full_path(char full_path[PATH_MAX], char *cmd)
 {
 	int	err;
 
-	if (!argv[0])
-	{
-		ft_fprintf(2, PREFIX"%s: command not found\n", command);
-		return (126);
-	}
-	err = check_exist(full_path, argv[0]);
-	if (err == 1)
-		return (0);
-	if (err < 0)
-		return (-err);
-	err = get_command_full_path(full_path, argv[0]);
+	err = search_command_path(full_path, cmd);
 	if (err == -1)
 	{
-		ft_fprintf(2, PREFIX"%s: %s\n", command, strerror(errno));
+		PRINT_SYSCALL_ERROR;
 		return (1);
 	}
 	if (err == 1)
-		return (0);
-	ft_fprintf(2, PREFIX"%s: command not found\n", argv[0]);
-	return (127);
+	{
+		ft_fprintf(2, PREFIX"%s: command not found\n", cmd);
+		return (127);
+	}
+	return (check_permission(full_path));
 }

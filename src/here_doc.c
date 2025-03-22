@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 15:09:11 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/22 10:56:28 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,13 @@ int	heredoc_forever(char **tokens)
 	int	fd;
 	int	pipefd[2];
 
-	fd = 0;
+	fd = -1;
 	while (*tokens)
 	{
 		if (ft_strcmp(*tokens, "<<") == 0)
 		{
 			tokens++;
-			if (fd > 0)
+			if (fd > -1)
 				close(fd);
 			if (pipe(pipefd) == -1)
 				return (-1);

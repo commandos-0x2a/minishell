@@ -63,14 +63,6 @@
 # define CYAN "\033[36m"
 # define WHITE "\033[37m"
 
-typedef struct s_tokens
-{
-	char	**tokens;
-	int		nb_tokens;
-	pid_t	*children_pid;
-	int		nb_command;
-}	t_tokens;
-
 typedef struct s_mdata
 {
 	char	*line;
@@ -91,8 +83,6 @@ void		print_tokenizer(char *line, int indent);
 char	**tokenizer(char *s);
 char		*get_argv0(char **tokens);
 char		**get_argv(char **tokens);
-void		free_tokens(t_tokens *tok);
-
 
 /*  expander  */
 char	*expand_str(char *str);
@@ -107,15 +97,15 @@ char **handle_wildcards(char **argv);
 # define IS_PIPE_MASK	0b11
 
 /*  execution  */
-int	command_execution(t_mdata *mdata, char **tokens, \
-	int *fd,\
-	int is_pipe);
+int		command_execution(t_mdata *mdata, char **tokens, \
+							int *fd,\
+							int is_pipe);
+int		pipeline_control(t_mdata *mdata, char **pipeline);
+int		flow_control(t_mdata *mdata);
+int		flow_check_syntax(char **tokens);
+int		wait_children(int target_pid);
+void	run_command(char **argv);
 
-int	pipeline_control(t_mdata *mdata, char **pipeline);
-int	flow_control(t_mdata *mdata);
-int	flow_check_syntax(char **tokens);
-int	wait_children(int target_pid);
-	
 /*  Redirection handling  */
 int	redirection_handler(char **tokens, int heredoc_fd, int change_std);
 int	heredoc_start_read(char *limiter, int out_fd);

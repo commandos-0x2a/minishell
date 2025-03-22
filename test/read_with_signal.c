@@ -7,7 +7,7 @@
 
 void	child(char id)
 {
-	char	buf[32];
+	char	buf[1024];
 	ssize_t	_read;
 
 	buf[0] = '\0';
