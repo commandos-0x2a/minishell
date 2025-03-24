@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 17:02:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/22 12:12:10 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/24 13:08:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int		ft_free_array_str(char **ptr);
 char	**ft_tokpbrk(char **tokens, const char *strset, ...);
 char	**ft_split(const char *s, char *d);
 
-
+char	**copy_dptr(char **dptr);
+void	free_dptr(char **ptr);
 
 #endif

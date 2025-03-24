@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/22 11:20:52 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/24 18:37:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,12 @@ static void	run_subshell(char **argv)
 
 // allocate:
 //	- char **argv
-//	- char	**env # global
+//	- char	**env # "global"
 void	run_command(char **argv)
 {
 	char		full_path[PATH_MAX];
 	int			err;
+	char		**expand_argv;
 
 	if (!*argv) // command not exist
 		exit(0);
@@ -49,13 +50,17 @@ void	run_command(char **argv)
 	if ((*argv)[0] == '(')
 		run_subshell(argv);
 	
-	argv = argv_expander(argv);
+	expand_argv = argv_expander(argv);
+	free_dptr(argv);
+	argv = expand_argv;
 	if (!argv)
 	{
 		PRINT_ALLOCATE_ERROR;
 		exit(-1);
 	}
-	argv = handle_wildcards(argv);
+	expand_argv = handle_wildcards(argv);
+	free_dptr(argv);
+	argv = expand_argv;
 	if (!argv)
 	{
 		PRINT_ALLOCATE_ERROR;
@@ -64,15 +69,16 @@ void	run_command(char **argv)
 	
 	// Check for built-in commands before getting full path and executing.
 	if (is_builtin(argv[0]))
-		handle_builtin(argv, 1);
+		handle_builtin(NULL, argv, 1);
 	
 	err = get_full_path(full_path, argv[0]);
 	if (err == 0)
 	{
 		execve(full_path, argv, *__init__env());
-		cleanup_env_copy();
 		perror(PREFIX"execve");
 		err = 1;
 	}
+	free_dptr(argv);
+	cleanup_env_copy();
 	exit(err);
 }

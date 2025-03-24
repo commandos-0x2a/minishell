@@ -70,7 +70,6 @@ typedef struct s_mdata
 	char	*line;
 	char	**tokens;
 	pid_t	*command_pid;
-	int		nb_commands;
 }	t_mdata;
 
 // Terminal configuration
@@ -106,6 +105,10 @@ int		flow_check_syntax(char **tokens);
 int		wait_children(int target_pid);
 void	run_command(char **argv);
 
+
+void	clean_and_exit(t_mdata *mdata, int exit_status);
+
+
 /*  Redirection handling  */
 int	redirection_handler(char **tokens, int heredoc_fd, int change_std);
 int	heredoc_start_read(char *limiter, int out_fd);
@@ -113,7 +116,7 @@ int	heredoc_forever(char **tokens);
 
 
 /*  Built-in commands  */
-int		handle_builtin(char **argv, int _exit);
+int		handle_builtin(t_mdata *mdata, char **argv, int _exit);
 int		is_builtin(char *cmd);
 int		ft_cd(char **argv);
 int		ft_echo(char **argv);

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 15:44:59 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/24 12:06:50 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,8 @@ int	redirection_handler(char **tokens, int heredoc_fd, int change_std)
 		if (ft_strcmp(*tokens, "<<") == 0)
 		{
 			++tokens;
-			status = dup2(heredoc_fd, STDIN_FILENO);
+			if (heredoc_fd > 0 && change_std)
+				status = dup2(heredoc_fd, STDIN_FILENO);
 		}
 		else if (ft_strcmp(*tokens, "<") == 0)
 			status = in_redirection(*++tokens, change_std);

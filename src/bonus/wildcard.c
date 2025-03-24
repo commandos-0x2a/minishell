@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/21 12:39:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/24 15:26:59 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ char **expand_wildcard(char *pattern)
     has_wildcard = (ft_strchr(pattern, '*') || ft_strchr(pattern, '?'));
     if (!has_wildcard)
 	{
-		files = malloc(sizeof(char *));	
+		files = ft_calloc(2, sizeof(char *));	
 		if (!files)
 			return (NULL);
 		files[0] = ft_strdup(pattern);
@@ -165,19 +165,19 @@ char **expand_wildcard(char *pattern)
 			free(files);
 			return (NULL);
 		}
-        return (files);  // keep original argument
+		return (files);  // keep original argument
 	}
 
-    dir = opendir(".");
-    if (!dir)
-        return (NULL);
+	dir = opendir(".");
+	if (!dir)
+		return (NULL);
 
-    files = ft_calloc(1, sizeof(char *));
-    if (!files)
-    {
-        closedir(dir);
-        return (NULL);
-    }
+	files = ft_calloc(1, sizeof(char *));
+	if (!files)
+	{
+		closedir(dir);
+		return (NULL);
+	}
     size = 0;
 
     while ((entry = readdir(dir)) != NULL)
@@ -238,7 +238,7 @@ char **handle_wildcards(char **argv)
 		argv[i] = NULL;
 		if (!expanded)
 		{
-			ft_free_array_str(new_argv);
+			free_dptr(new_argv);
 			return (NULL);
 		}
 		j = 0;
@@ -247,7 +247,7 @@ char **handle_wildcards(char **argv)
 			new_argv = add_to_array(new_argv, expanded[j], &total);
 			j++;
 		}
-		ft_free_array_str(expanded);
+		free_dptr(expanded);
 		i++;
 	}
 	return (new_argv);

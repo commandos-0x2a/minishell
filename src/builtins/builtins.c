@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/21 12:39:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/24 15:31:45 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,44 +18,57 @@
 */
 int	is_builtin(char *cmd)
 {
+	int	ret;
+
+	ret = 0;
 	if (!cmd)
 		return (0);
+	cmd = expand_str(cmd);
+	if (!cmd)
+		return (-1);
 	if (ft_strcmp(cmd, "cd") == 0 || \
 		ft_strcmp(cmd, "exit") == 0 || \
 		ft_strcmp(cmd, "export") == 0 || \
-		ft_strcmp(cmd, "unset") == 0)
-		return (1);
-	if (ft_strcmp(cmd, "echo") == 0 || \
+		ft_strcmp(cmd, "unset") == 0 ||	\
+		ft_strcmp(cmd, "echo") == 0 || \
 		ft_strcmp(cmd, "pwd") == 0 || \
 		ft_strcmp(cmd, "env") == 0)
-		return (2);
+		{
+			free(cmd);
+			return (1);
+		}
+	free(cmd);
 	return (0);
 }
 
-int	handle_builtin(char **argv, int _exit)
+int	handle_builtin(t_mdata *mdata, char **argv, int _exit)
 {
-	int	ret;
+	int	err;
+	char	**expand_argv;
 
-	if (!*argv)
+	if (!argv || !*argv)
 		return (1);
-	ret = 1;
-	if (ft_strcmp(*argv, "cd") == 0)
-		ret = ft_cd(argv);
-	else if (ft_strcmp(*argv, "exit") == 0)
-		ret = ft_exit(argv, &_exit);
-	else if (ft_strcmp(*argv, "export") == 0)
-		ret = ft_export(argv);
-	else if (ft_strcmp(*argv, "unset") == 0)
-		ret = ft_unset(argv);
-	else if (ft_strcmp(*argv, "echo") == 0)
-		ret = ft_echo(argv);
-	else if (ft_strcmp(*argv, "pwd") == 0)
-		ret = ft_pwd(argv);
-	else if (ft_strcmp(*argv, "env") == 0)
-		ret = ft_env(argv);
-	else
+	expand_argv = argv_expander(argv);
+	free_dptr(argv);
+	if (!expand_argv)
 		return (1);
+	err = 1;
+	if (ft_strcmp(*expand_argv, "cd") == 0)
+		err = ft_cd(expand_argv);
+	else if (ft_strcmp(*expand_argv, "exit") == 0)
+		err = ft_exit(expand_argv, &_exit);
+	else if (ft_strcmp(*expand_argv, "export") == 0)
+		err = ft_export(expand_argv);
+	else if (ft_strcmp(*expand_argv, "unset") == 0)
+		err = ft_unset(expand_argv);
+	else if (ft_strcmp(*expand_argv, "echo") == 0)
+		err = ft_echo(expand_argv);
+	else if (ft_strcmp(*expand_argv, "pwd") == 0)
+		err = ft_pwd(expand_argv);
+	else if (ft_strcmp(*expand_argv, "env") == 0)
+		err = ft_env(expand_argv);
+	free_dptr(expand_argv);
 	if (_exit)
-		exit(ret);
-	return (ret);
+		clean_and_exit(mdata, err);
+	return (err);
 }

@@ -19,7 +19,7 @@ FILES = builtins/builtins			\
 			builtins/test			\
 			builtins/unset			\
 			utils/config			\
-			utils/ft_free_array_str	\
+			utils/dptr				\
 			utils/ft_getenv			\
 			utils/ft_join_path		\
 			utils/ft_setenv			\
@@ -27,8 +27,9 @@ FILES = builtins/builtins			\
 			utils/readline_handler	\
 			utils/ft_tokpbrk		\
 			utils/ft_split			\
-			str_expander			\
 			utils/signals			\
+			utils/clean_and_exit	\
+			str_expander			\
 			wait_children			\
 			here_doc				\
 			get_argv				\
