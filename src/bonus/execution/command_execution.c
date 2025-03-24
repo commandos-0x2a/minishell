@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/22 11:00:26 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/23 10:10:49 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,11 +125,11 @@ int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 		mdata->command_pid = NULL;
 		
 		/* ========== Child Process ========== */
-		if (is_pipe)
+		if (is_pipe & IS_PIPE)
 			close(pipefd[0]);
 		heredoc_fd = heredoc_forever(tokens);
 		
-		kill(getpid(), SIGSTOP); 
+		kill(getpid(), SIGSTOP);
 		
 		if (redirection_handler(tokens, heredoc_fd, 1) != 0)
 			clean_and_exit(mdata, 126);

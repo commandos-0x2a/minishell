@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/22 10:56:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/23 10:29:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 int	heredoc_start_read(char *limiter, int out_fd)
 {
 	char	*line;
+	char	*line_expand;
 	size_t	limiter_len;
 
 	limiter_len = ft_strlen(limiter);
@@ -38,12 +39,14 @@ int	heredoc_start_read(char *limiter, int out_fd)
 			free(line);
 			break ;
 		}
-		write(out_fd, line, ft_strlen(line));
+		line_expand = expand_str(line);
 		free(line);
+		if (!line_expand)
+			return (-1);
+		write(out_fd, line_expand, ft_strlen(line_expand));
 	}
 	return (0);
 }
-
 
 int	heredoc_forever(char **tokens)
 {
@@ -60,7 +63,12 @@ int	heredoc_forever(char **tokens)
 				close(fd);
 			if (pipe(pipefd) == -1)
 				return (-1);
-			heredoc_start_read(*tokens, pipefd[1]);
+			if (heredoc_start_read(*tokens, pipefd[1]) != 0)
+			{
+				close(pipefd[0]);
+				close(pipefd[1]);
+				return (-1);
+			}
 			close(pipefd[1]);
 			fd = pipefd[0];
 		}

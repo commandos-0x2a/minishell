@@ -13,6 +13,8 @@
 #ifndef MINISHELL_H
 #define MINISHELL_H
 
+# define __USE_XOPEN2K8
+
 #include <libft.h>
 #include <stddef.h>
 #include <unistd.h>
