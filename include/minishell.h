@@ -71,8 +71,6 @@ typedef struct s_mdata
 	int		nb_commands;
 }	t_mdata;
 
-
-
 // Terminal configuration
 char *get_prompt(void);
 void handle_line(char *line);
