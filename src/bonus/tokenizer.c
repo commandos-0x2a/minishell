@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 18:16:09 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/22 15:09:19 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,8 @@ static char	**tokenizer_iter(char *s, int i)
 	tokens = tokenizer_iter(s + !!*s, i + 1);
 	if (!tokens)
 		return (NULL);
-	tokens[i] = start;
 	*s = '\0';
+	tokens[i] = start;
 	return (tokens);
 }
 
