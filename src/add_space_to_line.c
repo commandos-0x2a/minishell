@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 
-size_t	operation_len(const char *s)
+static size_t	operation_len(const char *s)
 {
 	if (strncmp(s, "&&", 2) == 0 || strncmp(s, "||", 2) == 0 \
 		|| strncmp(s, ">>", 2) == 0 || strncmp(s, "<<", 2) == 0)
@@ -13,7 +13,7 @@ size_t	operation_len(const char *s)
 	return (0);
 }
 
-size_t	get_new_len(const char *s)
+static size_t	get_new_len(const char *s)
 {
 	size_t	len;
 	size_t	op_len;
@@ -36,7 +36,7 @@ size_t	get_new_len(const char *s)
 	return (len);
 }
 
-void	copy_line(char *dst, const char *src)
+static void	add_space(char *dst, const char *src)
 {
 	size_t	op_len;
 	char	qout;
@@ -82,6 +82,6 @@ char	*add_space_to_line(const char *s)
 	if (!newline)
 		return (NULL);
 	newline[0] = '\0';
-	copy_line(newline, s);
+	add_space(newline, s);
 	return (newline);
 }

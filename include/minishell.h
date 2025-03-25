@@ -79,7 +79,7 @@ void cleanup_shell(void);
 
 /*  tokenizer  */
 void		print_tokenizer(char *line, int indent);
-char	**tokenizer(char *s);
+char		**tokenizer(char *s);
 char		*get_argv0(char **tokens);
 char		**get_argv(char **tokens);
 

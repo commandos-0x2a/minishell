@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/24 15:31:45 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/03/25 16:58:01 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,6 @@
 */
 int	is_builtin(char *cmd)
 {
-	int	ret;
-
-	ret = 0;
 	if (!cmd)
 		return (0);
 	cmd = expand_str(cmd);
@@ -43,7 +40,7 @@ int	is_builtin(char *cmd)
 
 int	handle_builtin(t_mdata *mdata, char **argv, int _exit)
 {
-	int	err;
+	int		err;
 	char	**expand_argv;
 
 	if (!argv || !*argv)
