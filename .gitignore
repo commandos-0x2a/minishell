@@ -1,52 +1,72 @@
-# Prerequisites
-*.d
-
-# Object files
+# Build outputs
+build/
+dist/
+bin/
+out/
 *.o
-*.ko
-*.obj
-*.elf
-
-# Linker output
-*.ilk
-*.map
-*.exp
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
 *.so
-*.so.*
+*.dll
 *.dylib
-
-# Executables
 *.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+./cat2
+./info
+
+# Dependencies
+node_modules/
+vendor/
+lib/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# Cache and temporary files
+.cache/
+tmp/
+temp/
+*.tmp
 
 # Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
+*.debug
 
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+# Coverage and test reports
+coverage/
+.nyc_output/
+junit.xml
+test-results/
+
+# Personal files
+TODO.md
+NOTES.md
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# executions
+
+minishell
+minishell_bonus
+a.out
