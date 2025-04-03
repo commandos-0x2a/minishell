@@ -6,11 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 07:25:20 by yaltayeh          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/04/01 20:15:44 by yaltayeh         ###   ########.fr       */
-=======
-/*   Updated: 2025/04/03 23:04:40 by yaltayeh         ###   ########.fr       */
->>>>>>> dev
+/*   Updated: 2025/04/03 23:28:09 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,23 +50,13 @@ char *ft_getenv(const char *name)
 	size_t name_len;
 	int i;
 	char ***g_env_copy;
-<<<<<<< HEAD
-=======
-	
->>>>>>> dev
 	g_env_copy = __init__env();
 
 	if (!name)
 		return (NULL);
-<<<<<<< HEAD
-	if (!(*g_env_copy))
-		(*g_env_copy) = create_env_copy();
-	if (!(*g_env_copy))
-=======
 	if (!*g_env_copy)
 		(*g_env_copy) = create_env_copy();
 	if (!*g_env_copy)
->>>>>>> dev
 		return (NULL);
 	name_len = ft_strlen(name);
 	i = 0;

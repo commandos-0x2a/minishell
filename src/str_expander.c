@@ -5,29 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-<<<<<<< HEAD
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/03 20:31:43 by yaltayeh         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-
-#include "minishell.h"
-#include <ctype.h>
-
-char *ft_itoa_kur(int n);
-
-
-=======
 /*   Created: 2025/01/24 14:32:22 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/03 23:05:34 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/03 23:29:34 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <ctype.h>
 
->>>>>>> dev
 /**
  * 
  * Environment Variable Expansion System Map
@@ -115,54 +100,6 @@ char *ft_itoa_kur(int n);
 
 static char *expand_env_var(char *str, int *i)
 {
-<<<<<<< HEAD
-    char *var_name;
-    char *var_value;
-    int start;
-    int len;
-
-
-	// try to handle the $? case
-    (*i)++;  // Skip the '$'
-    // Handle $? special parameter
-    if (str[*i] == '?')
-    {
-        (*i)++;
-		// str = malloc(12);
-		// sprintf(str, "%d", status);
-        return (strdup("WTF"));
-    }
-
-    if (str[*i] == '\0' || str[*i] == ' ' || str[*i] == '\'' || str[*i] == '\"')
-        return (ft_strdup("$"));
-
-    // Handle numeric variables (like $1, $2, etc.)
-    if (ft_isdigit(str[*i]))
-    {
-        (*i)++;
-        return (ft_strdup(""));  // Return empty string for numeric vars
-    }
-
-    start = *i;
-    // Include numbers in variable names, but don't start with them
-    while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-        (*i)++;
-    
-    len = *i - start;
-    if (len == 0)
-        return (ft_strdup("$"));
-
-    var_name = ft_substr(str, start, len);
-    if (!var_name)
-        return (NULL);
-
-    var_value = ft_getenv(var_name);
-    free(var_name);
-
-	if (var_value)
-		return (ft_strdup(""));
-    return (var_value);
-=======
 	char	*var_name;
 	char	*var_value;
 	int		start;
@@ -204,7 +141,6 @@ static char *expand_env_var(char *str, int *i)
 			return (ft_strdup(""));
 		return (var_value);
 	}
->>>>>>> dev
 }
 
 static char *join_and_free(char *s1, char *s2)
@@ -224,22 +160,11 @@ char	*expand_str(char *str)
 	char	quote_char;
 	int		i;
 
-<<<<<<< HEAD
-
-	result = ft_strdup("");
-	quote_char = 0;
-	i = 0;
-	while (str[i])
-	{
-		if (!result) // to detect all result malloc failed
-			return (NULL);
-=======
 	result = ft_strdup("");
 	quote_char = 0;
 	i = 0;
 	while (str[i] && result)
 	{
->>>>>>> dev
 		// Handle quotes
 		if ((str[i] == '\'' || str[i] == '\"') && !quote_char)
 		{
@@ -262,26 +187,8 @@ char	*expand_str(char *str)
 			continue;
 		}
 
-<<<<<<< HEAD
-		// Handle escape character
-		if (str[i] == '\\' && (!quote_char || quote_char == '\"'))
-		{
-			if (str[i + 1])
-			{
-				temp = ft_substr(str, i + 1, 1);
-				result = join_and_free(result, temp);
-				i += 2;
-			}
-			continue;
-		}
-
-		// Normal character
-		temp = ft_substr(str, i, 1);
-		result = join_and_free(result, temp);
-=======
 		// Normal character
 		result = join_and_free(result, ft_substr(str, i, 1));
->>>>>>> dev
 		i++;
 	}
 	return (result);
@@ -294,22 +201,11 @@ char	*expand_str_no_quote(char *str)
 	char	quote_char;
 	int		i;
 
-<<<<<<< HEAD
-
-	result = ft_strdup("");
-	quote_char = 0;
-	i = 0;
-	while (str[i])
-	{
-		if (!result) // to detect all result malloc failed
-			return (NULL);
-=======
 	result = ft_strdup("");
 	quote_char = 0;
 	i = 0;
 	while (str[i] && result)
 	{
->>>>>>> dev
 		// Handle quotes
 		if ((str[i] == '\'' || str[i] == '\"') && !quote_char)
 			quote_char = str[i];
@@ -324,10 +220,6 @@ char	*expand_str_no_quote(char *str)
 				result = join_and_free(result, temp);
 			continue;
 		}
-<<<<<<< HEAD
-
-=======
->>>>>>> dev
 		// Normal character
 		temp = ft_substr(str, i, 1);
 		result = join_and_free(result, temp);
@@ -374,8 +266,6 @@ char	**argv_expander(char **argv)
 	}
 	return (new_argv);
 }
-<<<<<<< HEAD
-=======
 
 
 
@@ -450,4 +340,3 @@ char	**argv_expander2(char **argv, int i)
 	
 	return (new_argv);
 }
->>>>>>> dev
