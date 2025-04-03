@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 21:44:00 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/03 20:26:51 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,5 +85,7 @@ int	flow_control(t_mdata *mdata)
 			test = !test;
 		pipeline = next_pipeline;
 	}
+	if (mdata->tokens)
+		free(mdata->tokens);
 	return (0);
 }

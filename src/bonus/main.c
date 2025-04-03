@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/21 20:13:02 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/03 20:28:19 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
 		}
 		free(mdata.line);
 	}
-
+	cleanup_env_copy();
 	// Save config before exit
 	// save_config(&config);
 	return (0);
