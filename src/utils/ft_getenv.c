@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 07:25:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/28 00:16:11 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/03 23:04:40 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char **create_env_copy(void)
 	i = 0;
 	while (environ[i])
 		i++;
-	new_env = (char **)malloc(sizeof(char *) * (i + 1));
+	new_env = (char **)ft_calloc(i + 1, sizeof(char *));
 	if (!new_env)
 		return (NULL);
 	i = 0;
@@ -36,9 +36,7 @@ char **create_env_copy(void)
 		new_env[i] = ft_strdup(environ[i]);
 		if (!new_env[i])
 		{
-			while (--i >= 0)
-				free(new_env[i]);
-			free(new_env);
+			free_dptr(new_env);
 			return (NULL);
 		}
 		i++;
