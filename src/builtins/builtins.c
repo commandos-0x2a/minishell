@@ -6,7 +6,11 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/03/25 16:58:01 by yaltayeh         ###   ########.fr       */
+=======
+/*   Updated: 2025/03/28 00:54:45 by yaltayeh         ###   ########.fr       */
+>>>>>>> dev
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +49,11 @@ int	handle_builtin(t_mdata *mdata, char **argv, int _exit)
 
 	if (!argv || !*argv)
 		return (1);
+<<<<<<< HEAD
 	expand_argv = argv_expander(argv);
+=======
+	expand_argv = argv_expander2(argv, 0);
+>>>>>>> dev
 	free_dptr(argv);
 	if (!expand_argv)
 		return (1);

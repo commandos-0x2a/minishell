@@ -5,6 +5,7 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
+<<<<<<< HEAD
 /*   Created: Invalid date        by                   #+#    #+#             */
 /*   Updated: 2025/04/03 20:31:43 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
@@ -17,6 +18,16 @@
 char *ft_itoa_kur(int n);
 
 
+=======
+/*   Created: 2025/01/24 14:32:22 by mkurkar           #+#    #+#             */
+/*   Updated: 2025/04/03 23:05:34 by yaltayeh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+#include <ctype.h>
+
+>>>>>>> dev
 /**
  * 
  * Environment Variable Expansion System Map
@@ -104,6 +115,7 @@ char *ft_itoa_kur(int n);
 
 static char *expand_env_var(char *str, int *i)
 {
+<<<<<<< HEAD
     char *var_name;
     char *var_value;
     int start;
@@ -150,6 +162,49 @@ static char *expand_env_var(char *str, int *i)
 	if (var_value)
 		return (ft_strdup(""));
     return (var_value);
+=======
+	char	*var_name;
+	char	*var_value;
+	int		start;
+	int		len;
+
+	// try to handle the $? case
+	(*i)++;  // Skip the '$'
+	// Handle $? special parameter
+	if (str[*i] == '?')
+	{
+		(*i)++;
+		return (strdup("WTF"));
+	}
+	else if (str[*i] == '\0' || str[*i] == ' ' || str[*i] == '\'' || str[*i] == '\"')
+		return (ft_strdup("$"));
+	// Handle numeric variables (like $1, $2, etc.)
+	else if (ft_isdigit(str[*i]))
+	{
+		(*i)++;
+		return (ft_strdup("")); // Return empty string for numeric vars
+	}
+	else
+	{
+		start = *i;
+		// Include numbers in variable names, but don't start with them
+		while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+			(*i)++;
+		
+		len = *i - start;
+		if (len == 0)
+			return (ft_strdup("$"));
+		
+		var_name = ft_substr(str, start, len);
+		if (!var_name)
+			return (NULL);
+		var_value = ft_getenv(var_name);
+		free(var_name);
+		if (!var_value)
+			return (ft_strdup(""));
+		return (var_value);
+	}
+>>>>>>> dev
 }
 
 static char *join_and_free(char *s1, char *s2)
@@ -169,6 +224,7 @@ char	*expand_str(char *str)
 	char	quote_char;
 	int		i;
 
+<<<<<<< HEAD
 
 	result = ft_strdup("");
 	quote_char = 0;
@@ -177,6 +233,13 @@ char	*expand_str(char *str)
 	{
 		if (!result) // to detect all result malloc failed
 			return (NULL);
+=======
+	result = ft_strdup("");
+	quote_char = 0;
+	i = 0;
+	while (str[i] && result)
+	{
+>>>>>>> dev
 		// Handle quotes
 		if ((str[i] == '\'' || str[i] == '\"') && !quote_char)
 		{
@@ -199,6 +262,7 @@ char	*expand_str(char *str)
 			continue;
 		}
 
+<<<<<<< HEAD
 		// Handle escape character
 		if (str[i] == '\\' && (!quote_char || quote_char == '\"'))
 		{
@@ -214,6 +278,10 @@ char	*expand_str(char *str)
 		// Normal character
 		temp = ft_substr(str, i, 1);
 		result = join_and_free(result, temp);
+=======
+		// Normal character
+		result = join_and_free(result, ft_substr(str, i, 1));
+>>>>>>> dev
 		i++;
 	}
 	return (result);
@@ -226,6 +294,7 @@ char	*expand_str_no_quote(char *str)
 	char	quote_char;
 	int		i;
 
+<<<<<<< HEAD
 
 	result = ft_strdup("");
 	quote_char = 0;
@@ -234,6 +303,13 @@ char	*expand_str_no_quote(char *str)
 	{
 		if (!result) // to detect all result malloc failed
 			return (NULL);
+=======
+	result = ft_strdup("");
+	quote_char = 0;
+	i = 0;
+	while (str[i] && result)
+	{
+>>>>>>> dev
 		// Handle quotes
 		if ((str[i] == '\'' || str[i] == '\"') && !quote_char)
 			quote_char = str[i];
@@ -248,7 +324,10 @@ char	*expand_str_no_quote(char *str)
 				result = join_and_free(result, temp);
 			continue;
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
 		// Normal character
 		temp = ft_substr(str, i, 1);
 		result = join_and_free(result, temp);
@@ -295,3 +374,80 @@ char	**argv_expander(char **argv)
 	}
 	return (new_argv);
 }
+<<<<<<< HEAD
+=======
+
+
+
+
+
+static char	**mini_tokonizer(char *s, int i)
+{
+	char	*start;
+	char	**tokens;
+	char	*token;
+
+	while (*s == ' ')
+		s++;
+	start = s;
+	while (*s && *s != ' ')
+	{
+		if (*s == '\'' || *s == '\"')
+		{
+			s = ft_strchr(s + 1, *s);
+			if (!s)
+				break ;
+		}
+		s++;
+	}
+	if (start == s && !*s)
+		return (ft_calloc(i + 1, sizeof(char *)));
+	token = ft_substr(start, 0, s - start);
+	if (!token)
+		return (NULL);
+	tokens = mini_tokonizer(s + !!*s, i + 1);
+	if (!tokens)
+	{
+		free(token);
+		return (NULL);
+	}
+	tokens[i] = token;
+	return (tokens);
+}
+
+
+char	**argv_expander2(char **argv, int i)
+{
+	char	**new_argv;
+	char	*expanded_str;
+	char	**slices;
+	int		j;
+
+	if (!*argv)
+		return (ft_calloc(i + 1, sizeof(char *)));
+	
+	expanded_str = expand_str_no_quote(*argv);
+	if (!expanded_str)
+		return (NULL);
+	slices = mini_tokonizer(expanded_str, 0);
+	free(expanded_str);
+	if (!slices)
+		return (NULL);
+		
+	j = 0;
+	while (slices[j])
+		j++;
+	new_argv = argv_expander2(argv + 1, i + j);
+	
+	if (!new_argv)
+	{
+		free_dptr(slices);
+		return (NULL);
+	}
+	j = 0;
+	while (slices[j])
+		new_argv[i++] = slices[j++];
+	
+	return (new_argv);
+}
+>>>>>>> dev
