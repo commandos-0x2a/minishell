@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/24 15:54:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/03 21:14:58 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,6 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 	return (0);
 }
 
-// allocate:
-//	- char	*line
-//	- char	**tokens
-//	- pid_t	*children_pid
-//	- char	**env # global
 int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 {
 	int		pid;
@@ -60,13 +55,6 @@ int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 	if (pid == 0)
 	{
 		/* ========== HEAP Memory ========== */
-		// allocate:
-		//	- char	*line
-		//	- char	**tokens
-		//	- pid_t	*children_pid
-
-
-		//	- pid_t	*children_pid
 		free(mdata->command_pid);
 		mdata->command_pid = NULL;
 
@@ -78,7 +66,6 @@ int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 		if (heredoc_fd < 0)
 			exit(1);
 
-		
 		kill(getpid(), SIGSTOP);
 		
 		if (pipex_handler(is_pipe, *fd, pipefd) != 0)
@@ -91,14 +78,10 @@ int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 		
 		argv = copy_dptr(get_argv(tokens));
 
-		// destroy mdata
-		//	- char	**tokens
 		free(mdata->tokens);
 		mdata->tokens = NULL;
-		//	- char	*line
 		free(mdata->line);
 		mdata->line = NULL;
-
 
 		if (!argv)
 			clean_and_exit(mdata, 1);

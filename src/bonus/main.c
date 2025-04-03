@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/03 20:28:19 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/03 21:03:46 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,26 +68,22 @@ int	terminal_reset(int fd)
 	return(0);
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	char		*line;
-	int			is_test;
 	t_mdata		mdata;
 
 	// t_config	config;
 
-	// Load configuration
-	// load_config(&config);
 	// setup_signals();
 	// terminal_config(STDIN_FILENO);
+
+	if (!isatty(0) || !isatty(1) || !isatty(2))
+	{
+		// fds not standard
+		return (1);
+	}
 	
-	// if (ft_strcmp(config.prompt_style, "colorful") == 0)
-	// 	ft_fprintf(2, "colorful\n");
-	// else
-	// 	ft_fprintf(2, "normal\n");
-	is_test = 0;
-	if (argc == 2 && ft_strcmp(argv[1], "test") == 0)
-		is_test = 1;
 	while (1)
 	{
 		ft_bzero(&mdata, sizeof(mdata));
@@ -104,20 +100,31 @@ int main(int argc, char **argv)
 		handle_line(line);
 		mdata.line = add_space_to_line(line);
 		free(line);
+		if (!mdata.line)
+		{
+			PRINT_ALLOCATE_ERROR;
+			break;
+		}
+		
 		if (*mdata.line)
 		{
-			// terminal_config(STDIN_FILENO);
-			// reset_signals();
-			if (is_test)
-				print_tokenizer(mdata.line, 0);
-			else
+			mdata.tokens = tokenizer(mdata.line);
+			if (!mdata.tokens)
+			{
+				PRINT_ALLOCATE_ERROR;
+				break;
+			}
+			if (check_syntax(mdata.tokens))
+			{
+				// terminal_config(STDIN_FILENO);
+				// reset_signals();
 				flow_control(&mdata);
-			// terminal_reset(STDIN_FILENO);
+				// terminal_reset(STDIN_FILENO);
+			}
+			free(mdata.tokens);
 		}
 		free(mdata.line);
 	}
 	cleanup_env_copy();
-	// Save config before exit
-	// save_config(&config);
 	return (0);
 }

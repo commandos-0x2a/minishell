@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 17:02:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/24 13:08:21 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/03 20:44:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@
 
 
 # define PRINT_ERRNO \
-	ft_fprintf(2, PREFIX"%s: %s\n", __func__, strerror(errno));
+	ft_fprintf(2, PREFIX"%s: %s\n", __func__, strerror(errno))
 
 # define PRINT_ALLOCATE_ERROR PRINT_ERRNO
 
 # define PRINT_FILE_ERROR(filename) \
-	ft_fprintf(2, PREFIX"%s: %s\n", filename, strerror(errno));
+	ft_fprintf(2, PREFIX"%s: %s\n", filename, strerror(errno))
 
 # define PRINT_SYSCALL_ERROR PRINT_ERRNO
 	

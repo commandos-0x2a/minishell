@@ -44,8 +44,8 @@ BONUS_FILES = main							\
 			execution/pipeline_control		\
 			execution/redirection_handler	\
 			wildcard						\
-			print_tokenizer					\
 			tokenizer						\
+			check_syntax					\
 #
 
 MANDATORY_FILES = 

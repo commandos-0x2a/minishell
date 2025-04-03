@@ -101,7 +101,7 @@ int		command_execution(t_mdata *mdata, char **tokens, \
 							int is_pipe);
 int		pipeline_control(t_mdata *mdata, char **pipeline);
 int		flow_control(t_mdata *mdata);
-int		flow_check_syntax(char **tokens);
+int		check_syntax(char **tokens);
 int		wait_children(int target_pid);
 void	run_command(char **argv);
 
@@ -134,10 +134,6 @@ typedef struct s_config
 	int color_enabled;
 } t_config;
 
-// Modify prototypes
-void load_config(t_config *config);
-void save_config(const t_config *config);
-
 void setup_signals(void);
 void reset_signals(void);
 
@@ -165,5 +161,9 @@ struct s_sig_handlers
 };
 
 struct s_sig_handlers *get_sig_handlers(void);
+
+
+int		check_syntax(char **tokens);
+
 
 #endif
