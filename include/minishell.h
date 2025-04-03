@@ -87,6 +87,8 @@ char		**get_argv(char **tokens);
 char	*expand_str(char *str);
 char	*expand_str_no_quote(char *str);
 char	**argv_expander(char **argv);
+char	**argv_expander2(char **argv, int i);
+
 
 /*  wildcarda  */
 char **handle_wildcards(char **argv);
