@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/03 23:21:14 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/07 20:48:07 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,17 +72,18 @@ int main()
 {
 	char		*line;
 	t_mdata		mdata;
+	t_list		*lst;
 
 	// t_config	config;
 
 	// setup_signals();
 	// terminal_config(STDIN_FILENO);
 
-	if (!isatty(0) || !isatty(1) || !isatty(2))
-	{
-		// fds not standard
-		return (1);
-	}
+	// if (!isatty(0) || !isatty(1) || !isatty(2))
+	// {
+	// 	// fds not standard
+	// 	return (1);
+	// }
 	
 	while (1)
 	{
@@ -108,22 +109,21 @@ int main()
 		
 		if (*mdata.line)
 		{
-			mdata.tokens = tokenizer(mdata.line);
-			if (!mdata.tokens)
+			lst = tokenizer(mdata.line);
+			if (!lst)
 			{
-				PRINT_ALLOCATE_ERROR;
-				break;
+				// PRINT_ALLOCATE_ERROR;
+				continue ;
 			}
-			if (check_syntax(mdata.tokens))
+			if (check_syntax(lst))
 			{
 				// terminal_config(STDIN_FILENO);
 				// reset_signals();
-				flow_control(&mdata);
+				pipeline_control(&lst);
+				// print_tokenizer(&lst, 0);
 				// terminal_reset(STDIN_FILENO);
 			}
-			free(mdata.tokens);
 		}
-		free(mdata.line);
 	}
 	cleanup_env_copy();
 	return (0);

@@ -1,5 +1,4 @@
-NAME		= minishell_mad
-NAME_BONUS	= minishell
+NAME		= minishell
 
 CC			= cc
 LDFLAGS		= -L./libft -lft -lreadline -lncurses
@@ -27,46 +26,36 @@ FILES = builtins/builtins			\
 			utils/ft_tokpbrk		\
 			utils/signals			\
 			utils/clean_and_exit	\
+			utils/list				\
 			str_expander			\
 			wait_children			\
 			here_doc				\
 			get_argv				\
 			get_argv0				\
 			add_space_to_line		\
-#
-
-BONUS_FILES = main								\
+ 			execution/pipeline_control			\
 			execution/execute_complex_command	\
 			execution/execute_simple_command	\
-			execution/flow_control				\
-			execution/pipeline_control			\
 			execution/redirection_handler		\
+			main								\
 			wildcard							\
 			tokenizer							\
 			check_syntax						\
+			print_tokenizer						\
 #
 
-MANDATORY_FILES = 
 
 #
 
 OBJECTS 			= $(FILES:%=$(OBJDIR)/%.o)
-MANDATORY_OBJECTS	= $(MANDATORY_FILES:%=$(OBJDIR)/mandatory/%.o)
-BONUS_OBJECTS 		= $(BONUS_FILES:%=$(OBJDIR)/bonus/%.o)
 
-
-# all: libft $(NAME)
-
-all: libft $(NAME_BONUS)
+all: libft $(NAME)
 
 libft:
 	@$(MAKE) -C libft
 
-$(NAME): $(OBJECTS) $(MANDATORY_OBJECTS) libft/libft.a
-	$(CC) $(OBJECTS) $(MANDATORY_OBJECTS) $(LDFLAGS) -o $@
-
-$(NAME_BONUS): $(OBJECTS) $(BONUS_OBJECTS) libft/libft.a
-	$(CC) $(OBJECTS) $(BONUS_OBJECTS) $(LDFLAGS) -o $@
+$(NAME): $(OBJECTS) libft/libft.a
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(dir $@)
@@ -74,11 +63,11 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 clean:
 #	$(MAKE) -C libft clean
-	rm -f $(OBJECTS) $(MANDATORY_OBJECTS) $(BONUS_OBJECTS)
+	rm -f $(OBJECTS)
 
 fclean: clean
-	rm -f $(NAME) $(NAME_BONUS)
+	rm -f $(NAME)
 
 re: fclean all
 
-.PHONY: all bonus libft clean fclean re
+.PHONY: all libft clean fclean re

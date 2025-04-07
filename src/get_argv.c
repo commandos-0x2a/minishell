@@ -6,47 +6,51 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 19:32:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 20:57:46 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/07 20:38:06 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	swap_args(char **a, char **b)
+static void lst_remove(t_list **lst, t_list *prev)
 {
-	char	*tmp;
+	t_list	*node;
 
-	tmp = *a;
-	*a = *b;
-	*b = tmp;
+	if (!*lst)
+		return ;
+
+	node = *lst;
+	if (prev)
+		prev->next = node->next;
+	*lst = node->next;
+	free(node->token);
+	free(node);
 }
 
-char	**get_argv(char **tokens)
+void	get_argv(t_list **lst_p)
 {
-	char	**argv;
-	char	**last_argv;
+	t_list	*prev;
+	t_list	*lst;
+	t_list	*start;
 
-	argv = NULL;
-	while (*tokens)
+	lst = *lst_p;
+	prev = NULL;
+	start = NULL;
+	while (lst && lst->token)
 	{
-		if (ft_strcmp(*tokens, "<<") == 0 \
-			|| ft_strcmp(*tokens, "<") == 0 \
-			|| ft_strcmp(*tokens, ">>") == 0 \
-			|| ft_strcmp(*tokens, ">") == 0)
+		if (ft_strcmp(lst->token, "<<") == 0 \
+			|| ft_strcmp(lst->token, "<") == 0 \
+			|| ft_strcmp(lst->token, ">>") == 0 \
+			|| ft_strcmp(lst->token, ">") == 0)
 		{
-			*tokens = NULL;
-			*++tokens = NULL;
+			lst_remove(&lst, prev);
+			lst_remove(&lst, prev);
+			continue;
 		}
-		else if (!argv)
-		{
-			argv = tokens;
-			last_argv = tokens;
-		}
-		else
-			swap_args(++last_argv, tokens);
-		tokens++;
+		if (!prev)
+			start = lst;
+		prev = lst;
+		lst = lst->next;
 	}
-	if (!argv)
-		return (tokens);
-	return (argv);
+	*lst_p = start;
 }

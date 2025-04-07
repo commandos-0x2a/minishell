@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 20:44:58 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/03 21:22:30 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/07 18:59:08 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,54 +29,54 @@ static int	operation_type(char *str)
 }
 
 
-int check_syntax(char **tokens)
+int check_syntax(t_list *lst)
 {
-	char	**prev_tokens;
+	t_list	*prev_tokens;
 
 	prev_tokens = NULL;
-	while (*tokens)
+	while (lst && lst->token)
 	{
-		if (ft_strcmp(*tokens, ">>") == 0 || \
-			ft_strcmp(*tokens, ">") == 0 || \
-			ft_strcmp(*tokens, "<<") == 0 || \
-			ft_strcmp(*tokens, "<") == 0)
+		if (ft_strcmp(lst->token, ">>") == 0 || \
+			ft_strcmp(lst->token, ">") == 0 || \
+			ft_strcmp(lst->token, "<<") == 0 || \
+			ft_strcmp(lst->token, "<") == 0)
 		{
-			if (!*(tokens + 1))
+			if (!lst->next)
 			{
 				ft_fprintf(2, PREFIX"syntax error near unexpected token `newline'\n");
 				return (0);
 			}
-			if (operation_type(*(tokens + 1)) != 0)
+			if (operation_type(lst->next->token) != 0)
 			{
-				ft_fprintf(2, PREFIX"syntax error near unexpected token `%s'\n", *(tokens + 1));
+				ft_fprintf(2, PREFIX"syntax error near unexpected token `%s'\n", lst->next->token);
 				return (0);
 			}	
 		}
-		else if (ft_strcmp(*tokens, "|") == 0 || \
-				ft_strcmp(*tokens, "||") == 0 || \
-				ft_strcmp(*tokens, "&&") == 0)
+		else if (ft_strcmp(lst->token, "|") == 0 || \
+				ft_strcmp(lst->token, "||") == 0 || \
+				ft_strcmp(lst->token, "&&") == 0)
 		{
-			if (!*(tokens + 1))
+			if (!lst->next || !lst->next->token)
 			{
-				ft_fprintf(2, PREFIX"syntax error near unexpected token `%s'\n", *tokens);
+				ft_fprintf(2, PREFIX"syntax error near unexpected token `%s'\n", lst->token);
 				return (0);
 			}
 			if (!prev_tokens)
 			{
-				ft_fprintf(2, PREFIX"syntax error near unexpected token `%s'\n", *tokens);
+				ft_fprintf(2, PREFIX"syntax error near unexpected token `%s'\n", lst->token);
 				return (0);
 			}
-			if (ft_strcmp(*(tokens + 1), "|") == 0 || \
-				ft_strcmp(*(tokens + 1), "||") == 0 || \
-				ft_strcmp(*(tokens + 1), "&&") == 0)
+			if (ft_strcmp(lst->next->token, "|") == 0 || \
+				ft_strcmp(lst->next->token, "||") == 0 || \
+				ft_strcmp(lst->next->token, "&&") == 0)
 			{
-				ft_fprintf(2, PREFIX"syntax error near unexpected token `%s'\n", *(tokens + 1));
+				ft_fprintf(2, PREFIX"syntax error near unexpected token `%s'\n", lst->next->token);
 				return (0);
 			}
 		}
 		if (!prev_tokens)
-			prev_tokens = tokens;
-		tokens++;
+			prev_tokens = lst;
+		lst = lst->next;
 	}
     return (1);
 }

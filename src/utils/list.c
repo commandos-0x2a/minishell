@@ -1,30 +1,48 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_argv0.c                                        :+:      :+:    :+:   */
+/*   list.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/07 13:19:51 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/07 19:02:21 by yaltayeh         ###   ########.fr       */
+/*   Created: 2025/04/07 17:59:57 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/04/08 01:32:26 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*get_argv0(t_list *lst)
+void	*fclean_list(t_list **lst)
 {
-	
-	while (lst && lst->token)
+	t_list	*next;
+
+	while (*lst)
 	{
-		if (!ft_strcmp(lst->token, "<<") \
-			|| !ft_strcmp(lst->token, ">>") \
-			|| !ft_strcmp(lst->token, "<") \
-			|| !ft_strcmp(lst->token, ">"))
-			lst = lst->next;
-		else
-			return (lst->token);
-		lst = lst->next;
+		free((*lst)->token);
+		next = (*lst)->next;
+		free(*lst);
+		*lst = next;
 	}
 	return (NULL);
 }
+
+void	*clean_list(t_list **lst)
+{
+	t_list	*next;
+
+	while (*lst && (*lst)->token)
+	{
+		free((*lst)->token);
+		next = (*lst)->next;
+		free(*lst);
+		*lst = next;
+	}
+	if (*lst)
+	{
+		next = (*lst)->next;
+		free(*lst);
+		*lst = next;
+	}
+	return (*lst);
+}
+

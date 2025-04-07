@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/24 12:02:40 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/07 23:00:27 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,22 +48,22 @@ int	heredoc_start_read(char *limiter, int out_fd)
 	return (0);
 }
 
-int	heredoc_forever(char **tokens)
+int	heredoc_forever(t_list *lst)
 {
 	int	fd;
 	int	pipefd[2];
 
 	fd = 0;
-	while (*tokens)
+	while (lst && lst->token)
 	{
-		if (ft_strcmp(*tokens, "<<") == 0)
+		if (ft_strcmp(lst->token, "<<") == 0)
 		{
-			tokens++;
+			lst = lst->next;
 			if (fd > 0)
 				close(fd);
 			if (pipe(pipefd) == -1)
 				return (-1);
-			if (heredoc_start_read(*tokens, pipefd[1]) != 0)
+			if (heredoc_start_read(lst->token, pipefd[1]) != 0)
 			{
 				close(pipefd[0]);
 				close(pipefd[1]);
@@ -72,7 +72,7 @@ int	heredoc_forever(char **tokens)
 			close(pipefd[1]);
 			fd = pipefd[0];
 		}
-		tokens++;
+		lst = lst->next;
 	}
 	return (fd);
 }

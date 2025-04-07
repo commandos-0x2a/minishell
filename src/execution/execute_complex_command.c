@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/07 15:05:42 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/08 01:36:55 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,10 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 	return (0);
 }
 
-int execute_complex_command(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
+int execute_complex_command(t_list **lst, int *fd, int is_pipe)
 {
 	int		pid;
 	int		pipefd[2];
-	char	**argv;
 	int		heredoc_fd;
 
 	if ((is_pipe & IS_PIPE) && pipe(pipefd) == -1)
@@ -55,37 +54,41 @@ int execute_complex_command(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 	if (pid == 0) /* ========== Child Process ========== */
 	{
 		/* ========== HEAP Memory ========== */
-		free(mdata->command_pid);
-		mdata->command_pid = NULL;
+		// free(mdata->command_pid);
+		// mdata->command_pid = NULL;
 
 		if (is_pipe & IS_PIPE)
 			close(pipefd[0]);
 
-		heredoc_fd = heredoc_forever(tokens);
+		heredoc_fd = heredoc_forever(*lst);
 		if (heredoc_fd < 0)
 			exit(1);
 
 		kill(getpid(), SIGSTOP);
 		
 		if (pipex_handler(is_pipe, *fd, pipefd) != 0)
-			clean_and_exit(mdata, 1);
+			// clean_and_exit(mdata, 1);
+			exit(1);
 		
-		if (redirection_handler(tokens, heredoc_fd, 1) != 0)
-			clean_and_exit(mdata, 126);
+		if (redirection_handler(*lst, heredoc_fd, 1) != 0)
+			// clean_and_exit(mdata, 126);
+			exit(126);
 		if (heredoc_fd > 0)
 			close(heredoc_fd);
 		
-		argv = copy_dptr(get_argv(tokens));
+		// argv = copy_dptr(get_argv(tokens));
 
-		free(mdata->tokens);
-		mdata->tokens = NULL;
-		free(mdata->line);
-		mdata->line = NULL;
+		// free(mdata->tokens);
+		// mdata->tokens = NULL;
+		// free(mdata->line);
+		// mdata->line = NULL;
 
-		if (!argv)
-			clean_and_exit(mdata, 1);
+		get_argv(lst);
+		if (!lst)
+			// clean_and_exit(mdata, 1);
+			exit(0);
 
-		execute_simple_command(argv);
+		execute_simple_command(lst);
 		exit(1);
 	}
 	/* ========== Parent Process ==========*/

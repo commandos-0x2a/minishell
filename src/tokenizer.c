@@ -6,17 +6,41 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/07 11:46:00 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/07 18:45:01 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+void	*clean_list(t_list *lst);
+
+
+static t_list	*add_token(t_list *lst, char *token)
+{
+	t_list	*new;
+	
+	if (!token)
+	{
+		clean_list(lst);
+		return (NULL);
+	}
+	new = malloc(sizeof(t_list));
+	if (!new)
+	{
+		free(token);
+		clean_list(lst);
+		return (NULL);
+	}
+	new->next = lst;
+	new->token = token;
+	return (new);
+}
+
 /*
 * Let me explain what this function does:
 * 
 * Imagine you have a sentence like: "play with penguin in my room"
-* This function is like a magical sentence splitter! 🪄
+* This function is like a magical sentence splitter!
 * 
 * What it does:
 * 1. It looks at your sentence
@@ -29,26 +53,18 @@
 * Output: ["play", "\"with penguin\""]
 * 
 * It's like taking a long piece of paper and cutting it into smaller pieces,
-* where each piece has one word! ✂️
+* where each piece has one word! 
 */
-static char	**tokenizer_iter(char *s, int i)
+
+static t_list	*tokenizer_iter(t_list *lst, char *s, int i)
 {
 	char	*start;
-	char	**tokens;
-	int		nb_bracket;
 
 	while (*s == ' ')
 		s++;
 	start = s;
-	nb_bracket = 0;
-	while (*s && (*s != ' ' || nb_bracket))
+	while (*s && *s != ' ')
 	{
-		if (*s == '(')
-			nb_bracket++;
-		if (*s == ')')
-			nb_bracket--;
-		if (nb_bracket < 0)
-			break ;
 		if (*s == '\'' || *s == '\"')
 		{
 			s = ft_strchr(s + 1, *s);
@@ -57,22 +73,23 @@ static char	**tokenizer_iter(char *s, int i)
 		}
 		s++;
 	}
-	if (nb_bracket != 0 || s == NULL)
+	if (s == NULL)
 	{
 		write(2, PREFIX"syntax error\n", sizeof(PREFIX"syntax error\n") - 1);
-		return (NULL);
+		return (clean_list(lst));
 	}
 	if (start == s && !*s)
-		return (ft_calloc(i + 1, sizeof(char *)));
-	tokens = tokenizer_iter(s + !!*s, i + 1);
-	if (!tokens)
+		return (ft_calloc(1, sizeof(t_list)));
+	lst = tokenizer_iter(lst, s + !!*s, i + 1);
+	if (!lst)
 		return (NULL);
-	*s = '\0';
-	tokens[i] = start;
-	return (tokens);
+	lst = add_token(lst, ft_substr(start, 0, s - start));
+	if (!lst)
+		return (NULL);
+	return (lst);
 }
 
-char	**tokenizer(char *s)
+t_list	*tokenizer(char *s)
 {
-	return (tokenizer_iter(s, 0));
+	return (tokenizer_iter(NULL, s, 0));
 }
