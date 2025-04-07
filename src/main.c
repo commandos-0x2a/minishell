@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/07 20:48:07 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/08 01:54:13 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	terminal_reset(int fd)
 int main()
 {
 	char		*line;
-	t_mdata		mdata;
+	char		*expand_line;
 	t_list		*lst;
 
 	// t_config	config;
@@ -87,7 +87,6 @@ int main()
 	
 	while (1)
 	{
-		ft_bzero(&mdata, sizeof(mdata));
 		// setup_signals();
 		line = readline(get_prompt());
 		
@@ -99,17 +98,18 @@ int main()
 			break;
 		}
 		handle_line(line);
-		mdata.line = add_space_to_line(line);
+		expand_line = add_space_to_line(line);
 		free(line);
-		if (!mdata.line)
+		if (!expand_line)
 		{
 			PRINT_ALLOCATE_ERROR;
 			break;
 		}
 		
-		if (*mdata.line)
+		if (*expand_line)
 		{
-			lst = tokenizer(mdata.line);
+			lst = tokenizer(expand_line);
+			free(expand_line);
 			if (!lst)
 			{
 				// PRINT_ALLOCATE_ERROR;

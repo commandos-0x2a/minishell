@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/08 01:38:53 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/08 01:52:52 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void	run_subshell(char **argv)
 	exit(status);
 }
 
-static char	**lst_2_argv(t_list **lst, int i)
+char	**lst_2_argv(t_list **lst, int i)
 {
 	char	**argv;
 	t_list	*current;
@@ -86,7 +86,7 @@ void	execute_simple_command(t_list **lst)
 	}	
 	// Check for built-in commands before getting full path and executing.
 	if (is_builtin(expand_argv[0]))
-		handle_builtin(NULL, expand_argv, 1);
+		handle_builtin(expand_argv, 1);
 	
 	err = get_full_path(full_path, expand_argv[0]);
 	if (err == 0)

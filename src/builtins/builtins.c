@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/03 23:26:36 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/08 01:53:20 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,34 +38,29 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-int	handle_builtin(t_mdata *mdata, char **argv, int _exit)
+int	handle_builtin(char **argv, int _exit)
 {
 	int		err;
-	char	**expand_argv;
 
 	if (!argv || !*argv)
 		return (1);
-	expand_argv = argv_expander2(argv, 0);
-	free_dptr(argv);
-	if (!expand_argv)
-		return (1);
 	err = 1;
-	if (ft_strcmp(*expand_argv, "cd") == 0)
-		err = ft_cd(expand_argv);
-	else if (ft_strcmp(*expand_argv, "exit") == 0)
-		err = ft_exit(expand_argv, &_exit);
-	else if (ft_strcmp(*expand_argv, "export") == 0)
-		err = ft_export(expand_argv);
-	else if (ft_strcmp(*expand_argv, "unset") == 0)
-		err = ft_unset(expand_argv);
-	else if (ft_strcmp(*expand_argv, "echo") == 0)
-		err = ft_echo(expand_argv);
-	else if (ft_strcmp(*expand_argv, "pwd") == 0)
-		err = ft_pwd(expand_argv);
-	else if (ft_strcmp(*expand_argv, "env") == 0)
-		err = ft_env(expand_argv);
-	free_dptr(expand_argv);
+	if (ft_strcmp(*argv, "cd") == 0)
+		err = ft_cd(argv);
+	else if (ft_strcmp(*argv, "exit") == 0)
+		err = ft_exit(argv, &_exit);
+	else if (ft_strcmp(*argv, "export") == 0)
+		err = ft_export(argv);
+	else if (ft_strcmp(*argv, "unset") == 0)
+		err = ft_unset(argv);
+	else if (ft_strcmp(*argv, "echo") == 0)
+		err = ft_echo(argv);
+	else if (ft_strcmp(*argv, "pwd") == 0)
+		err = ft_pwd(argv);
+	else if (ft_strcmp(*argv, "env") == 0)
+		err = ft_env(argv);
+	free_dptr(argv);
 	if (_exit)
-		clean_and_exit(mdata, err);
+		exit(err);
 	return (err);
 }

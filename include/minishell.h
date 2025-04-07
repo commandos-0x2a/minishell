@@ -66,13 +66,6 @@
 # define CYAN "\033[36m"
 # define WHITE "\033[37m"
 
-typedef struct s_mdata
-{
-	char	*line;
-	char	**tokens;
-	pid_t	*command_pid;
-}	t_mdata;
-
 typedef struct s_list
 {
 	struct s_list	*next;
@@ -108,13 +101,9 @@ char **handle_wildcards(char **argv);
 /*  execution  */
 int		execute_complex_command(t_list **lst, int *fd, int is_pipe);
 int		pipeline_control(t_list **lst);
-int		flow_control(t_mdata *mdata);
 int		check_syntax(t_list *lst);
 int		wait_children(int target_pid);
 void	execute_simple_command(t_list **lst);
-
-
-void	clean_and_exit(t_mdata *mdata, int exit_status);
 
 
 /*  Redirection handling  */
@@ -124,7 +113,7 @@ int	heredoc_forever(t_list *lst);
 
 
 /*  Built-in commands  */
-int		handle_builtin(t_mdata *mdata, char **argv, int _exit);
+int		handle_builtin(char **argv, int _exit);
 int		is_builtin(char *cmd);
 int		ft_cd(char **argv);
 int		ft_echo(char **argv);

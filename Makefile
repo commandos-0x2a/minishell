@@ -17,15 +17,12 @@ FILES = builtins/builtins			\
 			builtins/pwd			\
 			builtins/test			\
 			builtins/unset			\
-			utils/config			\
 			utils/dptr				\
 			utils/ft_getenv			\
 			utils/ft_setenv			\
 			utils/get_full_path		\
 			utils/readline_handler	\
-			utils/ft_tokpbrk		\
 			utils/signals			\
-			utils/clean_and_exit	\
 			utils/list				\
 			str_expander			\
 			wait_children			\

@@ -6,13 +6,15 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/08 01:36:16 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/08 01:52:43 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 void	*clean_list(t_list **lst);
+char	**lst_2_argv(t_list **lst, int i);
+
 
 static void get_next_command(t_list *lst, int *is_pipe)
 {
@@ -44,23 +46,39 @@ static int	get_nb_command(t_list *lst)
 	return (nb_pipeline);
 }
 
-// static int	run_builtin_command(t_mdata *mdata, char **tokens)
-// {
-// 	int	heredoc_fd;
+static int	run_builtin_command(t_list **lst)
+{
+	int	heredoc_fd;
+	char	**argv;
+	char	**expand_argv;
 
-// 	heredoc_fd = heredoc_forever(tokens);
-// 	if (heredoc_fd < 0)
-// 		return (-1);
-// 	if (redirection_handler(tokens, heredoc_fd, 0) != 0)
-// 	{
-// 		if (heredoc_fd > 0)
-// 			close(heredoc_fd);
-// 		return (-1);
-// 	}
-// 	if (heredoc_fd > 0)
-// 		close(heredoc_fd);
-// 	return (handle_builtin(mdata, copy_dptr(get_argv(tokens)), 0));
-// }
+	heredoc_fd = heredoc_forever(*lst);
+	if (heredoc_fd < 0)
+		return (-1);
+	if (redirection_handler(*lst, heredoc_fd, 0) != 0)
+	{
+		if (heredoc_fd > 0)
+			close(heredoc_fd);
+		return (-1);
+	}
+	if (heredoc_fd > 0)
+		close(heredoc_fd);
+	get_argv(lst);
+	argv = lst_2_argv(lst, 0);
+	if (!argv)
+	{
+		PRINT_ALLOCATE_ERROR;	
+		exit(1);
+	}
+	expand_argv = argv_expander2(argv, 0);
+	free_dptr(argv);
+	if (!expand_argv)
+	{
+		PRINT_ALLOCATE_ERROR;	
+		exit(1);
+	}
+	return (handle_builtin(expand_argv, 0));
+}
 
 int	pipeline_control(t_list **lst)
 {
@@ -72,8 +90,8 @@ int	pipeline_control(t_list **lst)
 	pid_t	*command_pid;
 
 	nb_commands = get_nb_command(*lst);
-	// if (nb_commands == 1 && is_builtin(get_argv0(lst)))
-	// 	return (run_builtin_command(mdata, pipeline));
+	if (nb_commands == 1 && is_builtin(get_argv0(*lst)))
+		return (run_builtin_command(lst));
 
 	command_pid = ft_calloc(nb_commands, sizeof(pid_t));
 	if (!command_pid)

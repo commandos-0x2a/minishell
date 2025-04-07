@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 16:30:52 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/07 10:46:10 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/08 01:47:06 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,22 +35,3 @@ char *get_prompt(void)
     snprintf(prompt, PROMPT_MAX, "%s$ ", cwd);
     return (prompt);
 }
-
-// int main(void)
-// {
-//     char    *line;
-
-//     atexit(cleanup_shell);
-//     while (1)
-//     {
-//         line = readline(get_prompt());
-//         if (!line)
-//         {
-//             printf("\nexit\n");
-//             break;
-//         }
-//         handle_line(line);
-//         free(line);
-//     }
-//     return (0);
-// }
