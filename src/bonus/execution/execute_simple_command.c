@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/07 13:14:56 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:06:07 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	execute_simple_command(char **argv)
 	if ((*argv)[0] == '(')
 		run_subshell(argv);
 	
-	expand_argv = argv_expander(argv);
+	expand_argv = argv_expander2(argv, 0);
 	free_dptr(argv);
 	argv = expand_argv;
 	if (!argv)
