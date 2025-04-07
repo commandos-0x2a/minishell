@@ -49,22 +49,10 @@
 #define PATH_MAX_LEN 3000
 #define PROMPT_MAX (HOSTNAME_MAX + USERNAME_MAX + PATH_MAX_LEN + 10)
 
-#define DEFAULT_PROMPT "0x2a$ "
-
 // Define maximum sizes for config values
 #define MAX_PROMPT_STYLE 32
 #define MAX_CONFIG_LINE 256
 
-// Add these color definitions before the structs
-# define RESET "\033[0m"
-# define BLACK "\033[30m"
-# define RED "\033[31m"
-# define GREEN "\033[32m"
-# define YELLOW "\033[33m"
-# define BLUE "\033[34m"
-# define MAGENTA "\033[35m"
-# define CYAN "\033[36m"
-# define WHITE "\033[37m"
 
 typedef struct s_list
 {
@@ -72,6 +60,8 @@ typedef struct s_list
 	char			*token;
 }	t_list;
 
+void	*fclean_list(t_list **lst);
+void	*clean_list(t_list **lst);
 
 // Terminal configuration
 char *get_prompt(void);
@@ -79,20 +69,18 @@ void handle_line(char *line);
 void cleanup_shell(void);
 
 /*  tokenizer  */
-void		print_tokenizer(t_list **lst, int indent);
 t_list		*tokenizer(char *s);
+
+/*  argv  */
 char		*get_argv0(t_list *lst);
 void		get_argv(t_list **lst_p);
+char		**lst_2_argv(t_list **lst, int i);
 
 /*  expander  */
 char	*expand_str(char *str);
 char	*expand_str_no_quote(char *str);
 char	**argv_expander(char **argv);
 char	**argv_expander2(char **argv, int i);
-
-
-/*  wildcarda  */
-char **handle_wildcards(char **argv);
 
 # define IS_PIPE		0b01
 # define IS_PREV_PIPE	0b10
@@ -104,7 +92,6 @@ int		pipeline_control(t_list **lst);
 int		check_syntax(t_list *lst);
 int		wait_children(int target_pid);
 void	execute_simple_command(t_list **lst);
-
 
 /*  Redirection handling  */
 int	redirection_handler(t_list *lst, int heredoc_fd, int change_std);
@@ -124,13 +111,6 @@ int		ft_test(char **argv);
 int		ft_export(char **argv);
 int		ft_unset(char **argv);
 
-// Modify config structure to use fixed arrays
-typedef struct s_config
-{
-	char prompt_style[MAX_PROMPT_STYLE];
-	int color_enabled;
-} t_config;
-
 void setup_signals(void);
 void reset_signals(void);
 
@@ -138,11 +118,6 @@ void reset_signals(void);
 char ***__init__env(void);
 char **create_env_copy(void);
 void cleanup_env_copy(void);
-
-// Add color function prototype
-void print_color(char *color, char *str);
-
-// void set_signals_child(void);
 
 // Add global variable declaration and new function prototypes
 int *heredoc_active(void);

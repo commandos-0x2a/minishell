@@ -6,37 +6,11 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/08 01:52:52 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/08 01:59:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	*fclean_list(t_list *lst);
-
-static void	run_subshell(char **argv)
-{
-	char	*line;
-	int		status;
-	t_list	*lst;
-
-	if (argv[1] != NULL)
-		exit(222);
-	line = *argv;
-	line[ft_strlen(line) - 1] = '\0';
-	line++;
-	line = ft_strdup(line);
-	if (!line)
-	{
-		PRINT_ALLOCATE_ERROR;
-		exit(1);
-	}
-	lst = tokenizer(line);
-	free(line);
-	status = pipeline_control(&lst);
-
-	exit(status);
-}
 
 char	**lst_2_argv(t_list **lst, int i)
 {
@@ -45,7 +19,7 @@ char	**lst_2_argv(t_list **lst, int i)
 
 	if (!*lst || !(*lst)->token)
 	{
-		fclean_list(*lst);
+		fclean_list(lst);
 		return (ft_calloc(i + 1, sizeof(char *)));
 	}
 	current = *lst;
@@ -72,10 +46,6 @@ void	execute_simple_command(t_list **lst)
 		PRINT_ALLOCATE_ERROR;
 		exit(1);
 	}
-	
-	// Check if the first character of the command is an opening parenthesis
-	if ((*argv)[0] == '(')
-		run_subshell(argv);
 	
 	expand_argv = argv_expander2(argv, 0);
 	free_dptr(argv);

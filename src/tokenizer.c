@@ -6,33 +6,31 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/07 18:45:01 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/08 02:01:46 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	*clean_list(t_list *lst);
-
-
-static t_list	*add_token(t_list *lst, char *token)
+static t_list	*add_token(t_list **lst, char *token)
 {
 	t_list	*new;
 	
 	if (!token)
 	{
-		clean_list(lst);
+		fclean_list(lst);
 		return (NULL);
 	}
 	new = malloc(sizeof(t_list));
 	if (!new)
 	{
 		free(token);
-		clean_list(lst);
+		fclean_list(lst);
 		return (NULL);
 	}
-	new->next = lst;
+	new->next = *lst;
 	new->token = token;
+	*lst = new;
 	return (new);
 }
 
@@ -76,14 +74,14 @@ static t_list	*tokenizer_iter(t_list *lst, char *s, int i)
 	if (s == NULL)
 	{
 		write(2, PREFIX"syntax error\n", sizeof(PREFIX"syntax error\n") - 1);
-		return (clean_list(lst));
+		return (fclean_list(&lst));
 	}
 	if (start == s && !*s)
 		return (ft_calloc(1, sizeof(t_list)));
 	lst = tokenizer_iter(lst, s + !!*s, i + 1);
 	if (!lst)
 		return (NULL);
-	lst = add_token(lst, ft_substr(start, 0, s - start));
+	add_token(&lst, ft_substr(start, 0, s - start));
 	if (!lst)
 		return (NULL);
 	return (lst);
