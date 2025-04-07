@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/03 21:14:21 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/07 14:37:41 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	pipeline_control(t_mdata *mdata, char **pipeline)
 		next_command = get_next_command(pipeline, &is_pipe);
 		if (is_pipe & IS_PIPE)
 			*next_command++ = NULL;
-		mdata->command_pid[i] = command_execution(mdata, pipeline, &fd, is_pipe);
+		mdata->command_pid[i] = execute_complex_command(mdata, pipeline, &fd, is_pipe);
 		if (mdata->command_pid[i] == -1)
 			break ;
 		if (waitpid(mdata->command_pid[i], NULL, WUNTRACED) == -1)

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/03 20:31:43 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/07 13:48:48 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ static char *expand_env_var(char *str, int *i)
     var_value = ft_getenv(var_name);
     free(var_name);
 
-	if (var_value)
+	if (!var_value)
 		return (ft_strdup(""));
     return (var_value);
 }

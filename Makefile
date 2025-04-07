@@ -35,15 +35,15 @@ FILES = builtins/builtins			\
 			add_space_to_line		\
 #
 
-BONUS_FILES = main							\
-			execution/command_execution		\
-			execution/run_command			\
-			execution/flow_control			\
-			execution/pipeline_control		\
-			execution/redirection_handler	\
-			wildcard						\
-			tokenizer						\
-			check_syntax					\
+BONUS_FILES = main								\
+			execution/execute_complex_command	\
+			execution/execute_simple_command	\
+			execution/flow_control				\
+			execution/pipeline_control			\
+			execution/redirection_handler		\
+			wildcard							\
+			tokenizer							\
+			check_syntax						\
 #
 
 MANDATORY_FILES = 

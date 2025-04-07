@@ -14,6 +14,7 @@
 #define MINISHELL_H
 
 # define __USE_XOPEN2K8
+# define _GNU_SOURCE // for WUNTRACED
 
 #include <libft.h>
 #include <stddef.h>
@@ -96,14 +97,14 @@ char **handle_wildcards(char **argv);
 # define IS_PIPE_MASK	0b11
 
 /*  execution  */
-int		command_execution(t_mdata *mdata, char **tokens, \
+int		execute_complex_command(t_mdata *mdata, char **tokens, \
 							int *fd,\
 							int is_pipe);
 int		pipeline_control(t_mdata *mdata, char **pipeline);
 int		flow_control(t_mdata *mdata);
 int		check_syntax(char **tokens);
 int		wait_children(int target_pid);
-void	run_command(char **argv);
+void	execute_simple_command(char **argv);
 
 
 void	clean_and_exit(t_mdata *mdata, int exit_status);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   run_command.c                                      :+:      :+:    :+:   */
+/*   execute_simple_command.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/24 18:37:22 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/07 13:14:56 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void	run_subshell(char **argv)
 // allocate:
 //	- char **argv
 //	- char	**env # "global"
-void	run_command(char **argv)
+void	execute_simple_command(char **argv)
 {
 	char		full_path[PATH_MAX];
 	int			err;

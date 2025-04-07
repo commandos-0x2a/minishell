@@ -6,12 +6,12 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 21:00:06 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/18 21:19:02 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/07 13:23:01 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdarg.h>
-#include <string.h>
+#include "libft.h"
 
 char	**ft_tokpbrk(char **tokens, const char *strset, ...)
 {
@@ -26,7 +26,7 @@ char	**ft_tokpbrk(char **tokens, const char *strset, ...)
 		str = strset;
 		while (str)
 		{
-			if (strcmp(*tokens, str) == 0)
+			if (ft_strcmp(*tokens, str) == 0)
 			{
 				va_end(ap);
 				va_end(ap2);

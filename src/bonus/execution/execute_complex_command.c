@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   command_execution.c                                :+:      :+:    :+:   */
+/*   execute_complex_command.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/03 21:14:58 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/07 13:14:56 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 	return (0);
 }
 
-int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
+int execute_complex_command(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 {
 	int		pid;
 	int		pipefd[2];
@@ -52,13 +52,12 @@ int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 	}
 
 	pid = fork();
-	if (pid == 0)
+	if (pid == 0) /* ========== Child Process ========== */
 	{
 		/* ========== HEAP Memory ========== */
 		free(mdata->command_pid);
 		mdata->command_pid = NULL;
 
-		/* ========== Child Process ========== */
 		if (is_pipe & IS_PIPE)
 			close(pipefd[0]);
 
@@ -86,7 +85,7 @@ int command_execution(t_mdata *mdata, char **tokens, int *fd, int is_pipe)
 		if (!argv)
 			clean_and_exit(mdata, 1);
 
-		run_command(argv);
+		execute_simple_command(argv);
 		exit(1);
 	}
 	/* ========== Parent Process ==========*/
