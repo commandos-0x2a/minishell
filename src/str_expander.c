@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/07 15:05:17 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/08 02:29:45 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,6 +306,31 @@ static char	**mini_tokonizer(char *s, int i)
 }
 
 
+char	*remove_qouts(char *str)
+{
+	char	*s1;
+	char	*s2;
+	char	*null_char;
+
+	s1 = str;
+	null_char = ft_strchr(str, '\0'); 
+	while (*s1)
+	{
+		if (*s1 == '\'' || *s1 == '\"')
+		{
+			s2 = ft_strchr(s1 + 1, *s1);
+			if (!s2)
+				return (str);
+			
+			ft_memmove(s2, s2 + 1, null_char-- - s2);
+			ft_memmove(s1, s1 + 1, null_char-- - s1);
+			s1 = s2;
+		}
+		s1++;
+	}
+	return (str);
+}
+
 char	**argv_expander2(char **argv, int i)
 {
 	char	**new_argv;
@@ -336,7 +361,7 @@ char	**argv_expander2(char **argv, int i)
 	}
 	j = 0;
 	while (slices[j])
-		new_argv[i++] = slices[j++];
+		new_argv[i++] = remove_qouts(slices[j++]);
 	
 	return (new_argv);
 }
