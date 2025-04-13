@@ -53,32 +53,31 @@
 #define MAX_PROMPT_STYLE 32
 #define MAX_CONFIG_LINE 256
 
-
 typedef struct s_list
 {
-	char			*token;
+	char			*str;
 	struct s_list	*next;
-}	t_tokens;
+}	t_list;
 
 typedef struct s_mini
 {
-	t_tokens	*tokens;
+	t_list	*tokens;
+	t_list	*env;
+	int		exit_status;
 }	t_mini;
 
-// Terminal configuration
-char *get_prompt(void);
-void handle_line(char *line);
-void cleanup_shell(void);
+extern int	g_status;
 
 /*  tokenizer  */
-t_tokens	*tokenizer(char *s);
-void		*tok_clean(t_tokens **lst);
-void		*tok_move2next(t_tokens **lst);
+char		*add_space_to_line(const char *s);
+t_list	*tokenizer(char *s);
+void		*tok_clean(t_list **lst);
+void		*tok_move2next(t_list **lst);
 
 /*  argv  */
-char		*get_argv0(t_tokens *lst);
-void		get_argv(t_tokens **lst);
-char		**lst_2_argv(t_tokens **lst, int i);
+char		*get_argv0(t_list *lst);
+void		get_argv(t_list **lst);
+char		**lst_2_argv(t_list **lst, int i);
 
 /*  expander  */
 char	*expand_str(char *str);
@@ -96,13 +95,12 @@ int		pipeline_control(t_mini *mini);
 int		execute_complex_command(t_mini *mini, int *fd, int is_pipe);
 void	execute_simple_command(t_mini *mini);
 int		wait_children(int target_pid);
-int		check_syntax(t_tokens *lst);
+int		check_syntax(t_list *lst);
 
 /*  Redirection handling  */
-int	redirection_handler(t_tokens *lst, int heredoc_fd, int change_std);
+int	redirection_handler(t_list *lst, int heredoc_fd, int change_std);
 int	heredoc_start_read(char *limiter, int out_fd);
-int	heredoc_forever(t_tokens *lst);
-
+int	heredoc_forever(t_list *lst);
 
 /*  Built-in commands  */
 int		handle_builtin(char **argv, int _exit);

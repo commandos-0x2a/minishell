@@ -6,43 +6,43 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 02:39:17 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 21:31:18 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void set_null_token(t_tokens *lst, int *is_pipe)
+static void set_null_token(t_list *lst, int *is_pipe)
 {
 	*is_pipe <<= 1;
-	while (lst && lst->token)
+	while (lst && lst->str)
 	{
-		if (ft_strcmp(lst->token, "|") == 0)
+		if (ft_strcmp(lst->str, "|") == 0)
 		{
 			*is_pipe |= 1;
-			free(lst->token);
-			lst->token = NULL;
+			free(lst->str);
+			lst->str = NULL;
 			return ;
 		}
 		lst = lst->next;
 	}
 }
 
-static int	get_nb_command(t_tokens *lst)
+static int	get_nb_command(t_list *lst)
 {
 	int	nb_pipeline;
 
 	nb_pipeline = 1;
-	while (lst && lst->token)
+	while (lst && lst->str)
 	{
-		if (ft_strcmp(lst->token, "|") == 0)
+		if (ft_strcmp(lst->str, "|") == 0)
 			nb_pipeline++;
 		lst = lst->next;
 	}
 	return (nb_pipeline);
 }
 
-static int	run_builtin_command(t_tokens **lst)
+static int	run_builtin_command(t_list **lst)
 {
 	int	heredoc_fd;
 	char	**argv;
@@ -64,14 +64,14 @@ static int	run_builtin_command(t_tokens **lst)
 	if (!argv)
 	{
 		PRINT_ALLOCATE_ERROR;	
-		exit(1);
+		return (-1);
 	}
 	expand_argv = argv_expander2(argv, 0);
 	free_dptr(argv);
 	if (!expand_argv)
 	{
 		PRINT_ALLOCATE_ERROR;	
-		exit(1);
+		return (-1);
 	}
 	return (handle_builtin(expand_argv, 0));
 }
@@ -95,7 +95,7 @@ int	pipeline_control(t_mini *mini)
 	fd = -1;
 	is_pipe = 0;
 	i = 0;
-	while (mini->tokens && mini->tokens->token)
+	while (mini->tokens && mini->tokens->str)
 	{
 		set_null_token(mini->tokens, &is_pipe);
 		command_pid[i] = execute_complex_command(mini, &fd, is_pipe);

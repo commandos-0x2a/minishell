@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 07:25:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/03 23:28:09 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 21:35:07 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char ***__init__env(void)
 
 char **create_env_copy(void)
 {
-	extern char **environ;
+	extern const char **environ;
 	char **new_env;
 	int i;
 
@@ -87,4 +87,14 @@ void cleanup_env_copy(void)
 		free((*g_env_copy));
 		(*g_env_copy) = NULL;
 	}
+}
+
+
+t_list	*copy_env_variables(char **env)
+{
+	extern const char **environ;
+
+	(void)env;
+	(void)environ;
+	return (NULL);
 }

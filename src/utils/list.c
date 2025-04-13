@@ -6,19 +6,19 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 17:59:57 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 02:05:00 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 21:31:18 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	*tok_clean(t_tokens **lst)
+void	*tok_clean(t_list **lst)
 {
-	t_tokens	*next;
+	t_list	*next;
 
 	while (*lst)
 	{
-		free((*lst)->token);
+		free((*lst)->str);
 		next = (*lst)->next;
 		free(*lst);
 		*lst = next;
@@ -26,13 +26,13 @@ void	*tok_clean(t_tokens **lst)
 	return (NULL);
 }
 
-void	*tok_move2next(t_tokens **lst)
+void	*tok_move2next(t_list **lst)
 {
-	t_tokens	*next;
+	t_list	*next;
 
-	while (*lst && (*lst)->token)
+	while (*lst && (*lst)->str)
 	{
-		free((*lst)->token);
+		free((*lst)->str);
 		next = (*lst)->next;
 		free(*lst);
 		*lst = next;

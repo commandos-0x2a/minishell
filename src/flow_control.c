@@ -6,26 +6,26 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 02:19:13 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 02:44:14 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 21:31:18 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void set_null_token(t_tokens *lst, int *op)
+static void set_null_token(t_list *lst, int *op)
 {
 	*op = 0;
-	while (lst && lst->token)
+	while (lst && lst->str)
 	{
-		if (ft_strcmp(lst->token, "&&") == 0 || \
-			ft_strcmp(lst->token, "||") == 0)
+		if (ft_strcmp(lst->str, "&&") == 0 || \
+			ft_strcmp(lst->str, "||") == 0)
 		{
-			if (ft_strcmp(lst->token, "&&") == 0)
+			if (ft_strcmp(lst->str, "&&") == 0)
 				*op = 1;
-			else if (ft_strcmp(lst->token, "||") == 0)
+			else if (ft_strcmp(lst->str, "||") == 0)
 				*op = 2;
-			free(lst->token);
-			lst->token = NULL;
+			free(lst->str);
+			lst->str = NULL;
 			return ;
 		}
 		lst = lst->next;
@@ -37,15 +37,17 @@ int	flow_control(t_mini *mini)
 	int			op;
 	int			test;
 
-	(void)test;
 	test = 1;
-	while (mini->tokens && mini->tokens->token)
+	while (mini->tokens && mini->tokens->str)
 	{
 		set_null_token(mini->tokens, &op);
 		if (test)
-			test = !pipeline_control(mini);
-		if (op == 2)
-			test = !test;
+		{
+			mini->exit_status = pipeline_control(mini);
+			test = !mini->exit_status;
+			if (op == 2)
+				test = !test;
+		}
 		if (op == 0)
 			break ;
 		tok_move2next(&mini->tokens);

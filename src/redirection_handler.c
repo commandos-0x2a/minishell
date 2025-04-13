@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 02:15:25 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 21:36:03 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,24 +126,24 @@ static int	out_redirection(char *token, int change_std)
 	return (0);
 }
 
-int	redirection_handler(t_tokens *lst, int heredoc_fd, int change_std)
+int	redirection_handler(t_list *lst, int heredoc_fd, int change_std)
 {
 	int		status;
 	
 	status = 0;
-	while (lst && lst->token)
+	while (lst && lst->str)
 	{
-		if (ft_strcmp(lst->token, "<<") == 0)
+		if (ft_strcmp(lst->str, "<<") == 0)
 		{
 			if (heredoc_fd > 0 && change_std)
 				status = dup2(heredoc_fd, STDIN_FILENO);
 		}
-		else if (ft_strcmp(lst->token, "<") == 0)
-			status = in_redirection(lst->next->token, change_std);
-		else if (ft_strcmp(lst->token, ">>") == 0)
-			status = out_append(lst->next->token, change_std);
-		else if (ft_strcmp(lst->token, ">") == 0)
-			status = out_redirection(lst->next->token, change_std);
+		else if (ft_strcmp(lst->str, "<") == 0)
+			status = in_redirection(lst->next->str, change_std);
+		else if (ft_strcmp(lst->str, ">>") == 0)
+			status = out_append(lst->next->str, change_std);
+		else if (ft_strcmp(lst->str, ">") == 0)
+			status = out_redirection(lst->next->str, change_std);
 		else
 		{
 			lst = lst->next;

@@ -6,18 +6,18 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 02:05:00 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 21:31:18 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**lst_2_argv(t_tokens **lst, int i)
+char	**lst_2_argv(t_list **lst, int i)
 {
 	char	**argv;
-	t_tokens	*current;
+	t_list	*current;
 
-	if (!*lst || !(*lst)->token)
+	if (!*lst || !(*lst)->str)
 	{
 		tok_clean(lst);
 		return (ft_calloc(i + 1, sizeof(char *)));
@@ -26,9 +26,9 @@ char	**lst_2_argv(t_tokens **lst, int i)
 	*lst = (*lst)->next;
 	argv = lst_2_argv(lst, i + 1);
 	if (!argv)
-		free(current->token);
+		free(current->str);
 	else
-		argv[i] = current->token;
+		argv[i] = current->str;
 	free(current);
 	return (argv);
 }

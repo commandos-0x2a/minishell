@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 17:47:06 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/21 15:43:55 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 20:10:34 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,20 @@ int	wait_children(int target_pid)
 		// {
 			if (WIFEXITED(wstatus))
 			{
-				ft_fprintf(2, "%d: is exited by %d\n", \
-						child_pid, WEXITSTATUS(wstatus));
+				// ft_fprintf(2, "%d: is exited by %d\n", \
+				// 		child_pid, WEXITSTATUS(wstatus));
 				exit_code = WEXITSTATUS(wstatus);
 			}
 			else if (WIFSIGNALED(wstatus))
 			{
-				ft_fprintf(2, "%d: is signaled by %d\n", \
-						child_pid, WTERMSIG(wstatus));
+				// ft_fprintf(2, "%d: is signaled by %d\n", \
+				// 		child_pid, WTERMSIG(wstatus));
 				exit_code = 128 + WTERMSIG(wstatus);
 			}
-			else if (WIFCONTINUED(wstatus))
-				ft_fprintf(2, "%d: is continued\n", child_pid);
-			else if (WIFSTOPPED(wstatus))
-				ft_fprintf(2, "%d: is stopped\n", child_pid);
+			// else if (WIFCONTINUED(wstatus))
+			// 	ft_fprintf(2, "%d: is continued\n", child_pid);
+			// else if (WIFSTOPPED(wstatus))
+			// 	ft_fprintf(2, "%d: is stopped\n", child_pid);
 		// }
 		child_pid = waitpid(-1, &wstatus, WUNTRACED);
 	}

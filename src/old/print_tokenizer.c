@@ -1,37 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   readline_handler.c                                 :+:      :+:    :+:   */
+/*   print_tokenizer.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/04 16:30:52 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/08 01:47:06 by yaltayeh         ###   ########.fr       */
+/*   Created: 2025/02/07 16:00:58 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/04/13 21:36:32 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void cleanup_shell(void)
+char	*expand_str_no_quote(char *str);
+
+void	print_tokenizer(t_list **lst, int indent)
 {
-	clear_history();
-}
+	int i;
+	t_list	*cur;
 
-void handle_line(char *line)
-{
-	if (line && *line)
-		add_history(line);
-}
-
-char *get_prompt(void)
-{
-    static char prompt[PROMPT_MAX];
-    char cwd[PATH_MAX_LEN];
-
-    if (getcwd(cwd, sizeof(cwd)) == NULL)
-        strcpy(cwd, "~");
-
-    cwd[PATH_MAX_LEN - 1] = '\0';
-    snprintf(prompt, PROMPT_MAX, "%s$ ", cwd);
-    return (prompt);
+	get_argv(lst);
+	i = 0;
+	cur = *lst;
+	while (lst && cur->str)
+	{
+		printf("%-*s%i: %s\n", indent, "", i, cur->str);
+		cur = cur->next;
+		i++;
+	}
 }

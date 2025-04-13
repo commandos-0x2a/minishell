@@ -6,97 +6,23 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/08 02:29:45 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 20:42:37 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <ctype.h>
 
-/**
- * 
- * Environment Variable Expansion System Map
- * =======================================
- * 
- * 1. argv_expander (Main Function)
- *    │
- *    ├── Purpose: Process command arguments and expand environment variables
- *    │   - Handles quoted strings
- *    │   - Processes environment variables
- *    │   - Manages escape characters
- *    │
- *    ├── Input: char **argv (array of command arguments)
- *    │   Example: ["echo", "$HOME", "\"$USER\"", '$PATH']
- *    │
- *    └── Process Flow:
- *        └── For each argument:
- *            ├── Initialize empty result string
- *            ├── Process character by character
- *            │   ├── Handle quotes ('" or '')
- *            │   ├── If '$' found → Call expand_env_var()
- *            │   ├── Handle escape characters
- *            │   └── Join results using join_and_free()
- *            └── Replace original argument with expanded version
- * 
- * 2. expand_env_var (Helper Function)
- *    │
- *    ├── Purpose: Extract and resolve environment variable values
- *    │   - Handles special case $?
- *    │   - Extracts variable names
- *    │   - Retrieves variable values
- *    │
- *    ├── Input: 
- *    │   - char *str (string containing env variable)
- *    │   - int *i (current position in string)
- *    │
- *    ├── Process:
- *    │   ├── Check for special case ($?)
- *    │   ├── Extract variable name
- *    │   └── Look up variable value
- *    │
- *    └── Output: Expanded value or empty string
- * 
- * 3. join_and_free (Utility Function)
- *    │
- *    ├── Purpose: Memory-safe string concatenation
- *    │   - Joins two strings
- *    │   - Frees original strings
- *    │   - Prevents memory leaks
- *    │
- *    ├── Input: 
- *    │   - char *s1 (first string)
- *    │   - char *s2 (second string)
- *    │
- *    └── Output: New concatenated string
- * 
- * Example Flow:
- * ------------
- * Input: echo "Welcome $USER to $HOME"
- * │
- * ├── argv_expander processes the argument
- * │   │
- * │   ├── Finds $USER
- * │   │   └── expand_env_var extracts "USER"
- * │   │       └── Returns "mkurkar"
- * │   │           └── join_and_free combines "Welcome " + "mkurkar"
- * │   │
- * │   └── Finds $HOME
- * │       └── expand_env_var extracts "HOME"
- * │           └── Returns "/home/mkurkar"
- * │               └── join_and_free combines previous result + " to " + "/home/mkurkar"
- * │
- * └── Final Output: "Welcome mkurkar to /home/mkurkar"
- */
 
-// static int	get_env_var_name_len(char *str)
-// {
-// 	int	i;
+static char *join_and_free(char *s1, char *s2)
+{
+    char *result;
 
-// 	i = 0;
-// 	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-// 		i++;
-// 	return (i);
-// }
+    result = ft_strjoin(2, s1, s2);
+    free(s1);
+    free(s2);
+    return (result);
+}
 
 static char *expand_env_var(char *str, int *i)
 {
@@ -141,16 +67,6 @@ static char *expand_env_var(char *str, int *i)
 			return (ft_strdup(""));
 		return (var_value);
 	}
-}
-
-static char *join_and_free(char *s1, char *s2)
-{
-    char *result;
-
-    result = ft_strjoin(2, s1, s2);
-    free(s1);
-    free(s2);
-    return (result);
 }
 
 char	*expand_str(char *str)
@@ -228,19 +144,6 @@ char	*expand_str_no_quote(char *str)
 	return (result);
 }
 
-/*
-* Enhanced version that handles:
-* 1. Environment variables ($VAR, $PATH, etc.)
-* 2. Quote removal and escaping
-* 3. Special case $? for exit status
-* 4. Preserves spaces in quotes
-* 
-* Examples:
-* echo "$HOME/file"    -> /home/user/file
-* echo '$HOME/file'    -> $HOME/file
-* echo "Path: $PATH"   -> Path: /usr/bin:/bin
-* echo $?             -> 0 (or last exit status)
-*/
 char	**argv_expander(char **argv)
 {
 	int		i;
@@ -266,10 +169,6 @@ char	**argv_expander(char **argv)
 	}
 	return (new_argv);
 }
-
-
-
-
 
 static char	**mini_tokonizer(char *s, int i)
 {
@@ -304,7 +203,6 @@ static char	**mini_tokonizer(char *s, int i)
 	tokens[i] = token;
 	return (tokens);
 }
-
 
 char	*remove_qouts(char *str)
 {
