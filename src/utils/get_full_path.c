@@ -6,12 +6,11 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 21:33:51 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/22 14:54:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/10 14:13:36 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-# define __USE_XOPEN
 #include <sys/stat.h>
 
 static int	search_command_path(char full_path[PATH_MAX], char *cmd)

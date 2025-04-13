@@ -16,42 +16,42 @@
 # define __USE_XOPEN2K8
 # define _GNU_SOURCE // for WUNTRACED
 
-#include <libft.h>
-#include <stddef.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdio.h>
-#ifdef __linux__
-#include <linux/limits.h>
+# include <libft.h>
+# include <stddef.h>
+# include <unistd.h>
+# include <sys/wait.h>
+# include <fcntl.h>
+# include <errno.h>
+# include <string.h>
+# include <stdio.h>
+# ifdef __linux__
+#  include <linux/limits.h>
 // #  include <bits/termios-c_lflag.h>
 // #  include <asm-generic/termbits.h>
-#include <bits/sigaction.h>
-#include <asm-generic/signal-defs.h>
-#else
-#include <limits.h>
-#endif
+// #  include <bits/sigaction.h>
+// #  include <asm-generic/signal-defs.h>
+# else
+#  include <limits.h>
+# endif
 
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <sys/types.h>
-#include <termios.h>
-#include <signal.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <sys/types.h>
+# include <termios.h>
+# include <signal.h>
 
-#include "minishell_utils.h"
+# include "minishell_utils.h"
 
-#define PREFIX "minishell: "
+# define PREFIX "minishell: "
 
-#define HOSTNAME_MAX 64
-#define USERNAME_MAX 32
-#define PATH_MAX_LEN 3000
-#define PROMPT_MAX (HOSTNAME_MAX + USERNAME_MAX + PATH_MAX_LEN + 10)
+# define HOSTNAME_MAX 64
+# define USERNAME_MAX 32
+# define PATH_MAX_LEN 3000
+# define PROMPT_MAX (HOSTNAME_MAX + USERNAME_MAX + PATH_MAX_LEN + 10)
 
 // Define maximum sizes for config values
-#define MAX_PROMPT_STYLE 32
-#define MAX_CONFIG_LINE 256
+# define MAX_PROMPT_STYLE 32
+# define MAX_CONFIG_LINE 256
 
 
 typedef struct s_list

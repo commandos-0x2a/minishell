@@ -32,6 +32,7 @@ FILES = builtins/builtins			\
 			add_space_to_line		\
  			execution/flow_control				\
  			execution/pipeline_control			\
+ 			execution/flow_control				\
 			execution/execute_complex_command	\
 			execution/execute_simple_command	\
 			execution/redirection_handler		\
