@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 20:44:58 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/07 18:59:08 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 02:05:00 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ static int	operation_type(char *str)
 }
 
 
-int check_syntax(t_list *lst)
+int check_syntax(t_tokens *lst)
 {
-	t_list	*prev_tokens;
+	t_tokens	*prev_tokens;
 
 	prev_tokens = NULL;
 	while (lst && lst->token)

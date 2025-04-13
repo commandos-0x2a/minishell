@@ -6,26 +6,26 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/08 02:01:46 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 02:05:00 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static t_list	*add_token(t_list **lst, char *token)
+static t_tokens	*add_token(t_tokens **lst, char *token)
 {
-	t_list	*new;
+	t_tokens	*new;
 	
 	if (!token)
 	{
-		fclean_list(lst);
+		tok_clean(lst);
 		return (NULL);
 	}
-	new = malloc(sizeof(t_list));
+	new = malloc(sizeof(t_tokens));
 	if (!new)
 	{
 		free(token);
-		fclean_list(lst);
+		tok_clean(lst);
 		return (NULL);
 	}
 	new->next = *lst;
@@ -54,7 +54,7 @@ static t_list	*add_token(t_list **lst, char *token)
 * where each piece has one word! 
 */
 
-static t_list	*tokenizer_iter(t_list *lst, char *s, int i)
+static t_tokens	*tokenizer_iter(t_tokens *lst, char *s, int i)
 {
 	char	*start;
 
@@ -74,10 +74,10 @@ static t_list	*tokenizer_iter(t_list *lst, char *s, int i)
 	if (s == NULL)
 	{
 		write(2, PREFIX"syntax error\n", sizeof(PREFIX"syntax error\n") - 1);
-		return (fclean_list(&lst));
+		return (tok_clean(&lst));
 	}
 	if (start == s && !*s)
-		return (ft_calloc(1, sizeof(t_list)));
+		return (ft_calloc(1, sizeof(t_tokens)));
 	lst = tokenizer_iter(lst, s + !!*s, i + 1);
 	if (!lst)
 		return (NULL);
@@ -87,7 +87,7 @@ static t_list	*tokenizer_iter(t_list *lst, char *s, int i)
 	return (lst);
 }
 
-t_list	*tokenizer(char *s)
+t_tokens	*tokenizer(char *s)
 {
 	return (tokenizer_iter(NULL, s, 0));
 }

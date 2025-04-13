@@ -6,51 +6,52 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 19:32:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/07 20:38:06 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 02:08:28 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void lst_remove(t_list **lst, t_list *prev)
+static void lst_remove(t_tokens **lst, t_tokens *prev)
 {
-	t_list	*node;
+	t_tokens	*cur;
 
 	if (!*lst)
 		return ;
 
-	node = *lst;
+	cur = *lst;
 	if (prev)
-		prev->next = node->next;
-	*lst = node->next;
-	free(node->token);
-	free(node);
+		prev->next = cur->next;
+	*lst = cur->next;
+	if (cur->token)
+		free(cur->token);
+	free(cur);
 }
 
-void	get_argv(t_list **lst_p)
+void	get_argv(t_tokens **lst)
 {
-	t_list	*prev;
-	t_list	*lst;
-	t_list	*start;
+	t_tokens	*prev;
+	t_tokens	*cur;
+	t_tokens	*start;
 
-	lst = *lst_p;
+	cur = *lst;
 	prev = NULL;
 	start = NULL;
-	while (lst && lst->token)
+	while (cur && cur->token)
 	{
-		if (ft_strcmp(lst->token, "<<") == 0 \
-			|| ft_strcmp(lst->token, "<") == 0 \
-			|| ft_strcmp(lst->token, ">>") == 0 \
-			|| ft_strcmp(lst->token, ">") == 0)
+		if (ft_strcmp(cur->token, "<<") == 0 \
+			|| ft_strcmp(cur->token, "<") == 0 \
+			|| ft_strcmp(cur->token, ">>") == 0 \
+			|| ft_strcmp(cur->token, ">") == 0)
 		{
-			lst_remove(&lst, prev);
-			lst_remove(&lst, prev);
+			lst_remove(&cur, prev);
+			lst_remove(&cur, prev);
 			continue;
 		}
 		if (!prev)
-			start = lst;
-		prev = lst;
-		lst = lst->next;
+			start = cur;
+		prev = cur;
+		cur = cur->next;
 	}
-	*lst_p = start;
+	*lst = start;
 }

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/07 22:55:31 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 02:15:25 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,26 +126,7 @@ static int	out_redirection(char *token, int change_std)
 	return (0);
 }
 
-/*
-static int	heredoc_redirection(char *token, int change_std)
-{
-	int	pipefd[2];
-
-	if (pipe(pipefd) == -1)
-		return (-1);
-	heredoc_start_read(token, pipefd[1]);
-	close(pipefd[1]);
-	if (change_std && dup2(pipefd[0], STDIN_FILENO) == -1)
-	{
-		close(pipefd[0]);
-		return (-1);
-	}
-	close(pipefd[0]);
-	return (0);
-}
-*/
-
-int	redirection_handler(t_list *lst, int heredoc_fd, int change_std)
+int	redirection_handler(t_tokens *lst, int heredoc_fd, int change_std)
 {
 	int		status;
 	

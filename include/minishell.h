@@ -56,12 +56,14 @@
 
 typedef struct s_list
 {
-	struct s_list	*next;
 	char			*token;
-}	t_list;
+	struct s_list	*next;
+}	t_tokens;
 
-void	*fclean_list(t_list **lst);
-void	*clean_list(t_list **lst);
+typedef struct s_mini
+{
+	t_tokens	*tokens;
+}	t_mini;
 
 // Terminal configuration
 char *get_prompt(void);
@@ -69,12 +71,14 @@ void handle_line(char *line);
 void cleanup_shell(void);
 
 /*  tokenizer  */
-t_list		*tokenizer(char *s);
+t_tokens	*tokenizer(char *s);
+void		*tok_clean(t_tokens **lst);
+void		*tok_move2next(t_tokens **lst);
 
 /*  argv  */
-char		*get_argv0(t_list *lst);
-void		get_argv(t_list **lst_p);
-char		**lst_2_argv(t_list **lst, int i);
+char		*get_argv0(t_tokens *lst);
+void		get_argv(t_tokens **lst);
+char		**lst_2_argv(t_tokens **lst, int i);
 
 /*  expander  */
 char	*expand_str(char *str);
@@ -87,16 +91,17 @@ char	**argv_expander2(char **argv, int i);
 # define IS_PIPE_MASK	0b11
 
 /*  execution  */
-int		execute_complex_command(t_list **lst, int *fd, int is_pipe);
-int		pipeline_control(t_list **lst);
-int		check_syntax(t_list *lst);
+int		flow_control(t_mini *mini);
+int		pipeline_control(t_mini *mini);
+int		execute_complex_command(t_mini *mini, int *fd, int is_pipe);
+void	execute_simple_command(t_mini *mini);
 int		wait_children(int target_pid);
-void	execute_simple_command(t_list **lst);
+int		check_syntax(t_tokens *lst);
 
 /*  Redirection handling  */
-int	redirection_handler(t_list *lst, int heredoc_fd, int change_std);
+int	redirection_handler(t_tokens *lst, int heredoc_fd, int change_std);
 int	heredoc_start_read(char *limiter, int out_fd);
-int	heredoc_forever(t_list *lst);
+int	heredoc_forever(t_tokens *lst);
 
 
 /*  Built-in commands  */

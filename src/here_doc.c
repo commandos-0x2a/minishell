@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/07 23:00:27 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 02:05:00 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	heredoc_start_read(char *limiter, int out_fd)
 	return (0);
 }
 
-int	heredoc_forever(t_list *lst)
+int	heredoc_forever(t_tokens *lst)
 {
 	int	fd;
 	int	pipefd[2];

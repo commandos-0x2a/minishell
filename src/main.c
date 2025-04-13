@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/08 01:54:13 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 02:41:44 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int main()
 {
 	char		*line;
 	char		*expand_line;
-	t_list		*lst;
+	t_mini		mini;
 
 	// t_config	config;
 
@@ -108,19 +108,18 @@ int main()
 		
 		if (*expand_line)
 		{
-			lst = tokenizer(expand_line);
+			mini.tokens = tokenizer(expand_line);
 			free(expand_line);
-			if (!lst)
+			if (!mini.tokens)
 			{
 				// PRINT_ALLOCATE_ERROR;
 				continue ;
 			}
-			if (check_syntax(lst))
+			if (check_syntax(mini.tokens))
 			{
 				// terminal_config(STDIN_FILENO);
 				// reset_signals();
-				pipeline_control(&lst);
-				// print_tokenizer(&lst, 0);
+				flow_control(&mini);
 				// terminal_reset(STDIN_FILENO);
 			}
 		}

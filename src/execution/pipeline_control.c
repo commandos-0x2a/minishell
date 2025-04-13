@@ -6,17 +6,13 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/08 01:52:43 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 02:39:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	*clean_list(t_list **lst);
-char	**lst_2_argv(t_list **lst, int i);
-
-
-static void get_next_command(t_list *lst, int *is_pipe)
+static void set_null_token(t_tokens *lst, int *is_pipe)
 {
 	*is_pipe <<= 1;
 	while (lst && lst->token)
@@ -32,7 +28,7 @@ static void get_next_command(t_list *lst, int *is_pipe)
 	}
 }
 
-static int	get_nb_command(t_list *lst)
+static int	get_nb_command(t_tokens *lst)
 {
 	int	nb_pipeline;
 
@@ -46,7 +42,7 @@ static int	get_nb_command(t_list *lst)
 	return (nb_pipeline);
 }
 
-static int	run_builtin_command(t_list **lst)
+static int	run_builtin_command(t_tokens **lst)
 {
 	int	heredoc_fd;
 	char	**argv;
@@ -80,7 +76,7 @@ static int	run_builtin_command(t_list **lst)
 	return (handle_builtin(expand_argv, 0));
 }
 
-int	pipeline_control(t_list **lst)
+int	pipeline_control(t_mini *mini)
 {
 	int		is_pipe;
 	int		fd;
@@ -89,9 +85,9 @@ int	pipeline_control(t_list **lst)
 	pid_t	victim_pid;
 	pid_t	*command_pid;
 
-	nb_commands = get_nb_command(*lst);
-	if (nb_commands == 1 && is_builtin(get_argv0(*lst)))
-		return (run_builtin_command(lst));
+	nb_commands = get_nb_command(mini->tokens);
+	if (nb_commands == 1 && is_builtin(get_argv0(mini->tokens)))
+		return (run_builtin_command(&mini->tokens));
 
 	command_pid = ft_calloc(nb_commands, sizeof(pid_t));
 	if (!command_pid)
@@ -99,23 +95,27 @@ int	pipeline_control(t_list **lst)
 	fd = -1;
 	is_pipe = 0;
 	i = 0;
-	while (*lst && (*lst)->token)
+	while (mini->tokens && mini->tokens->token)
 	{
-		get_next_command(*lst, &is_pipe);
-		command_pid[i] = execute_complex_command(lst, &fd, is_pipe);
+		set_null_token(mini->tokens, &is_pipe);
+		command_pid[i] = execute_complex_command(mini, &fd, is_pipe);
 		if (command_pid[i] == -1)
 			break ;
 		if (waitpid(command_pid[i], NULL, WUNTRACED) == -1)
 			break ;
-		clean_list(lst);
 		i++;
+		if ((is_pipe & IS_PIPE) == 0)
+			break ;
+		tok_move2next(&mini->tokens);
 	}
 	if (i > 0)
 		victim_pid = command_pid[i - 1];
-	while (i--)
+	i = 0;
+	while (i < nb_commands)
 	{
-		kill(command_pid[i], SIGCONT);
-		waitpid(command_pid[i], NULL, WCONTINUED);
+		if (command_pid[i] != -1)
+			kill(command_pid[i], SIGCONT);
+		i++;
 	}
 	free(command_pid);
 	return (wait_children(victim_pid));

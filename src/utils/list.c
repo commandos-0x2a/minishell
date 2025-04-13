@@ -6,15 +6,15 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 17:59:57 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/08 01:32:26 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 02:05:00 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	*fclean_list(t_list **lst)
+void	*tok_clean(t_tokens **lst)
 {
-	t_list	*next;
+	t_tokens	*next;
 
 	while (*lst)
 	{
@@ -26,9 +26,9 @@ void	*fclean_list(t_list **lst)
 	return (NULL);
 }
 
-void	*clean_list(t_list **lst)
+void	*tok_move2next(t_tokens **lst)
 {
-	t_list	*next;
+	t_tokens	*next;
 
 	while (*lst && (*lst)->token)
 	{
