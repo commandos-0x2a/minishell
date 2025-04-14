@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_control.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 14:38:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:43:36 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,10 @@ static int	run_builtin_command(t_mini *mini)
 	int	heredoc_fd;
 	char	**argv;
 
-	heredoc_fd = heredoc_forever(mini->tokens, mini->env);
+	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
 		return (-1);
-	if (redirection_handler(mini->tokens, mini->env, heredoc_fd, 0) != 0)
+	if (redirection_handler(mini, heredoc_fd, 0) != 0)
 	{
 		if (heredoc_fd > 0)
 			close(heredoc_fd);
@@ -80,7 +80,7 @@ int	pipeline_control(t_mini *mini)
 	pid_t	*command_pid;
 
 	nb_commands = get_nb_command(mini->tokens);
-	if (nb_commands == 1 && is_builtin(mini->env, get_argv0(mini->tokens)))
+	if (nb_commands == 1 && is_builtin(mini, get_argv0(mini->tokens)))
 		return (run_builtin_command(mini));
 
 	command_pid = ft_calloc(nb_commands, sizeof(pid_t));

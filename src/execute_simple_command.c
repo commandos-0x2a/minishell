@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 15:24:36 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/14 15:41:12 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void	handle_cmd_execution(t_mini *mini, char **argv)
 	char	full_path[PATH_MAX];
 	int		err;
 
-	if (is_builtin(mini->env, argv[0]))
+	if (is_builtin(mini, argv[0]))
 		handle_builtin(mini, argv, 1);
 	err = get_full_path(mini->env, full_path, argv[0]);
 	if (err == 0)

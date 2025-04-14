@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 15:03:37 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/14 15:43:44 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static void	handle_child_process(t_mini *mini, int *fd, int is_pipe, int *pipefd
 
 	if (is_pipe & IS_PIPE)
 		close(pipefd[0]);
-	heredoc_fd = heredoc_forever(mini->tokens, mini->env);
+	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
 	{
 		mini_clean(mini);
@@ -55,7 +55,7 @@ static void	handle_child_process(t_mini *mini, int *fd, int is_pipe, int *pipefd
 		mini_clean(mini);
 		exit(EXIT_FAILURE);
 	}
-	if (redirection_handler(mini->tokens, mini->env, heredoc_fd, 1) != 0)
+	if (redirection_handler(mini, heredoc_fd, 1) != 0)
 	{
 		mini_clean(mini);
 		exit(126);

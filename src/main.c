@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/14 09:28:33 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:32:23 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int main()
 	// 	// fds not standard
 	// 	return (1);
 	// }
-	
+	ft_bzero(&mini, sizeof(t_mini));
 	mini.env = copy_env_variables();
 	if (!mini.env)
 	{
@@ -70,10 +70,10 @@ int main()
 	// terminal_config(STDIN_FILENO);
 	while (1)
 	{
-		// setup_signals();
+		setup_signals();
 		line = readline(get_prompt());
 		
-		// reset_signals();
+		reset_signals();
 
 		if (!line) // ctrl-D handling
 		{

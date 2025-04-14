@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/14 10:10:14 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:37:49 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 * Regular built-ins can run in child process (output only)
 * Shell built-ins must run in parent process (modify shell state)
 */
-int	is_builtin(t_list *env, char *cmd)
+int	is_builtin(t_mini *mini, char *cmd)
 {
 	if (!cmd)
 		return (0);
-	cmd = expand_str(env, cmd);
+	cmd = expand_str(mini, cmd);
 	if (!cmd)
 		return (-1);
 	if (ft_strcmp(cmd, "cd") == 0 || \

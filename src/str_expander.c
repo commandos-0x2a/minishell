@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   str_expander.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/14 15:13:47 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:38:51 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static char *join_and_free(char *s1, char *s2)
     return (result);
 }
 
-static char *expand_env_var(t_list *env, char *str, int *i)
+static char *expand_env_var(t_mini *mini, char *str, int *i)
 {
 	char	*var_name;
 	char	*var_value;
@@ -36,7 +36,7 @@ static char *expand_env_var(t_list *env, char *str, int *i)
 	if (str[*i] == '?')
 	{
 		(*i)++;
-		return (strdup("WTF"));
+		return (ft_itoa(mini->exit_status, 0));
 	}
 	else if (str[*i] == '\0' || str[*i] == ' ' || str[*i] == '\'' || str[*i] == '\"')
 		return (ft_strdup("$"));
@@ -60,7 +60,7 @@ static char *expand_env_var(t_list *env, char *str, int *i)
 		var_name = ft_substr(str, start, len);
 		if (!var_name)
 			return (NULL);
-		var_value = ft_getenv(env, var_name);
+		var_value = ft_getenv(mini->env, var_name);
 		free(var_name);
 		if (!var_value)
 			return (ft_strdup(""));
@@ -68,7 +68,7 @@ static char *expand_env_var(t_list *env, char *str, int *i)
 	}
 }
 
-char	*expand_str(t_list *env, char *str)
+char	*expand_str(t_mini *mini, char *str)
 {
 	char	*result;
 	char	*temp;
@@ -96,7 +96,7 @@ char	*expand_str(t_list *env, char *str)
 		// Handle environment variables
 		if (str[i] == '$' && quote_char != '\'')
 		{
-			temp = expand_env_var(env, str, &i);
+			temp = expand_env_var(mini, str, &i);
 			if (temp)
 				result = join_and_free(result, temp);
 			continue;
@@ -109,7 +109,7 @@ char	*expand_str(t_list *env, char *str)
 	return (result);
 }
 
-char	**argv_expander(t_list *env, char **argv)
+char	**argv_expander(t_mini *mini, char **argv)
 {
 	int		i;
 	int		len;
@@ -124,7 +124,7 @@ char	**argv_expander(t_list *env, char **argv)
 		return (NULL);
 	while (argv[i])
 	{
-		new_argv[i] = expand_str(env, argv[i]);
+		new_argv[i] = expand_str(mini, argv[i]);
 		if (!new_argv[i])
 		{
 			free_dptr(new_argv);
@@ -135,7 +135,7 @@ char	**argv_expander(t_list *env, char **argv)
 	return (new_argv);
 }
 
-char	*expand_env(t_list *env, char *str)
+char	*expand_env(t_mini *mini, char *str)
 {
 	char	*result;
 	char	*temp;
@@ -156,7 +156,7 @@ char	*expand_env(t_list *env, char *str)
 		// Handle environment variables
 		else if (str[i] == '$' && quote_char != '\'')
 		{
-			temp = expand_env_var(env, str, &i);
+			temp = expand_env_var(mini, str, &i);
 			if (temp)
 				result = join_and_free(result, temp);
 			continue;
@@ -239,7 +239,7 @@ int	argv_expander2(t_mini *mini)
 	tok = mini->tokens;
 	while (tok && tok->str)
 	{
-		expanded_str = expand_env(mini->env, tok->str);
+		expanded_str = expand_env(mini, tok->str);
 		if (!expanded_str)
 			return (1);
 		slices = mini_tokonizer(expanded_str, 0);

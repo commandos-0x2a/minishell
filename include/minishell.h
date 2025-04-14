@@ -86,9 +86,9 @@ void	get_argv(t_list **lst);
 char	**lst_2_dptr(t_list *lst);
 
 /*  expander  */
-char	*expand_str(t_list *env, char *str);
-char	*expand_env(t_list *env, char *str);
-char	**argv_expander(t_list *env, char **argv);
+char	*expand_str(t_mini *mini, char *str);
+char	*expand_env(t_mini *mini, char *str);
+char	**argv_expander(t_mini *mini, char **argv);
 int		argv_expander2(t_mini *mini);
 
 # define IS_PIPE		0b01
@@ -104,9 +104,9 @@ int		wait_children(int target_pid);
 int		check_syntax(t_list *lst);
 
 /*  Redirection handling  */
-int	redirection_handler(t_list *lst, t_list *env, int heredoc_fd, int change_std);
-int	heredoc_start_read(t_list *env, char *limiter, int out_fd);
-int	heredoc_forever(t_list *lst, t_list *env);
+int	redirection_handler(t_mini *mini, int heredoc_fd, int change_std);
+int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd);
+int	heredoc_forever(t_mini *mini, t_list *lst);
 
 /*  Environment variables  */
 t_list	*copy_env_variables(void);
@@ -115,7 +115,7 @@ char	*ft_getenv(t_list *env, const char *name);
 
 /*  Built-in commands  */
 int		handle_builtin(t_mini *mini, char **argv, int _exit);
-int		is_builtin(t_list *env, char *cmd);
+int		is_builtin(t_mini *mini, char *cmd);
 int		ft_cd(t_mini *mini, char **argv);
 int		ft_echo(char **argv);
 int		ft_pwd(char **argv);

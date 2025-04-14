@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 06:23:49 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:39:28 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "get_next_line.h"
 
-int	heredoc_start_read(t_list *env, char *limiter, int out_fd)
+int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd)
 {
 	char	*line;
 	char	*line_expand;
@@ -39,7 +39,7 @@ int	heredoc_start_read(t_list *env, char *limiter, int out_fd)
 			free(line);
 			break ;
 		}
-		line_expand = expand_str(env, line);
+		line_expand = expand_str(mini, line);
 		free(line);
 		if (!line_expand)
 			return (-1);
@@ -48,7 +48,7 @@ int	heredoc_start_read(t_list *env, char *limiter, int out_fd)
 	return (0);
 }
 
-int	heredoc_forever(t_list *lst, t_list *env)
+int	heredoc_forever(t_mini *mini, t_list *lst)
 {
 	int	fd;
 	int	pipefd[2];
@@ -63,7 +63,7 @@ int	heredoc_forever(t_list *lst, t_list *env)
 				close(fd);
 			if (pipe(pipefd) == -1)
 				return (-1);
-			if (heredoc_start_read(env, lst->str, pipefd[1]) != 0)
+			if (heredoc_start_read(mini, lst->str, pipefd[1]) != 0)
 			{
 				close(pipefd[0]);
 				close(pipefd[1]);

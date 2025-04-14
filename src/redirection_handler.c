@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_handler.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 10:31:14 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:43:09 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	check_ambiguous(t_list *env, char *token)
+static int	check_ambiguous(t_mini *mini, char *token)
 {
 	char	*s;
 
-	s = expand_env(env, token);
+	s = expand_env(mini, token);
 	if (!s)
 	{
 		PRINT_ALLOCATE_ERROR;
@@ -36,14 +36,14 @@ static int	check_ambiguous(t_list *env, char *token)
 	return (0);
 }
 
-static int	in_redirection(t_list *env, char *token, int change_std)
+static int	in_redirection(t_mini *mini, char *token, int change_std)
 {
 	int		fd;
 	char	*filename;
 
-	if (check_ambiguous(env, token))
+	if (check_ambiguous(mini, token))
 		return (1);
-	filename = expand_str(env, token);
+	filename = expand_str(mini, token);
 	if (!filename)
 	{
 		PRINT_ALLOCATE_ERROR;
@@ -66,14 +66,14 @@ static int	in_redirection(t_list *env, char *token, int change_std)
 	return (0);
 }
 
-static int	out_append(t_list *env, char *token, int change_std)
+static int	out_append(t_mini *mini, char *token, int change_std)
 {
 	int		fd;
 	char	*filename;
 
-	if (check_ambiguous(env, token))
+	if (check_ambiguous(mini, token))
 		return (1);
-	filename = expand_str(env, token);
+	filename = expand_str(mini, token);
 	if (!filename)
 	{
 		PRINT_ALLOCATE_ERROR;
@@ -96,14 +96,14 @@ static int	out_append(t_list *env, char *token, int change_std)
 	return (0);
 }
 
-static int	out_redirection(t_list *env, char *token, int change_std)
+static int	out_redirection(t_mini *mini, char *token, int change_std)
 {
 	int		fd;
 	char	*filename;
 
-	if (check_ambiguous(env, token))
+	if (check_ambiguous(mini, token))
 		return (1);
-	filename = expand_str(env, token);
+	filename = expand_str(mini, token);
 	if (!filename)
 	{
 		PRINT_ALLOCATE_ERROR;
@@ -126,10 +126,12 @@ static int	out_redirection(t_list *env, char *token, int change_std)
 	return (0);
 }
 
-int	redirection_handler(t_list *lst, t_list *env, int heredoc_fd, int change_std)
+int	redirection_handler(t_mini *mini, int heredoc_fd, int change_std)
 {
 	int		status;
+	t_list	*lst;
 	
+	lst = mini->tokens;
 	status = 0;
 	while (lst && lst->str)
 	{
@@ -139,11 +141,11 @@ int	redirection_handler(t_list *lst, t_list *env, int heredoc_fd, int change_std
 				status = dup2(heredoc_fd, STDIN_FILENO);
 		}
 		else if (ft_strcmp(lst->str, "<") == 0)
-			status = in_redirection(env, lst->next->str, change_std);
+			status = in_redirection(mini, lst->next->str, change_std);
 		else if (ft_strcmp(lst->str, ">>") == 0)
-			status = out_append(env, lst->next->str, change_std);
+			status = out_append(mini, lst->next->str, change_std);
 		else if (ft_strcmp(lst->str, ">") == 0)
-			status = out_redirection(env, lst->next->str, change_std);
+			status = out_redirection(mini, lst->next->str, change_std);
 		else
 		{
 			lst = lst->next;
