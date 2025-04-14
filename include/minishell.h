@@ -128,21 +128,10 @@ int		ft_unset(t_mini *mini, char **argv);
 void setup_signals(void);
 void reset_signals(void);
 
-
-// Add global variable declaration and new function prototypes
-int *heredoc_active(void);
-
+/* Signal handling functions */
+int heredoc_is_active(void);
+void set_heredoc_active(int active);
 void save_signal_handlers(void);
 void restore_signal_handlers(void);
-
-// Add this struct and function prototype
-struct s_sig_handlers
-{
-	struct sigaction old_int;
-	struct sigaction old_quit;
-};
-
-struct s_sig_handlers *get_sig_handlers(void);
-
 
 #endif

@@ -14,39 +14,74 @@
 #include <signal.h>
 #include <termios.h>
 
-int *heredoc_active(void)
+typedef enum e_signal_event
 {
-	static int g_heredoc_active;
-	return (&g_heredoc_active);
+	SIG_HEREDOC_ACTIVE,
+	SIG_INTERACTIVE_MODE,
+	SIG_EXECUTION_MODE,
+	SIG_INT_HANDLER,
+	SIG_QUIT_HANDLER
+}	t_signal_event;
+
+static int	handle_mode_events(t_signal_event event, int set_value, int is_setter)
+{
+	static int	heredoc_active = 0;
+	static int	interactive_mode = 0;
+	static int	execution_mode = 0;
+
+	if (event == SIG_HEREDOC_ACTIVE)
+	{
+		if (is_setter)
+			heredoc_active = set_value;
+		return (heredoc_active);
+	}
+	else if (event == SIG_INTERACTIVE_MODE)
+	{
+		if (is_setter)
+			interactive_mode = set_value;
+		return (interactive_mode);
+	}
+	else if (event == SIG_EXECUTION_MODE)
+	{
+		if (is_setter)
+			execution_mode = set_value;
+		return (execution_mode);
+	}
+	return (0);
 }
 
-struct s_sig_handlers *get_sig_handlers(void)
+static int	handle_handler_events(t_signal_event event, int is_setter)
 {
-	static struct s_sig_handlers handlers;
-	return (&handlers);
+	static struct sigaction	old_int;
+	static struct sigaction	old_quit;
+
+	if (event == SIG_INT_HANDLER)
+	{
+		if (is_setter)
+			return (sigaction(SIGINT, NULL, &old_int));
+		return (sigaction(SIGINT, &old_int, NULL));
+	}
+	else if (event == SIG_QUIT_HANDLER)
+	{
+		if (is_setter)
+			return (sigaction(SIGQUIT, NULL, &old_quit));
+		return (sigaction(SIGQUIT, &old_quit, NULL));
+	}
+	return (0);
 }
 
-void save_signal_handlers(void)
+static int	signal_controller(t_signal_event event, int set_value, int is_setter)
 {
-	struct s_sig_handlers *handlers = get_sig_handlers();
-
-	sigaction(SIGINT, NULL, &handlers->old_int);
-	sigaction(SIGQUIT, NULL, &handlers->old_quit);
+	if (event <= SIG_EXECUTION_MODE)
+		return (handle_mode_events(event, set_value, is_setter));
+	else
+		return (handle_handler_events(event, is_setter));
 }
 
-void restore_signal_handlers(void)
+static void	restore_prompt(int sig)
 {
-	struct s_sig_handlers *handlers = get_sig_handlers();
-
-	sigaction(SIGINT, &handlers->old_int, NULL);
-	sigaction(SIGQUIT, &handlers->old_quit, NULL);
-}
-
-void restore_prompt(int sig)
-{
-	if (*heredoc_active())
-		return;
-
+	if (signal_controller(SIG_HEREDOC_ACTIVE, 0, 0))
+		return ;
 	(void)sig;
 	write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
@@ -56,34 +91,51 @@ void restore_prompt(int sig)
 	rl_redisplay();
 }
 
-void setup_signals(void)
-{
-	struct sigaction sa;
-
-	sa.sa_handler = restore_prompt;
-	sa.sa_flags = SA_RESTART;
-	sigemptyset(&sa.sa_mask);
-
-	sigaction(SIGINT, &sa, NULL);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTSTP, SIG_IGN);
-}
-
-static void ignore_handler(int sig)
+static void	ignore_handler(int sig)
 {
 	(void)sig;
 }
 
-void reset_signals(void)
+int	heredoc_is_active(void)
+{
+	return (signal_controller(SIG_HEREDOC_ACTIVE, 0, 0));
+}
+
+void	set_heredoc_active(int active)
+{
+	signal_controller(SIG_HEREDOC_ACTIVE, active, 1);
+}
+
+void	save_signal_handlers(void)
+{
+	signal_controller(SIG_INT_HANDLER, 0, 1);
+	signal_controller(SIG_QUIT_HANDLER, 0, 1);
+}
+
+void	restore_signal_handlers(void)
+{
+	signal_controller(SIG_INT_HANDLER, 0, 0);
+	signal_controller(SIG_QUIT_HANDLER, 0, 0);
+}
+
+void	setup_signals(void)
+{
+	struct sigaction	sa;
+
+	sa.sa_handler = restore_prompt;
+	sa.sa_flags = SA_RESTART;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGINT, &sa, NULL);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGTSTP, SIG_IGN);
+	signal_controller(SIG_INTERACTIVE_MODE, 1, 1);
+	signal_controller(SIG_EXECUTION_MODE, 0, 1);
+}
+
+void	reset_signals(void)
 {
 	signal(SIGINT, ignore_handler);
 	signal(SIGQUIT, SIG_DFL);
-	// signal(SIGTSTP, SIG_DFL);
+	signal_controller(SIG_INTERACTIVE_MODE, 0, 1);
+	signal_controller(SIG_EXECUTION_MODE, 1, 1);
 }
-
-// void set_signals_child(void)
-// {
-// 	*(__init_in_child()) = 1;
-// 	signal(SIGINT, SIG_DFL);
-// 	signal(SIGQUIT, SIG_DFL);
-// }
