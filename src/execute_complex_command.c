@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 02:02:06 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 06:31:20 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int execute_complex_command(t_mini *mini, int *fd, int is_pipe)
 		if (is_pipe & IS_PIPE)
 			close(pipefd[0]);
 
-		heredoc_fd = heredoc_forever(mini->tokens);
+		heredoc_fd = heredoc_forever(mini->tokens, mini->env);
 		if (heredoc_fd < 0)
 			exit(1);
 
@@ -66,7 +66,7 @@ int execute_complex_command(t_mini *mini, int *fd, int is_pipe)
 		if (pipex_handler(is_pipe, *fd, pipefd) != 0)
 			exit(1);
 		
-		if (redirection_handler(mini->tokens, heredoc_fd, 1) != 0)
+		if (redirection_handler(mini->tokens, mini->env, heredoc_fd, 1) != 0)
 			exit(126);
 		if (heredoc_fd > 0)
 			close(heredoc_fd);

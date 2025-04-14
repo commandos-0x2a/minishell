@@ -6,99 +6,29 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/04/09 22:02:54 by yaltayeh         ###   ########.fr       */
+=======
+/*   Updated: 2025/04/14 06:23:13 by yaltayeh         ###   ########.fr       */
+>>>>>>> refs/remotes/origin/linked_list
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <ctype.h>
 
-/**
- * 
- * Environment Variable Expansion System Map
- * =======================================
- * 
- * 1. argv_expander (Main Function)
- *    │
- *    ├── Purpose: Process command arguments and expand environment variables
- *    │   - Handles quoted strings
- *    │   - Processes environment variables
- *    │   - Manages escape characters
- *    │
- *    ├── Input: char **argv (array of command arguments)
- *    │   Example: ["echo", "$HOME", "\"$USER\"", '$PATH']
- *    │
- *    └── Process Flow:
- *        └── For each argument:
- *            ├── Initialize empty result string
- *            ├── Process character by character
- *            │   ├── Handle quotes ('" or '')
- *            │   ├── If '$' found → Call expand_env_var()
- *            │   ├── Handle escape characters
- *            │   └── Join results using join_and_free()
- *            └── Replace original argument with expanded version
- * 
- * 2. expand_env_var (Helper Function)
- *    │
- *    ├── Purpose: Extract and resolve environment variable values
- *    │   - Handles special case $?
- *    │   - Extracts variable names
- *    │   - Retrieves variable values
- *    │
- *    ├── Input: 
- *    │   - char *str (string containing env variable)
- *    │   - int *i (current position in string)
- *    │
- *    ├── Process:
- *    │   ├── Check for special case ($?)
- *    │   ├── Extract variable name
- *    │   └── Look up variable value
- *    │
- *    └── Output: Expanded value or empty string
- * 
- * 3. join_and_free (Utility Function)
- *    │
- *    ├── Purpose: Memory-safe string concatenation
- *    │   - Joins two strings
- *    │   - Frees original strings
- *    │   - Prevents memory leaks
- *    │
- *    ├── Input: 
- *    │   - char *s1 (first string)
- *    │   - char *s2 (second string)
- *    │
- *    └── Output: New concatenated string
- * 
- * Example Flow:
- * ------------
- * Input: echo "Welcome $USER to $HOME"
- * │
- * ├── argv_expander processes the argument
- * │   │
- * │   ├── Finds $USER
- * │   │   └── expand_env_var extracts "USER"
- * │   │       └── Returns "mkurkar"
- * │   │           └── join_and_free combines "Welcome " + "mkurkar"
- * │   │
- * │   └── Finds $HOME
- * │       └── expand_env_var extracts "HOME"
- * │           └── Returns "/home/mkurkar"
- * │               └── join_and_free combines previous result + " to " + "/home/mkurkar"
- * │
- * └── Final Output: "Welcome mkurkar to /home/mkurkar"
- */
 
-// static int	get_env_var_name_len(char *str)
-// {
-// 	int	i;
+static char *join_and_free(char *s1, char *s2)
+{
+    char *result;
 
-// 	i = 0;
-// 	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-// 		i++;
-// 	return (i);
-// }
+    result = ft_strjoin(2, s1, s2);
+    free(s1);
+    free(s2);
+    return (result);
+}
 
-static char *expand_env_var(char *str, int *i)
+static char *expand_env_var(t_list *env, char *str, int *i)
 {
 	char	*var_name;
 	char	*var_value;
@@ -135,7 +65,7 @@ static char *expand_env_var(char *str, int *i)
 		var_name = ft_substr(str, start, len);
 		if (!var_name)
 			return (NULL);
-		var_value = ft_getenv(var_name);
+		var_value = ft_getenv(env, var_name);
 		free(var_name);
 		if (!var_value)
 			return (ft_strdup(""));
@@ -143,17 +73,7 @@ static char *expand_env_var(char *str, int *i)
 	}
 }
 
-static char *join_and_free(char *s1, char *s2)
-{
-    char *result;
-
-    result = ft_strjoin(2, s1, s2);
-    free(s1);
-    free(s2);
-    return (result);
-}
-
-char	*expand_str(char *str)
+char	*expand_str(t_list *env, char *str)
 {
 	char	*result;
 	char	*temp;
@@ -181,7 +101,7 @@ char	*expand_str(char *str)
 		// Handle environment variables
 		if (str[i] == '$' && quote_char != '\'')
 		{
-			temp = expand_env_var(str, &i);
+			temp = expand_env_var(env, str, &i);
 			if (temp)
 				result = join_and_free(result, temp);
 			continue;
@@ -194,7 +114,7 @@ char	*expand_str(char *str)
 	return (result);
 }
 
-char	*expand_str_no_quote(char *str)
+char	*expand_str_no_quote(t_list *env, char *str)
 {
 	char	*result;
 	char	*temp;
@@ -215,7 +135,7 @@ char	*expand_str_no_quote(char *str)
 		// Handle environment variables
 		else if (str[i] == '$' && quote_char != '\'')
 		{
-			temp = expand_env_var(str, &i);
+			temp = expand_env_var(env, str, &i);
 			if (temp)
 				result = join_and_free(result, temp);
 			continue;
@@ -228,20 +148,7 @@ char	*expand_str_no_quote(char *str)
 	return (result);
 }
 
-/*
-* Enhanced version that handles:
-* 1. Environment variables ($VAR, $PATH, etc.)
-* 2. Quote removal and escaping
-* 3. Special case $? for exit status
-* 4. Preserves spaces in quotes
-* 
-* Examples:
-* echo "$HOME/file"    -> /home/user/file
-* echo '$HOME/file'    -> $HOME/file
-* echo "Path: $PATH"   -> Path: /usr/bin:/bin
-* echo $?             -> 0 (or last exit status)
-*/
-char	**argv_expander(char **argv)
+char	**argv_expander(t_list *env, char **argv)
 {
 	int		i;
 	int		len;
@@ -256,7 +163,7 @@ char	**argv_expander(char **argv)
 		return (NULL);
 	while (argv[i])
 	{
-		new_argv[i] = expand_str(argv[i]);
+		new_argv[i] = expand_str(env, argv[i]);
 		if (!new_argv[i])
 		{
 			free_dptr(new_argv);
@@ -266,10 +173,6 @@ char	**argv_expander(char **argv)
 	}
 	return (new_argv);
 }
-
-
-
-
 
 static char	**mini_tokonizer(char *s, int i)
 {
@@ -305,7 +208,6 @@ static char	**mini_tokonizer(char *s, int i)
 	return (tokens);
 }
 
-
 char	*remove_qouts(char *str)
 {
 	char	*s1;
@@ -331,7 +233,7 @@ char	*remove_qouts(char *str)
 	return (str);
 }
 
-char	**argv_expander2(char **argv, int i)
+char	**argv_expander2(t_list *env, char **argv, int i)
 {
 	char	**new_argv;
 	char	*expanded_str;
@@ -341,7 +243,7 @@ char	**argv_expander2(char **argv, int i)
 	if (!*argv)
 		return (ft_calloc(i + 1, sizeof(char *)));
 	
-	expanded_str = expand_str_no_quote(*argv);
+	expanded_str = expand_str_no_quote(env, *argv);
 	if (!expanded_str)
 		return (NULL);
 	slices = mini_tokonizer(expanded_str, 0);
@@ -352,7 +254,7 @@ char	**argv_expander2(char **argv, int i)
 	j = 0;
 	while (slices[j])
 		j++;
-	new_argv = argv_expander2(argv + 1, i + j);
+	new_argv = argv_expander2(env, argv + 1, i + j);
 	
 	if (!new_argv)
 	{

@@ -6,19 +6,19 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 17:59:57 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 02:05:00 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 06:20:18 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	*tok_clean(t_tokens **lst)
+void	*lst_clean(t_list **lst)
 {
-	t_tokens	*next;
+	t_list	*next;
 
 	while (*lst)
 	{
-		free((*lst)->token);
+		free((*lst)->str);
 		next = (*lst)->next;
 		free(*lst);
 		*lst = next;
@@ -26,13 +26,13 @@ void	*tok_clean(t_tokens **lst)
 	return (NULL);
 }
 
-void	*tok_move2next(t_tokens **lst)
+void	*lst_move2next(t_list **lst)
 {
-	t_tokens	*next;
+	t_list	*next;
 
-	while (*lst && (*lst)->token)
+	while (*lst && (*lst)->str)
 	{
-		free((*lst)->token);
+		free((*lst)->str);
 		next = (*lst)->next;
 		free(*lst);
 		*lst = next;
@@ -46,3 +46,20 @@ void	*tok_move2next(t_tokens **lst)
 	return (*lst);
 }
 
+char	**lst_2_dptr(t_list *lst)
+{
+	char		**dptr;
+	static int	i;
+	int			_i;
+
+	_i = i++;
+	if (!lst || !lst->str)
+	{
+		i = 0;
+		return (ft_calloc(_i + 1, sizeof(char *)));
+	}
+	dptr = lst_2_dptr(lst->next);
+	if (dptr)
+		dptr[_i] = lst->str;
+	return (dptr);
+}

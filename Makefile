@@ -21,7 +21,6 @@ FILES = builtins/builtins			\
 			utils/ft_getenv			\
 			utils/ft_setenv			\
 			utils/get_full_path		\
-			utils/readline_handler	\
 			utils/signals			\
 			utils/list				\
 			str_expander			\
@@ -30,6 +29,7 @@ FILES = builtins/builtins			\
 			get_argv				\
 			get_argv0				\
 			add_space_to_line		\
+<<<<<<< HEAD
  			execution/flow_control				\
  			execution/pipeline_control			\
  			execution/flow_control				\
@@ -41,6 +41,17 @@ FILES = builtins/builtins			\
 			tokenizer							\
 			check_syntax						\
 			print_tokenizer						\
+=======
+ 			flow_control			\
+ 			pipeline_control		\
+			execute_complex_command	\
+			execute_simple_command	\
+			redirection_handler		\
+			main					\
+			wildcard				\
+			tokenizer				\
+			check_syntax			\
+>>>>>>> refs/remotes/origin/linked_list
 #
 
 

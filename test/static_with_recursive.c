@@ -1,37 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   readline_handler.c                                 :+:      :+:    :+:   */
+/*   static_with_recursive.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/04 16:30:52 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/08 01:47:06 by yaltayeh         ###   ########.fr       */
+/*   Created: 2025/04/13 22:41:02 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/04/13 22:44:20 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <stdio.h>
 
-void cleanup_shell(void)
+void iter_func(int count)
 {
-	clear_history();
+	static int	i;
+	int			_i;
+
+	_i = i++;
+	if (count == 0)
+	{
+		i = 0;
+		return ;
+	}
+	iter_func(count - 1);
+	printf("i: %d\n", _i);
 }
 
-void handle_line(char *line)
+int main()
 {
-	if (line && *line)
-		add_history(line);
-}
-
-char *get_prompt(void)
-{
-    static char prompt[PROMPT_MAX];
-    char cwd[PATH_MAX_LEN];
-
-    if (getcwd(cwd, sizeof(cwd)) == NULL)
-        strcpy(cwd, "~");
-
-    cwd[PATH_MAX_LEN - 1] = '\0';
-    snprintf(prompt, PROMPT_MAX, "%s$ ", cwd);
-    return (prompt);
+	iter_func(5);
+	iter_func(6);
+	return (0);
 }

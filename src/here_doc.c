@@ -6,14 +6,14 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 02:05:00 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 06:23:49 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "get_next_line.h"
 
-int	heredoc_start_read(char *limiter, int out_fd)
+int	heredoc_start_read(t_list *env, char *limiter, int out_fd)
 {
 	char	*line;
 	char	*line_expand;
@@ -39,7 +39,7 @@ int	heredoc_start_read(char *limiter, int out_fd)
 			free(line);
 			break ;
 		}
-		line_expand = expand_str(line);
+		line_expand = expand_str(env, line);
 		free(line);
 		if (!line_expand)
 			return (-1);
@@ -48,22 +48,22 @@ int	heredoc_start_read(char *limiter, int out_fd)
 	return (0);
 }
 
-int	heredoc_forever(t_tokens *lst)
+int	heredoc_forever(t_list *lst, t_list *env)
 {
 	int	fd;
 	int	pipefd[2];
 
 	fd = 0;
-	while (lst && lst->token)
+	while (lst && lst->str)
 	{
-		if (ft_strcmp(lst->token, "<<") == 0)
+		if (ft_strcmp(lst->str, "<<") == 0)
 		{
 			lst = lst->next;
 			if (fd > 0)
 				close(fd);
 			if (pipe(pipefd) == -1)
 				return (-1);
-			if (heredoc_start_read(lst->token, pipefd[1]) != 0)
+			if (heredoc_start_read(env, lst->str, pipefd[1]) != 0)
 			{
 				close(pipefd[0]);
 				close(pipefd[1]);
