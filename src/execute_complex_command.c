@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 15:43:44 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/14 20:43:27 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,20 +40,23 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 static void	handle_child_process(t_mini *mini, int *fd, int is_pipe, int *pipefd)
 {
 	int	heredoc_fd;
+	int	status;
 
+	status = EXIT_FAILURE;
 	if (is_pipe & IS_PIPE)
 		close(pipefd[0]);
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
-	if (heredoc_fd < 0)
+	if (heredoc_fd < 0 || mini->is_interupted)
 	{
+		status = mini->exit_status;
 		mini_clean(mini);
-		exit(EXIT_FAILURE);
+		exit(status);
 	}
 	kill(getpid(), SIGSTOP);
 	if (pipex_handler(is_pipe, *fd, pipefd) != 0)
 	{
 		mini_clean(mini);
-		exit(EXIT_FAILURE);
+		exit(status);
 	}
 	if (redirection_handler(mini, heredoc_fd, 1) != 0)
 	{
@@ -104,6 +107,7 @@ int	execute_complex_command(t_mini *mini, int *fd, int is_pipe)
 	pid = fork();
 	if (pid == 0)
 	{
+		reset_signals_child();
 		handle_child_process(mini, fd, is_pipe, pipefd);
 		prepare_and_execute_command(mini);
 	}

@@ -65,6 +65,7 @@ typedef struct s_mini
 	t_list	*env;
 	int		exit_status;
 	void	*ctx;
+	int		is_interupted;
 }	t_mini;
 
 extern int	g_status;
@@ -78,7 +79,7 @@ t_list		*tokenizer(char *s);
 void		*lst_clean(t_list **lst);
 void		*lst_move2next(t_list **lst);
 char		**lst_2_argv(t_list **lst);
-
+void	reset_signals_child(void);
 /*  argv  */
 int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);
 char	*get_argv0(t_list *lst);
