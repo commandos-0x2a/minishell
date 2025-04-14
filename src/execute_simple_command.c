@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 15:23:44 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/14 15:24:36 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,16 +47,4 @@ void	execute_simple_command(t_mini *mini)
 		return ;
 	}
 	handle_cmd_execution(mini, argv);
-	// if (is_builtin(mini->env, argv[0]))
-	// 	handle_builtin(mini, argv, 1);
-	
-	// err = get_full_path(mini->env, full_path, argv[0]);
-	// if (err == 0)
-	// {
-	// 	execve(full_path, argv, lst_2_dptr(mini->env));
-	// 	err = 1;
-	// }
-	// free_dptr(argv);
-	// mini_clean(mini);
-	// exit(err);
 }
