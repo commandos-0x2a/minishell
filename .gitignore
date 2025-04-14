@@ -10,7 +10,7 @@ out/
 *.exe
 ./cat2
 ./info
-./argc
+argc
 
 # Dependencies
 node_modules/

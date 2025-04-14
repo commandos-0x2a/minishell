@@ -89,7 +89,7 @@ char	**lst_2_dptr(t_list *lst);
 char	*expand_str(t_list *env, char *str);
 char	*expand_env(t_list *env, char *str);
 char	**argv_expander(t_list *env, char **argv);
-char	**argv_expander2(t_list *env, char **argv, int i);
+int		argv_expander2(t_mini *mini);
 
 # define IS_PIPE		0b01
 # define IS_PREV_PIPE	0b10
