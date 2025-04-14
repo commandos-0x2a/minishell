@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/21 12:39:39 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/14 15:10:39 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,12 @@ typedef enum e_signal_event
 	SIG_INT_HANDLER,
 	SIG_QUIT_HANDLER
 }	t_signal_event;
+
+typedef enum e_setter
+{
+	SIG_SET,
+	SIG_RETURN,
+}	t_setter;
 
 static int	handle_mode_events(t_signal_event event, int set_value, int is_setter)
 {
@@ -80,7 +86,7 @@ static int	signal_controller(t_signal_event event, int set_value, int is_setter)
 
 static void	restore_prompt(int sig)
 {
-	if (signal_controller(SIG_HEREDOC_ACTIVE, 0, 0))
+	if (signal_controller(SIG_HEREDOC_ACTIVE, 0, SIG_SET))
 		return ;
 	(void)sig;
 	write(STDOUT_FILENO, "\n", 1);
@@ -98,7 +104,7 @@ static void	ignore_handler(int sig)
 
 int	heredoc_is_active(void)
 {
-	return (signal_controller(SIG_HEREDOC_ACTIVE, 0, 0));
+	return (signal_controller(SIG_HEREDOC_ACTIVE, 0, SIG_SET));
 }
 
 void	set_heredoc_active(int active)
@@ -114,8 +120,8 @@ void	save_signal_handlers(void)
 
 void	restore_signal_handlers(void)
 {
-	signal_controller(SIG_INT_HANDLER, 0, 0);
-	signal_controller(SIG_QUIT_HANDLER, 0, 0);
+	signal_controller(SIG_INT_HANDLER, 0, SIG_SET);
+	signal_controller(SIG_QUIT_HANDLER, 0, SIG_SET);
 }
 
 void	setup_signals(void)
@@ -128,14 +134,14 @@ void	setup_signals(void)
 	sigaction(SIGINT, &sa, NULL);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGTSTP, SIG_IGN);
-	signal_controller(SIG_INTERACTIVE_MODE, 1, 1);
-	signal_controller(SIG_EXECUTION_MODE, 0, 1);
+	signal_controller(SIG_INTERACTIVE_MODE, 1, SIG_RETURN);
+	signal_controller(SIG_EXECUTION_MODE, 0, SIG_RETURN);
 }
 
 void	reset_signals(void)
 {
 	signal(SIGINT, ignore_handler);
 	signal(SIGQUIT, SIG_DFL);
-	signal_controller(SIG_INTERACTIVE_MODE, 0, 1);
-	signal_controller(SIG_EXECUTION_MODE, 1, 1);
+	signal_controller(SIG_INTERACTIVE_MODE, 0, SIG_RETURN);
+	signal_controller(SIG_EXECUTION_MODE, 1, SIG_RETURN);
 }
