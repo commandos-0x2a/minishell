@@ -1,31 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_tokenizer.c                                  :+:      :+:    :+:   */
+/*   static_with_recursive.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/07 16:00:58 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 21:36:32 by yaltayeh         ###   ########.fr       */
+/*   Created: 2025/04/13 22:41:02 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/04/13 22:44:20 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <stdio.h>
 
-char	*expand_str_no_quote(char *str);
-
-void	print_tokenizer(t_list **lst, int indent)
+void iter_func(int count)
 {
-	int i;
-	t_list	*cur;
+	static int	i;
+	int			_i;
 
-	get_argv(lst);
-	i = 0;
-	cur = *lst;
-	while (lst && cur->str)
+	_i = i++;
+	if (count == 0)
 	{
-		printf("%-*s%i: %s\n", indent, "", i, cur->str);
-		cur = cur->next;
-		i++;
+		i = 0;
+		return ;
 	}
+	iter_func(count - 1);
+	printf("i: %d\n", _i);
+}
+
+int main()
+{
+	iter_func(5);
+	iter_func(6);
+	return (0);
 }

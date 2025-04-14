@@ -6,17 +6,17 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 21:36:03 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 06:30:39 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	check_ambiguous(char *token)
+static int	check_ambiguous(t_list *env, char *token)
 {
 	char	*s;
 
-	s = expand_str_no_quote(token);
+	s = expand_str_no_quote(env, token);
 	if (!s)
 	{
 		PRINT_ALLOCATE_ERROR;
@@ -36,14 +36,14 @@ static int	check_ambiguous(char *token)
 	return (0);
 }
 
-static int	in_redirection(char *token, int change_std)
+static int	in_redirection(t_list *env, char *token, int change_std)
 {
 	int		fd;
 	char	*filename;
 
-	if (check_ambiguous(token))
+	if (check_ambiguous(env, token))
 		return (1);
-	filename = expand_str(token);
+	filename = expand_str(env, token);
 	if (!filename)
 	{
 		PRINT_ALLOCATE_ERROR;
@@ -66,14 +66,14 @@ static int	in_redirection(char *token, int change_std)
 	return (0);
 }
 
-static int	out_append(char *token, int change_std)
+static int	out_append(t_list *env, char *token, int change_std)
 {
 	int		fd;
 	char	*filename;
 
-	if (check_ambiguous(token))
+	if (check_ambiguous(env, token))
 		return (1);
-	filename = expand_str(token);
+	filename = expand_str(env, token);
 	if (!filename)
 	{
 		PRINT_ALLOCATE_ERROR;
@@ -96,14 +96,14 @@ static int	out_append(char *token, int change_std)
 	return (0);
 }
 
-static int	out_redirection(char *token, int change_std)
+static int	out_redirection(t_list *env, char *token, int change_std)
 {
 	int		fd;
 	char	*filename;
 
-	if (check_ambiguous(token))
+	if (check_ambiguous(env, token))
 		return (1);
-	filename = expand_str(token);
+	filename = expand_str(env, token);
 	if (!filename)
 	{
 		PRINT_ALLOCATE_ERROR;
@@ -126,7 +126,7 @@ static int	out_redirection(char *token, int change_std)
 	return (0);
 }
 
-int	redirection_handler(t_list *lst, int heredoc_fd, int change_std)
+int	redirection_handler(t_list *lst, t_list *env, int heredoc_fd, int change_std)
 {
 	int		status;
 	
@@ -139,11 +139,11 @@ int	redirection_handler(t_list *lst, int heredoc_fd, int change_std)
 				status = dup2(heredoc_fd, STDIN_FILENO);
 		}
 		else if (ft_strcmp(lst->str, "<") == 0)
-			status = in_redirection(lst->next->str, change_std);
+			status = in_redirection(env, lst->next->str, change_std);
 		else if (ft_strcmp(lst->str, ">>") == 0)
-			status = out_append(lst->next->str, change_std);
+			status = out_append(env, lst->next->str, change_std);
 		else if (ft_strcmp(lst->str, ">") == 0)
-			status = out_redirection(lst->next->str, change_std);
+			status = out_redirection(env, lst->next->str, change_std);
 		else
 		{
 			lst = lst->next;

@@ -38,7 +38,6 @@ FILES = builtins/builtins			\
 			wildcard				\
 			tokenizer				\
 			check_syntax			\
-			old/print_tokenizer		\
 #
 
 

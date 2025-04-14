@@ -71,19 +71,20 @@ extern int	g_status;
 /*  tokenizer  */
 char		*add_space_to_line(const char *s);
 t_list	*tokenizer(char *s);
-void		*tok_clean(t_list **lst);
-void		*tok_move2next(t_list **lst);
+void		*lst_clean(t_list **lst);
+void		*lst_move2next(t_list **lst);
 
 /*  argv  */
-char		*get_argv0(t_list *lst);
-void		get_argv(t_list **lst);
-char		**lst_2_argv(t_list **lst, int i);
+int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);
+char	*get_argv0(t_list *lst);
+void	get_argv(t_list **lst);
+char	**lst_2_dptr(t_list *lst);
 
 /*  expander  */
-char	*expand_str(char *str);
-char	*expand_str_no_quote(char *str);
-char	**argv_expander(char **argv);
-char	**argv_expander2(char **argv, int i);
+char	*expand_str(t_list *env, char *str);
+char	*expand_str_no_quote(t_list *env, char *str);
+char	**argv_expander(t_list *env, char **argv);
+char	**argv_expander2(t_list *env, char **argv, int i);
 
 # define IS_PIPE		0b01
 # define IS_PREV_PIPE	0b10
@@ -98,29 +99,30 @@ int		wait_children(int target_pid);
 int		check_syntax(t_list *lst);
 
 /*  Redirection handling  */
-int	redirection_handler(t_list *lst, int heredoc_fd, int change_std);
-int	heredoc_start_read(char *limiter, int out_fd);
-int	heredoc_forever(t_list *lst);
+int	redirection_handler(t_list *lst, t_list *env, int heredoc_fd, int change_std);
+int	heredoc_start_read(t_list *env, char *limiter, int out_fd);
+int	heredoc_forever(t_list *lst, t_list *env);
+
+/*  Environment variables  */
+t_list	*copy_env_variables(void);
+char	*ft_getenv(t_list *env, const char *name);
+
 
 /*  Built-in commands  */
-int		handle_builtin(char **argv, int _exit);
-int		is_builtin(char *cmd);
-int		ft_cd(char **argv);
+int		handle_builtin(t_mini *mini, char **argv, int _exit);
+int		is_builtin(t_list *env, char *cmd);
+int		ft_cd(t_mini *mini, char **argv);
 int		ft_echo(char **argv);
 int		ft_pwd(char **argv);
-int		ft_env(char **argv);
+int		ft_env(t_mini *mini, char **argv);
 int		ft_exit(char **argv, int *_exit);
-int		ft_test(char **argv);
-int		ft_export(char **argv);
-int		ft_unset(char **argv);
+int		ft_test(t_mini *mini, char **argv);
+int		ft_export(t_mini *mini, char **argv);
+int		ft_unset(t_mini *mini, char **argv);
 
 void setup_signals(void);
 void reset_signals(void);
 
-// Environment management functions
-char ***__init__env(void);
-char **create_env_copy(void);
-void cleanup_env_copy(void);
 
 // Add global variable declaration and new function prototypes
 int *heredoc_active(void);

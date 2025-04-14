@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 21:31:18 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 06:31:10 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,16 @@ static int	get_nb_command(t_list *lst)
 	return (nb_pipeline);
 }
 
-static int	run_builtin_command(t_list **lst)
+static int	run_builtin_command(t_mini *mini)
 {
 	int	heredoc_fd;
 	char	**argv;
 	char	**expand_argv;
 
-	heredoc_fd = heredoc_forever(*lst);
+	heredoc_fd = heredoc_forever(mini->tokens, mini->env);
 	if (heredoc_fd < 0)
 		return (-1);
-	if (redirection_handler(*lst, heredoc_fd, 0) != 0)
+	if (redirection_handler(mini->tokens, mini->env, heredoc_fd, 0) != 0)
 	{
 		if (heredoc_fd > 0)
 			close(heredoc_fd);
@@ -59,21 +59,21 @@ static int	run_builtin_command(t_list **lst)
 	}
 	if (heredoc_fd > 0)
 		close(heredoc_fd);
-	get_argv(lst);
-	argv = lst_2_argv(lst, 0);
+	get_argv(&mini->tokens);
+	argv = lst_2_dptr(mini->tokens);
 	if (!argv)
 	{
 		PRINT_ALLOCATE_ERROR;	
 		return (-1);
 	}
-	expand_argv = argv_expander2(argv, 0);
+	expand_argv = argv_expander2(mini->env, argv, 0);
 	free_dptr(argv);
 	if (!expand_argv)
 	{
 		PRINT_ALLOCATE_ERROR;	
 		return (-1);
 	}
-	return (handle_builtin(expand_argv, 0));
+	return (handle_builtin(mini, expand_argv, 0));
 }
 
 int	pipeline_control(t_mini *mini)
@@ -86,8 +86,8 @@ int	pipeline_control(t_mini *mini)
 	pid_t	*command_pid;
 
 	nb_commands = get_nb_command(mini->tokens);
-	if (nb_commands == 1 && is_builtin(get_argv0(mini->tokens)))
-		return (run_builtin_command(&mini->tokens));
+	if (nb_commands == 1 && is_builtin(mini->env, get_argv0(mini->tokens)))
+		return (run_builtin_command(mini));
 
 	command_pid = ft_calloc(nb_commands, sizeof(pid_t));
 	if (!command_pid)
@@ -106,7 +106,7 @@ int	pipeline_control(t_mini *mini)
 		i++;
 		if ((is_pipe & IS_PIPE) == 0)
 			break ;
-		tok_move2next(&mini->tokens);
+		lst_move2next(&mini->tokens);
 	}
 	if (i > 0)
 		victim_pid = command_pid[i - 1];

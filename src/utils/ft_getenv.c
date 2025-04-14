@@ -6,95 +6,57 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 07:25:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 21:35:07 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 22:58:16 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char ***__init__env(void)
+char *ft_getenv(t_list *env, const char *name)
 {
-	static char **g_env_copy;
-	return (&g_env_copy);
-}
-
-char **create_env_copy(void)
-{
-	extern const char **environ;
-	char **new_env;
-	int i;
-
-	i = 0;
-	while (environ[i])
-		i++;
-	new_env = (char **)ft_calloc(i + 1, sizeof(char *));
-	if (!new_env)
-		return (NULL);
-	i = 0;
-	while (environ[i])
-	{
-		new_env[i] = ft_strdup(environ[i]);
-		if (!new_env[i])
-		{
-			free_dptr(new_env);
-			return (NULL);
-		}
-		i++;
-	}
-	new_env[i] = NULL;
-	return (new_env);
-}
-
-char *ft_getenv(const char *name)
-{
-	size_t name_len;
-	int i;
-	char ***g_env_copy;
-	g_env_copy = __init__env();
+	size_t	name_len;
 
 	if (!name)
 		return (NULL);
-	if (!*g_env_copy)
-		(*g_env_copy) = create_env_copy();
-	if (!*g_env_copy)
-		return (NULL);
 	name_len = ft_strlen(name);
-	i = 0;
-	while ((*g_env_copy)[i])
+	while (env && env->str)
 	{
-		if (ft_strncmp((*g_env_copy)[i], name, name_len) == 0 &&
-			(*g_env_copy)[i][name_len] == '=')
-			return (ft_strdup((*g_env_copy)[i] + name_len + 1));
-		i++;
+		if (ft_strncmp(env->str, name, name_len) == 0 && \
+				env->str[name_len] == '=')
+			return (ft_strdup(env->str + name_len + 1));
+		env = env->next;
 	}
 	return (NULL);
 }
 
-void cleanup_env_copy(void)
+t_list	*copy_env_variables(void)
 {
-	int i;
-	char ***g_env_copy;
-	g_env_copy = __init__env();
+	t_list				*lst;
+	extern const char	**environ;
+	static int			i;
+	int					_i;
 
-	if ((*g_env_copy))
+	_i = i++;
+	if (!environ[_i])
 	{
 		i = 0;
-		while ((*g_env_copy)[i])
-		{
-			free((*g_env_copy)[i]);
-			i++;
-		}
-		free((*g_env_copy));
-		(*g_env_copy) = NULL;
+		return (ft_calloc(1, sizeof(t_list)));
 	}
-}
-
-
-t_list	*copy_env_variables(char **env)
-{
-	extern const char **environ;
-
-	(void)env;
-	(void)environ;
-	return (NULL);
+	lst = malloc(sizeof(t_list));
+	if (!lst)
+		return (NULL);
+	lst->str = ft_strdup(environ[_i]);
+	if (!lst->str)
+	{
+		free(lst);
+		return (NULL);
+	}
+	lst->next = copy_env_variables();
+	if (!lst->next)
+	{
+		free(lst->str);
+		free(lst);
+		return (NULL);
+	}
+	return (lst);
 }

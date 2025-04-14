@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/13 21:33:35 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 06:31:42 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,24 +36,28 @@ char *get_prompt(void)
     return (prompt);
 }
 
+
 int main()
 {
 	char		*line;
 	t_mini		mini;
-
-	// t_config	config;
-
-	// setup_signals();
-	// terminal_config(STDIN_FILENO);
 
 	// if (!isatty(0) || !isatty(1) || !isatty(2))
 	// {
 	// 	// fds not standard
 	// 	return (1);
 	// }
+	
+	mini.env = copy_env_variables();
+	if (!mini.env)
+	{
+		PRINT_ALLOCATE_ERROR;
+		return (1);
+	}
 
-	
-	
+
+	// setup_signals();
+	// terminal_config(STDIN_FILENO);
 	while (1)
 	{
 		// setup_signals();
@@ -86,6 +90,6 @@ int main()
 			}
 		}
 	}
-	cleanup_env_copy();
+	lst_clean(&mini.env);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 02:19:13 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 21:31:18 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 23:09:04 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	flow_control(t_mini *mini)
 		}
 		if (op == 0)
 			break ;
-		tok_move2next(&mini->tokens);
+		lst_move2next(&mini->tokens);
 	}
 	return (0);
 }

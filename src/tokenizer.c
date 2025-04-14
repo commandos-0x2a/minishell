@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 21:31:18 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/13 23:09:09 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ static t_list	*add_token(t_list **lst, char *token)
 	
 	if (!token)
 	{
-		tok_clean(lst);
+		lst_clean(lst);
 		return (NULL);
 	}
 	new = malloc(sizeof(t_list));
 	if (!new)
 	{
 		free(token);
-		tok_clean(lst);
+		lst_clean(lst);
 		return (NULL);
 	}
 	new->next = *lst;
@@ -67,9 +67,10 @@ static char	*cut_slice(char **s_ptr)
 	return (start);
 }
 
-static t_list	*tokenizer_iter(t_list *lst, char *s, int i)
+static t_list	*tokenizer_iter(char *s, int i)
 {
 	char	*start;
+	t_list	*lst;
 
 	start = cut_slice(&s);
 	if (!start || !s)
@@ -79,7 +80,7 @@ static t_list	*tokenizer_iter(t_list *lst, char *s, int i)
 	}
 	if (start == s && !*s)
 		return (ft_calloc(1, sizeof(t_list)));
-	lst = tokenizer_iter(lst, s + !!*s, i + 1);
+	lst = tokenizer_iter(s + !!*s, i + 1);
 	if (!lst)
 		return (NULL);
 	add_token(&lst, ft_substr(start, 0, s - start));
@@ -90,13 +91,13 @@ static t_list	*tokenizer_iter(t_list *lst, char *s, int i)
 
 t_list	*tokenizer(char *s)
 {
-	char		*expand_str;
+	char	*expand_str;
 	t_list	*tokens;
 
 	expand_str = add_space_to_line(s);
 	if (!expand_str)
 		return (NULL);
-	tokens = tokenizer_iter(NULL, expand_str, 0);
+	tokens = tokenizer_iter(expand_str, 0);
 	free(expand_str);
 	return (tokens);
 }

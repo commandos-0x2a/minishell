@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 21:33:51 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/22 14:54:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 06:17:55 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define __USE_XOPEN
 #include <sys/stat.h>
 
-static int	search_command_path(char full_path[PATH_MAX], char *cmd)
+static int	search_command_path(t_list *env, char full_path[PATH_MAX], char *cmd)
 {
 	char	*path_env;
 	char	*path;
@@ -30,7 +30,7 @@ static int	search_command_path(char full_path[PATH_MAX], char *cmd)
 		}
 		return (0);
 	}
-	path_env = ft_getenv("PATH");
+	path_env = ft_getenv(env, "PATH");
 	if (!path_env)
 		return (-1);
 	path = ft_strtok(path_env, ":");
@@ -52,26 +52,11 @@ static int	search_command_path(char full_path[PATH_MAX], char *cmd)
 	return (1);
 }
 
-int check_permission(char full_path[PATH_MAX])
-{
-	// struct stat buf;
-
-	// if (stat(full_path, &buf) == -1)
-	// {
-	// 	PRINT_SYSCALL_ERROR;
-	// 	return (1);
-	// }
-	// if (buf.st_mode & S_IFDIR)
-	// 	return (1);
-	(void)full_path;
-	return (0);
-}
-
-int	get_full_path(char full_path[PATH_MAX], char *cmd)
+int	get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd)
 {
 	int	err;
 
-	err = search_command_path(full_path, cmd);
+	err = search_command_path(env, full_path, cmd);
 	if (err == -1)
 	{
 		PRINT_SYSCALL_ERROR;
@@ -82,5 +67,5 @@ int	get_full_path(char full_path[PATH_MAX], char *cmd)
 		ft_fprintf(2, PREFIX"%s: command not found\n", cmd);
 		return (127);
 	}
-	return (check_permission(full_path));
+	return (0);
 }

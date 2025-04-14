@@ -6,20 +6,20 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:32 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/21 12:39:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 06:15:15 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_cd(char **argv)
+int	ft_cd(t_mini *mini, char **argv)
 {
 	char	*path;
 	char	cwd[PATH_MAX];
 
 	if (!argv[1])
 	{
-		path = ft_getenv("HOME");
+		path = ft_getenv(mini->env, "HOME");
 		if (!path)
 		{
 			ft_fprintf(2, PREFIX"cd: HOME not set\n");
