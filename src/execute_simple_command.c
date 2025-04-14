@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_simple_command.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 15:41:12 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/14 17:31:15 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,11 @@ void	execute_simple_command(t_mini *mini)
 	char		**argv;
 
 	if (argv_expander2(mini) != 0)
+	{
+		PRINT_ALLOCATE_ERROR;
+		return ;
+	}
+	if (handle_wildcards(mini) != 0)
 	{
 		PRINT_ALLOCATE_ERROR;
 		return ;

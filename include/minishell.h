@@ -90,6 +90,8 @@ char	*expand_str(t_mini *mini, char *str);
 char	*expand_env(t_mini *mini, char *str);
 char	**argv_expander(t_mini *mini, char **argv);
 int		argv_expander2(t_mini *mini);
+int		handle_wildcards(t_mini *mini);
+
 
 # define IS_PIPE		0b01
 # define IS_PREV_PIPE	0b10

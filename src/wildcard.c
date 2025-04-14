@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/24 15:26:59 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 17:29:50 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,37 +220,50 @@ char **expand_wildcard(char *pattern)
 * 3. Makes a new list with all the matching toys
 * It's like magic - give it "*.txt" and it finds all text files!
 */
-char **handle_wildcards(char **argv)
-{
-	char    **new_argv;
-	char    **expanded;
-	int     total;
-	int     i;
-	int     j;
+int	handle_wildcards(t_mini *mini)
+{	
+	t_list	*tok;
+	t_list	*next;
+	char	**slices;
+	int		i;
 
-	new_argv = NULL;
-	total = 0;
-	i = 0;
-	while (argv[i])
+	tok = mini->tokens;
+	while (tok && tok->str)
 	{
-		expanded = expand_wildcard(argv[i]);
-		free(argv[i]);
-		argv[i] = NULL;
-		if (!expanded)
+		slices = expand_wildcard(tok->str);
+		if (!slices)
+			return (1);
+
+		if (*slices)
+			free(tok->str);
+		next = tok->next;
+		tok->next = NULL;
+
+		
+		i = 0;
+		while (slices[i])
 		{
-			free_dptr(new_argv);
-			return (NULL);
+			tok->str = slices[i];
+			i++;
+			if (!slices[i])
+				break;
+			if (!tok->next)
+				tok->next = ft_calloc(1, sizeof(t_list));
+			if (!tok->next)
+			{
+				tok->next = next; // reconnect to clean it
+				while (slices[i]) // free left slices
+					free(slices[i++]);
+				free(slices);
+				return (1);
+			}
+			tok = tok->next;
 		}
-		j = 0;
-		while (expanded[j])
-		{
-			new_argv = add_to_array(new_argv, expanded[j], &total);
-			j++;
-		}
-		free_dptr(expanded);
-		i++;
+		
+		tok->next = next; // reconnect
+		tok = next;
 	}
-	return (new_argv);
+	return (0);
 }
 
 /**

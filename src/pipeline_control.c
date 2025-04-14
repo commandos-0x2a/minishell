@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_control.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 15:43:36 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/14 17:35:59 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,24 +49,23 @@ static int	run_builtin_command(t_mini *mini)
 
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
-		return (-1);
+		return (PRINT_SYSCALL_ERROR, -1);
 	if (redirection_handler(mini, heredoc_fd, 0) != 0)
 	{
 		if (heredoc_fd > 0)
 			close(heredoc_fd);
-		return (-1);
+		return (PRINT_SYSCALL_ERROR, -1);
 	}
 	if (heredoc_fd > 0)
 		close(heredoc_fd);
 	get_argv(&mini->tokens);
 	if (argv_expander2(mini) != 0)
-		return (-1);
+		return (PRINT_ALLOCATE_ERROR, -1);
+	if (handle_wildcards(mini) != 0)
+		return (PRINT_ALLOCATE_ERROR, -1);
 	argv = lst_2_argv(&mini->tokens);
 	if (!argv)
-	{
-		PRINT_ALLOCATE_ERROR;	
-		return (-1);
-	}
+		return (PRINT_ALLOCATE_ERROR, -1);
 	return (handle_builtin(mini, argv, 0));
 }
 
@@ -113,5 +112,6 @@ int	pipeline_control(t_mini *mini)
 		i++;
 	}
 	free(command_pid);
+	mini->ctx = NULL;
 	return (wait_children(victim_pid));
 }
