@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 09:26:34 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 14:38:04 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ static int	run_builtin_command(t_mini *mini)
 {
 	int	heredoc_fd;
 	char	**argv;
-	char	**expand_argv;
 
 	heredoc_fd = heredoc_forever(mini->tokens, mini->env);
 	if (heredoc_fd < 0)
@@ -60,20 +59,15 @@ static int	run_builtin_command(t_mini *mini)
 	if (heredoc_fd > 0)
 		close(heredoc_fd);
 	get_argv(&mini->tokens);
-	argv = lst_2_dptr(mini->tokens);
+	if (argv_expander2(mini) != 0)
+		return (-1);
+	argv = lst_2_argv(&mini->tokens);
 	if (!argv)
 	{
 		PRINT_ALLOCATE_ERROR;	
 		return (-1);
 	}
-	expand_argv = argv_expander2(mini->env, argv, 0);
-	free_dptr(argv);
-	if (!expand_argv)
-	{
-		PRINT_ALLOCATE_ERROR;	
-		return (-1);
-	}
-	return (handle_builtin(mini, expand_argv, 0));
+	return (handle_builtin(mini, argv, 0));
 }
 
 int	pipeline_control(t_mini *mini)

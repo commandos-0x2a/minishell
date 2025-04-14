@@ -6,15 +6,67 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/14 10:38:05 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:13:47 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <ctype.h>
 
+static char *join_and_free(char *s1, char *s2)
+{
+    char *result;
 
-/*
+    result = ft_strjoin(2, s1, s2);
+    free(s1);
+    free(s2);
+    return (result);
+}
+
+static char *expand_env_var(t_list *env, char *str, int *i)
+{
+	char	*var_name;
+	char	*var_value;
+	int		start;
+	int		len;
+
+	// try to handle the $? case
+	(*i)++;  // Skip the '$'
+	// Handle $? special parameter
+	if (str[*i] == '?')
+	{
+		(*i)++;
+		return (strdup("WTF"));
+	}
+	else if (str[*i] == '\0' || str[*i] == ' ' || str[*i] == '\'' || str[*i] == '\"')
+		return (ft_strdup("$"));
+	// Handle numeric variables (like $1, $2, etc.)
+	else if (ft_isdigit(str[*i]))
+	{
+		(*i)++;
+		return (ft_strdup("")); // Return empty string for numeric vars
+	}
+	else
+	{
+		start = *i;
+		// Include numbers in variable names, but don't start with them
+		while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+			(*i)++;
+		
+		len = *i - start;
+		if (len == 0)
+			return (ft_strdup("$"));
+		
+		var_name = ft_substr(str, start, len);
+		if (!var_name)
+			return (NULL);
+		var_value = ft_getenv(env, var_name);
+		free(var_name);
+		if (!var_value)
+			return (ft_strdup(""));
+		return (var_value);
+	}
+}
 
 char	*expand_str(t_list *env, char *str)
 {
@@ -83,64 +135,6 @@ char	**argv_expander(t_list *env, char **argv)
 	return (new_argv);
 }
 
-*/
-
-
-static char *join_and_free(char *s1, char *s2)
-{
-    char *result;
-
-    result = ft_strjoin(2, s1, s2);
-    free(s1);
-    free(s2);
-    return (result);
-}
-
-static char *expand_env_var(t_list *env, char *str, int *i)
-{
-	char	*var_name;
-	char	*var_value;
-	int		start;
-	int		len;
-
-	// try to handle the $? case
-	(*i)++;  // Skip the '$'
-	// Handle $? special parameter
-	if (str[*i] == '?')
-	{
-		(*i)++;
-		return (strdup("WTF"));
-	}
-	else if (str[*i] == '\0' || str[*i] == ' ' || str[*i] == '\'' || str[*i] == '\"')
-		return (ft_strdup("$"));
-	// Handle numeric variables (like $1, $2, etc.)
-	else if (ft_isdigit(str[*i]))
-	{
-		(*i)++;
-		return (ft_strdup("")); // Return empty string for numeric vars
-	}
-	else
-	{
-		start = *i;
-		// Include numbers in variable names, but don't start with them
-		while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-			(*i)++;
-		
-		len = *i - start;
-		if (len == 0)
-			return (ft_strdup("$"));
-		
-		var_name = ft_substr(str, start, len);
-		if (!var_name)
-			return (NULL);
-		var_value = ft_getenv(env, var_name);
-		free(var_name);
-		if (!var_value)
-			return (ft_strdup(""));
-		return (var_value);
-	}
-}
-
 char	*expand_env(t_list *env, char *str)
 {
 	char	*result;
@@ -200,7 +194,7 @@ char	*remove_qouts(char *str)
 	return (str);
 }
 
-static char	**mini_tokonizer(t_list **lst, char *s, int i)
+static char	**mini_tokonizer(char *s, int i)
 {
 	char	*start;
 	char	**tokens;
@@ -234,11 +228,13 @@ static char	**mini_tokonizer(t_list **lst, char *s, int i)
 	return (tokens);
 }
 
-int	argv_expander2(t_mini *mini, int i)
+int	argv_expander2(t_mini *mini)
 {
 	char	*expanded_str;
 	char	**slices;
 	t_list	*tok;
+	t_list	*next;
+	int		i;
 
 	tok = mini->tokens;
 	while (tok && tok->str)
@@ -246,27 +242,39 @@ int	argv_expander2(t_mini *mini, int i)
 		expanded_str = expand_env(mini->env, tok->str);
 		if (!expanded_str)
 			return (1);
-		tok = tok->next;
-		slices = mini_tokonizer(lst, expanded_str, 0);
-	}
-	
-	free(expanded_str);
-	if (!slices)
-		return (1);
+		slices = mini_tokonizer(expanded_str, 0);
+		free(expanded_str);
+		if (!slices)
+			return (1);
+
+		if (*slices)
+			free(tok->str);
+		next = tok->next;
+		tok->next = NULL;
+
 		
-	j = 0;
-	while (slices[j])
-		j++;
-	new_argv = argv_expander2(env, argv + 1, i + j);
-	
-	if (!new_argv)
-	{
-		free_dptr(slices);
-		return (1);
+		i = 0;
+		while (slices[i])
+		{
+			tok->str = remove_qouts(slices[i]);
+			i++;
+			if (!slices[i])
+				break;
+			if (!tok->next)
+				tok->next = ft_calloc(1, sizeof(t_list));
+			if (!tok->next)
+			{
+				tok->next = next; // reconnect to clean it
+				while (slices[i]) // free left slices
+					free(slices[i++]);
+				free(slices);
+				return (1);
+			}
+			tok = tok->next;
+		}
+		
+		tok->next = next; // reconnect
+		tok = next;
 	}
-	j = 0;
-	while (slices[j])
-		new_argv[i++] = remove_qouts(slices[j++]);
-	free(slices);
 	return (0);
 }
