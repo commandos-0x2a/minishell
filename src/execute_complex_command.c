@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_complex_command.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 10:13:11 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:00:31 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,61 +37,48 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 	return (0);
 }
 
-int execute_complex_command(t_mini *mini, int *fd, int is_pipe)
+static void	handle_child_process(t_mini *mini, int *fd, int is_pipe, int *pipefd)
 {
-	int	pid;
-	int	pipefd[2];
 	int	heredoc_fd;
 
-	if ((is_pipe & IS_PIPE) && pipe(pipefd) == -1)
+	if (is_pipe & IS_PIPE)
+		close(pipefd[0]);
+	heredoc_fd = heredoc_forever(mini->tokens, mini->env);
+	if (heredoc_fd < 0)
 	{
-		if (is_pipe & IS_PREV_PIPE)
-			close(*fd);
-		return (-1);
-	}
-
-	pid = fork();
-	if (pid == 0) /* ========== Child Process ========== */
-	{
-		/* ========== HEAP Memory ========== */
-		if (is_pipe & IS_PIPE)
-			close(pipefd[0]);
-
-		heredoc_fd = heredoc_forever(mini->tokens, mini->env);
-		if (heredoc_fd < 0)
-		{
-			mini_clean(mini);
-			exit(1);
-		}
-
-		kill(getpid(), SIGSTOP);
-		
-		if (pipex_handler(is_pipe, *fd, pipefd) != 0)
-		{
-			mini_clean(mini);
-			exit(1);
-		}
-		
-		if (redirection_handler(mini->tokens, mini->env, heredoc_fd, 1) != 0)
-		{
-			mini_clean(mini);
-			exit(126);
-		}
-		if (heredoc_fd > 0)
-			close(heredoc_fd);
-		get_argv(&mini->tokens);
-		if (!mini->tokens)
-		{
-			mini_clean(mini);
-			exit(0);
-		}
-
-		execute_simple_command(mini);
 		mini_clean(mini);
 		exit(1);
 	}
-	/* ========== Parent Process ==========*/
-	// Close unused file descriptors from previous pipe.
+	kill(getpid(), SIGSTOP);
+	if (pipex_handler(is_pipe, *fd, pipefd) != 0)
+	{
+		mini_clean(mini);
+		exit(1);
+	}
+	if (redirection_handler(mini->tokens, mini->env, heredoc_fd, 1) != 0)
+	{
+		mini_clean(mini);
+		exit(126);
+	}
+	if (heredoc_fd > 0)
+		close(heredoc_fd);
+}
+
+static void	prepare_and_execute_command(t_mini *mini)
+{
+	get_argv(&mini->tokens);
+	if (!mini->tokens)
+	{
+		mini_clean(mini);
+		exit(0);
+	}
+	execute_simple_command(mini);
+	mini_clean(mini);
+	exit(1);
+}
+
+static void	handle_parent_process(int is_pipe, int *fd, int *pipefd, int pid)
+{
 	if (is_pipe & IS_PREV_PIPE)
 		close(*fd);
 	if (is_pipe & IS_PIPE)
@@ -101,5 +88,25 @@ int execute_complex_command(t_mini *mini, int *fd, int is_pipe)
 		if (pid == -1)
 			close(*fd);
 	}
+}
+
+int	execute_complex_command(t_mini *mini, int *fd, int is_pipe)
+{
+	int	pid;
+	int	pipefd[2];
+
+	if ((is_pipe & IS_PIPE) && pipe(pipefd) == -1)
+	{
+		if (is_pipe & IS_PREV_PIPE)
+			close(*fd);
+		return (-1);
+	}
+	pid = fork();
+	if (pid == 0)
+	{
+		handle_child_process(mini, fd, is_pipe, pipefd);
+		prepare_and_execute_command(mini);
+	}
+	handle_parent_process(is_pipe, fd, pipefd, pid);
 	return (pid);
 }
