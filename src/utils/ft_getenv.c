@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 07:25:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 22:58:16 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 09:22:13 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ char *ft_getenv(t_list *env, const char *name)
 
 t_list	*copy_env_variables(void)
 {
-	t_list				*lst;
-	extern const char	**environ;
-	static int			i;
-	int					_i;
+	t_list		*lst;
+	extern char	**environ;
+	static int	i;
+	int			_i;
 
 	_i = i++;
 	if (!environ[_i])

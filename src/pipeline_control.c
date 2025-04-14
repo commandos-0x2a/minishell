@@ -6,11 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-<<<<<<< HEAD:src/execution/pipeline_control.c
-/*   Updated: 2025/04/13 17:40:03 by yaltayeh         ###   ########.fr       */
-=======
-/*   Updated: 2025/04/14 06:31:10 by yaltayeh         ###   ########.fr       */
->>>>>>> refs/remotes/origin/linked_list:src/pipeline_control.c
+/*   Updated: 2025/04/14 09:26:34 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +92,7 @@ int	pipeline_control(t_mini *mini)
 	command_pid = ft_calloc(nb_commands, sizeof(pid_t));
 	if (!command_pid)
 		return (-1);
+	mini->ctx = command_pid;
 	fd = -1;
 	is_pipe = 0;
 	i = 0;

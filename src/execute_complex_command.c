@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 06:31:20 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 10:13:11 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ static int	pipex_handler(int is_pipe, int in_fd, int *pipefd)
 
 int execute_complex_command(t_mini *mini, int *fd, int is_pipe)
 {
-	int		pid;
-	int		pipefd[2];
-	int		heredoc_fd;
+	int	pid;
+	int	pipefd[2];
+	int	heredoc_fd;
 
 	if ((is_pipe & IS_PIPE) && pipe(pipefd) == -1)
 	{
@@ -59,22 +59,35 @@ int execute_complex_command(t_mini *mini, int *fd, int is_pipe)
 
 		heredoc_fd = heredoc_forever(mini->tokens, mini->env);
 		if (heredoc_fd < 0)
+		{
+			mini_clean(mini);
 			exit(1);
+		}
 
 		kill(getpid(), SIGSTOP);
 		
 		if (pipex_handler(is_pipe, *fd, pipefd) != 0)
+		{
+			mini_clean(mini);
 			exit(1);
+		}
 		
 		if (redirection_handler(mini->tokens, mini->env, heredoc_fd, 1) != 0)
+		{
+			mini_clean(mini);
 			exit(126);
+		}
 		if (heredoc_fd > 0)
 			close(heredoc_fd);
 		get_argv(&mini->tokens);
 		if (!mini->tokens)
+		{
+			mini_clean(mini);
 			exit(0);
+		}
 
 		execute_simple_command(mini);
+		mini_clean(mini);
 		exit(1);
 	}
 	/* ========== Parent Process ==========*/

@@ -6,11 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/04/13 17:39:57 by yaltayeh         ###   ########.fr       */
-=======
-/*   Updated: 2025/04/14 06:31:42 by yaltayeh         ###   ########.fr       */
->>>>>>> refs/remotes/origin/linked_list
+/*   Updated: 2025/04/14 09:28:33 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +16,16 @@
 #include <strings.h>
 #include <stdlib.h>
 
+
+void	mini_clean(t_mini *mini)
+{
+	if (mini->tokens)
+		lst_clean(&mini->tokens);	
+	if (mini->env)
+		lst_clean(&mini->env);
+	if (mini->ctx)
+		free(mini->ctx);	
+}
 
 void handle_line(char *line)
 {
@@ -92,6 +98,7 @@ int main()
 				flow_control(&mini);
 				// terminal_reset(STDIN_FILENO);
 			}
+			lst_clean(&mini.tokens);
 		}
 	}
 	lst_clean(&mini.env);

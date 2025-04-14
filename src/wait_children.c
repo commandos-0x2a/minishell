@@ -6,11 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 17:47:06 by yaltayeh          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/04/09 21:59:56 by yaltayeh         ###   ########.fr       */
-=======
-/*   Updated: 2025/04/13 20:10:34 by yaltayeh         ###   ########.fr       */
->>>>>>> refs/remotes/origin/linked_list
+/*   Updated: 2025/04/14 09:22:24 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

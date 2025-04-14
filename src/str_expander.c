@@ -6,16 +6,84 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/04/09 22:02:54 by yaltayeh         ###   ########.fr       */
-=======
-/*   Updated: 2025/04/14 06:23:13 by yaltayeh         ###   ########.fr       */
->>>>>>> refs/remotes/origin/linked_list
+/*   Updated: 2025/04/14 10:38:05 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <ctype.h>
+
+
+/*
+
+char	*expand_str(t_list *env, char *str)
+{
+	char	*result;
+	char	*temp;
+	char	quote_char;
+	int		i;
+
+	result = ft_strdup("");
+	quote_char = 0;
+	i = 0;
+	while (str[i] && result)
+	{
+		// Handle quotes
+		if ((str[i] == '\'' || str[i] == '\"') && !quote_char)
+		{
+			quote_char = str[i++];
+			continue;
+		}
+		if (str[i] == quote_char)
+		{
+			quote_char = 0;
+			i++;
+			continue;
+		}
+
+		// Handle environment variables
+		if (str[i] == '$' && quote_char != '\'')
+		{
+			temp = expand_env_var(env, str, &i);
+			if (temp)
+				result = join_and_free(result, temp);
+			continue;
+		}
+
+		// Normal character
+		result = join_and_free(result, ft_substr(str, i, 1));
+		i++;
+	}
+	return (result);
+}
+
+char	**argv_expander(t_list *env, char **argv)
+{
+	int		i;
+	int		len;
+	char	**new_argv;
+
+	i = 0;
+	len = 0;
+	while (argv[len])
+		len++;
+	new_argv = ft_calloc(len + 1, sizeof(char *));
+	if (!new_argv)
+		return (NULL);
+	while (argv[i])
+	{
+		new_argv[i] = expand_str(env, argv[i]);
+		if (!new_argv[i])
+		{
+			free_dptr(new_argv);
+			return (NULL);
+		}
+		i++;
+	}
+	return (new_argv);
+}
+
+*/
 
 
 static char *join_and_free(char *s1, char *s2)
@@ -73,48 +141,7 @@ static char *expand_env_var(t_list *env, char *str, int *i)
 	}
 }
 
-char	*expand_str(t_list *env, char *str)
-{
-	char	*result;
-	char	*temp;
-	char	quote_char;
-	int		i;
-
-	result = ft_strdup("");
-	quote_char = 0;
-	i = 0;
-	while (str[i] && result)
-	{
-		// Handle quotes
-		if ((str[i] == '\'' || str[i] == '\"') && !quote_char)
-		{
-			quote_char = str[i++];
-			continue;
-		}
-		if (str[i] == quote_char)
-		{
-			quote_char = 0;
-			i++;
-			continue;
-		}
-
-		// Handle environment variables
-		if (str[i] == '$' && quote_char != '\'')
-		{
-			temp = expand_env_var(env, str, &i);
-			if (temp)
-				result = join_and_free(result, temp);
-			continue;
-		}
-
-		// Normal character
-		result = join_and_free(result, ft_substr(str, i, 1));
-		i++;
-	}
-	return (result);
-}
-
-char	*expand_str_no_quote(t_list *env, char *str)
+char	*expand_env(t_list *env, char *str)
 {
 	char	*result;
 	char	*temp;
@@ -148,33 +175,32 @@ char	*expand_str_no_quote(t_list *env, char *str)
 	return (result);
 }
 
-char	**argv_expander(t_list *env, char **argv)
+char	*remove_qouts(char *str)
 {
-	int		i;
-	int		len;
-	char	**new_argv;
+	char	*s1;
+	char	*s2;
+	char	*null_char;
 
-	i = 0;
-	len = 0;
-	while (argv[len])
-		len++;
-	new_argv = ft_calloc(len + 1, sizeof(char *));
-	if (!new_argv)
-		return (NULL);
-	while (argv[i])
+	s1 = str;
+	null_char = ft_strchr(str, '\0'); 
+	while (*s1)
 	{
-		new_argv[i] = expand_str(env, argv[i]);
-		if (!new_argv[i])
+		if (*s1 == '\'' || *s1 == '\"')
 		{
-			free_dptr(new_argv);
-			return (NULL);
+			s2 = ft_strchr(s1 + 1, *s1);
+			if (!s2)
+				return (str);
+			
+			ft_memmove(s2, s2 + 1, null_char-- - s2);
+			ft_memmove(s1, s1 + 1, null_char-- - s1);
+			s1 = s2;
 		}
-		i++;
+		s1++;
 	}
-	return (new_argv);
+	return (str);
 }
 
-static char	**mini_tokonizer(char *s, int i)
+static char	**mini_tokonizer(t_list **lst, char *s, int i)
 {
 	char	*start;
 	char	**tokens;
@@ -208,48 +234,25 @@ static char	**mini_tokonizer(char *s, int i)
 	return (tokens);
 }
 
-char	*remove_qouts(char *str)
+int	argv_expander2(t_mini *mini, int i)
 {
-	char	*s1;
-	char	*s2;
-	char	*null_char;
-
-	s1 = str;
-	null_char = ft_strchr(str, '\0'); 
-	while (*s1)
-	{
-		if (*s1 == '\'' || *s1 == '\"')
-		{
-			s2 = ft_strchr(s1 + 1, *s1);
-			if (!s2)
-				return (str);
-			
-			ft_memmove(s2, s2 + 1, null_char-- - s2);
-			ft_memmove(s1, s1 + 1, null_char-- - s1);
-			s1 = s2;
-		}
-		s1++;
-	}
-	return (str);
-}
-
-char	**argv_expander2(t_list *env, char **argv, int i)
-{
-	char	**new_argv;
 	char	*expanded_str;
 	char	**slices;
-	int		j;
+	t_list	*tok;
 
-	if (!*argv)
-		return (ft_calloc(i + 1, sizeof(char *)));
+	tok = mini->tokens;
+	while (tok && tok->str)
+	{
+		expanded_str = expand_env(mini->env, tok->str);
+		if (!expanded_str)
+			return (1);
+		tok = tok->next;
+		slices = mini_tokonizer(lst, expanded_str, 0);
+	}
 	
-	expanded_str = expand_str_no_quote(env, *argv);
-	if (!expanded_str)
-		return (NULL);
-	slices = mini_tokonizer(expanded_str, 0);
 	free(expanded_str);
 	if (!slices)
-		return (NULL);
+		return (1);
 		
 	j = 0;
 	while (slices[j])
@@ -259,11 +262,11 @@ char	**argv_expander2(t_list *env, char **argv, int i)
 	if (!new_argv)
 	{
 		free_dptr(slices);
-		return (NULL);
+		return (1);
 	}
 	j = 0;
 	while (slices[j])
 		new_argv[i++] = remove_qouts(slices[j++]);
-	
-	return (new_argv);
+	free(slices);
+	return (0);
 }

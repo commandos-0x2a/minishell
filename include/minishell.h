@@ -64,15 +64,20 @@ typedef struct s_mini
 	t_list	*tokens;
 	t_list	*env;
 	int		exit_status;
+	void	*ctx;
 }	t_mini;
 
 extern int	g_status;
 
+void		mini_clean(t_mini *mini);
+
+
 /*  tokenizer  */
 char		*add_space_to_line(const char *s);
-t_list	*tokenizer(char *s);
+t_list		*tokenizer(char *s);
 void		*lst_clean(t_list **lst);
 void		*lst_move2next(t_list **lst);
+char		**lst_2_argv(t_list **lst);
 
 /*  argv  */
 int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);
@@ -82,7 +87,7 @@ char	**lst_2_dptr(t_list *lst);
 
 /*  expander  */
 char	*expand_str(t_list *env, char *str);
-char	*expand_str_no_quote(t_list *env, char *str);
+char	*expand_env(t_list *env, char *str);
 char	**argv_expander(t_list *env, char **argv);
 char	**argv_expander2(t_list *env, char **argv, int i);
 

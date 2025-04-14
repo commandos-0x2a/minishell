@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/14 06:21:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 10:10:14 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,6 @@ int	handle_builtin(t_mini *mini, char **argv, int _exit)
 {
 	int		err;
 
-	if (!argv || !*argv)
-		return (1);
 	err = 1;
 	if (ft_strcmp(*argv, "cd") == 0)
 		err = ft_cd(mini, argv);
@@ -61,6 +59,9 @@ int	handle_builtin(t_mini *mini, char **argv, int _exit)
 		err = ft_env(mini, argv);
 	free_dptr(argv);
 	if (_exit)
+	{
+		mini_clean(mini);
 		exit(err);
+	}
 	return (err);
 }

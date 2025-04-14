@@ -6,11 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-<<<<<<< HEAD:src/execution/redirection_handler.c
-/*   Updated: 2025/04/13 17:40:09 by yaltayeh         ###   ########.fr       */
-=======
-/*   Updated: 2025/04/14 06:30:39 by yaltayeh         ###   ########.fr       */
->>>>>>> refs/remotes/origin/linked_list:src/redirection_handler.c
+/*   Updated: 2025/04/14 10:31:14 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +16,7 @@ static int	check_ambiguous(t_list *env, char *token)
 {
 	char	*s;
 
-	s = expand_str_no_quote(env, token);
+	s = expand_env(env, token);
 	if (!s)
 	{
 		PRINT_ALLOCATE_ERROR;

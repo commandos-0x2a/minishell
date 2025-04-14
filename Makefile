@@ -29,19 +29,6 @@ FILES = builtins/builtins			\
 			get_argv				\
 			get_argv0				\
 			add_space_to_line		\
-<<<<<<< HEAD
- 			execution/flow_control				\
- 			execution/pipeline_control			\
- 			execution/flow_control				\
-			execution/execute_complex_command	\
-			execution/execute_simple_command	\
-			execution/redirection_handler		\
-			main								\
-			wildcard							\
-			tokenizer							\
-			check_syntax						\
-			print_tokenizer						\
-=======
  			flow_control			\
  			pipeline_control		\
 			execute_complex_command	\
@@ -51,10 +38,6 @@ FILES = builtins/builtins			\
 			wildcard				\
 			tokenizer				\
 			check_syntax			\
->>>>>>> refs/remotes/origin/linked_list
-#
-
-
 #
 
 OBJECTS 			= $(FILES:%=$(OBJDIR)/%.o)
