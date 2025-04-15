@@ -22,7 +22,7 @@ FILES = builtins/builtins			\
 			utils/ft_setenv			\
 			utils/get_full_path		\
 			utils/signals			\
-			utils/list				\
+			utils/ft_list				\
 			str_expander			\
 			wait_children			\
 			here_doc				\

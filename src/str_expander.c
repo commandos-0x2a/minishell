@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   str_expander.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/14 15:38:51 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/14 22:26:15 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,7 @@ static char	**mini_tokonizer(char *s, int i)
 		free(token);
 		return (NULL);
 	}
-	tokens[i] = token;
+	tokens[i] = remove_qouts(token);
 	return (tokens);
 }
 
@@ -232,49 +232,23 @@ int	argv_expander2(t_mini *mini)
 {
 	char	*expanded_str;
 	char	**slices;
-	t_list	*tok;
-	t_list	*next;
-	int		i;
+	t_list	*lst;
 
-	tok = mini->tokens;
-	while (tok && tok->str)
+	lst = mini->tokens;
+	while (lst && lst->str)
 	{
-		expanded_str = expand_env(mini, tok->str);
+		expanded_str = expand_env(mini, lst->str);
 		if (!expanded_str)
 			return (1);
 		slices = mini_tokonizer(expanded_str, 0);
 		free(expanded_str);
 		if (!slices)
 			return (1);
-
-		if (*slices)
-			free(tok->str);
-		next = tok->next;
-		tok->next = NULL;
-
-		
-		i = 0;
-		while (slices[i])
-		{
-			tok->str = remove_qouts(slices[i]);
-			i++;
-			if (!slices[i])
-				break;
-			if (!tok->next)
-				tok->next = ft_calloc(1, sizeof(t_list));
-			if (!tok->next)
-			{
-				tok->next = next; // reconnect to clean it
-				while (slices[i]) // free left slices
-					free(slices[i++]);
-				free(slices);
-				return (1);
-			}
-			tok = tok->next;
-		}
-		
-		tok->next = next; // reconnect
-		tok = next;
+		lst = lst_expand(lst, slices);
+		free(slices);
+		if (!lst)
+			return (1);
+		lst = lst->next;
 	}
 	return (0);
 }

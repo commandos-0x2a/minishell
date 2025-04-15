@@ -68,23 +68,24 @@ typedef struct s_mini
 	int		is_interupted;
 }	t_mini;
 
-extern int	g_status;
+void	mini_clean(t_mini *mini);
 
-void		mini_clean(t_mini *mini);
 
+/*  t_list  */
+t_list	*lst_expand(t_list *lst, char **slices);
+void	*lst_move2next(t_list **lst);
+void	*lst_clean(t_list **lst);
+char	**lst_2_argv(t_list **lst);
+char	**lst_2_dptr(t_list *lst);
 
 /*  tokenizer  */
-char		*add_space_to_line(const char *s);
-t_list		*tokenizer(char *s);
-void		*lst_clean(t_list **lst);
-void		*lst_move2next(t_list **lst);
-char		**lst_2_argv(t_list **lst);
-void	reset_signals_child(void);
+char	*add_space_to_line(const char *s);
+t_list	*tokenizer(char *s);
+
 /*  argv  */
 int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);
 char	*get_argv0(t_list *lst);
 void	get_argv(t_list **lst);
-char	**lst_2_dptr(t_list *lst);
 
 /*  expander  */
 char	*expand_str(t_mini *mini, char *str);
@@ -103,20 +104,24 @@ int		flow_control(t_mini *mini);
 int		pipeline_control(t_mini *mini);
 int		execute_complex_command(t_mini *mini, int *fd, int is_pipe);
 void	execute_simple_command(t_mini *mini);
-int		wait_children(int target_pid);
 int		check_syntax(t_list *lst);
 
-/*  Redirection handling  */
+/*  Wait children  */
+int		wait_children(int target_pid);
+int		wait_child_stop(pid_t victim);
+
+
+/*  redirection handling  */
 int	redirection_handler(t_mini *mini, int heredoc_fd, int change_std);
 int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd);
 int	heredoc_forever(t_mini *mini, t_list *lst);
 
-/*  Environment variables  */
+/*  environment variables  */
 t_list	*copy_env_variables(void);
 char	*ft_getenv(t_list *env, const char *name);
 
 
-/*  Built-in commands  */
+/*  built-in commands  */
 int		handle_builtin(t_mini *mini, char **argv, int _exit);
 int		is_builtin(t_mini *mini, char *cmd);
 int		ft_cd(t_mini *mini, char **argv);
@@ -128,13 +133,13 @@ int		ft_test(t_mini *mini, char **argv);
 int		ft_export(t_mini *mini, char **argv);
 int		ft_unset(t_mini *mini, char **argv);
 
-void setup_signals(void);
-void reset_signals(void);
-
-/* Signal handling functions */
-int heredoc_is_active(void);
-void set_heredoc_active(int active);
-void save_signal_handlers(void);
-void restore_signal_handlers(void);
+/* signal handling functions */
+int		heredoc_is_active(void);
+void	set_heredoc_active(int active);
+void	save_signal_handlers(void);
+void	restore_signal_handlers(void);
+void	reset_signals_child(void);
+void	setup_signals(void);
+void	reset_signals(void);
 
 #endif

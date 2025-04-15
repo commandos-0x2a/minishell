@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/14 17:29:50 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/14 22:30:02 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,46 +222,20 @@ char **expand_wildcard(char *pattern)
 */
 int	handle_wildcards(t_mini *mini)
 {	
-	t_list	*tok;
-	t_list	*next;
+	t_list	*lst;
 	char	**slices;
-	int		i;
 
-	tok = mini->tokens;
-	while (tok && tok->str)
+	lst = mini->tokens;
+	while (lst && lst->str)
 	{
-		slices = expand_wildcard(tok->str);
+		slices = expand_wildcard(lst->str);
 		if (!slices)
 			return (1);
-
-		if (*slices)
-			free(tok->str);
-		next = tok->next;
-		tok->next = NULL;
-
-		
-		i = 0;
-		while (slices[i])
-		{
-			tok->str = slices[i];
-			i++;
-			if (!slices[i])
-				break;
-			if (!tok->next)
-				tok->next = ft_calloc(1, sizeof(t_list));
-			if (!tok->next)
-			{
-				tok->next = next; // reconnect to clean it
-				while (slices[i]) // free left slices
-					free(slices[i++]);
-				free(slices);
-				return (1);
-			}
-			tok = tok->next;
-		}
-		
-		tok->next = next; // reconnect
-		tok = next;
+		lst = lst_expand(lst, slices);
+		free(slices);
+		if (!lst)
+			return (1);
+		lst = lst->next;
 	}
 	return (0);
 }

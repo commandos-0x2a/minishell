@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_control.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 20:18:59 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/14 23:38:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,21 +76,6 @@ static int	run_builtin_command(t_mini *mini)
 	return (handle_builtin(mini, argv, 0));
 }
 
-int	handle_wstatus(int wstatus)
-{
-	int	exit_code;
-
-	if (WIFEXITED(wstatus))
-		exit_code = WEXITSTATUS(wstatus);
-	else if (WIFSIGNALED(wstatus))
-		exit_code = 128 + WTERMSIG(wstatus);
-	else if (WIFSTOPPED(wstatus))
-		exit_code = 128 + WSTOPSIG(wstatus);
-	else
-		exit_code = 1;
-	return (exit_code);
-}
-
 int	pipeline_control(t_mini *mini)
 {
 	int		is_pipe;
@@ -118,18 +103,17 @@ int	pipeline_control(t_mini *mini)
 		command_pid[i] = execute_complex_command(mini, &fd, is_pipe);
 		if (command_pid[i] == -1)
 			break ;
-		if (waitpid(command_pid[i], &wstatus, WUNTRACED) == -1)
-			break ;
-		mini->exit_status = handle_wstatus(wstatus);
+		mini->exit_status = wait_child_stop(command_pid[i]);
 		if (mini->exit_status != 128 + SIGSTOP)
 		{
+			while (i--)
+				kill(command_pid[i], SIGKILL);
 			free(command_pid);
 			if (fd > 0)
 				close(fd);
 			mini->ctx = NULL;
 			return (mini->exit_status);
 		}
-
 		i++;
 		if ((is_pipe & IS_PIPE) == 0)
 			break ;
