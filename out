@@ -1,0 +1,12 @@
+build
+include
+libft
+LICENSE
+Makefile
+minishell
+out
+project-mindmap.md
+readline_curses.supp
+README.md
+src
+test
