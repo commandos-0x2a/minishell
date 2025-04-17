@@ -95,14 +95,15 @@ int		argv_expander2(t_mini *mini);
 int		handle_wildcards(t_mini *mini);
 
 
-# define IS_PIPE		0b01
+# define IS_NEXT_PIPE	0b01
 # define IS_PREV_PIPE	0b10
 # define IS_PIPE_MASK	0b11
 
 /*  execution  */
 int		flow_control(t_mini *mini);
 int		pipeline_control(t_mini *mini);
-int		execute_complex_command(t_mini *mini, int *fd, int is_pipe);
+int	execute_complex_command(t_mini *mini, int in_fd, \
+							int pipefds[2], int is_pipe);
 void	execute_simple_command(t_mini *mini);
 int		check_syntax(t_list *lst);
 

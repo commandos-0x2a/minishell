@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/13 23:09:09 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/16 17:21:12 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,13 @@ static t_list	*add_token(t_list **lst, char *token)
 	return (new);
 }
 
-static char	*cut_slice(char **s_ptr)
+static char	*cut_slice(char **s_r)
 {
 	char	*start;
 	int		nb_bracket;
 	char	*s;
 
-	s = *s_ptr;
+	s = *s_r;
 	while (*s == ' ')
 		s++;
 	start = s;
@@ -61,7 +61,7 @@ static char	*cut_slice(char **s_ptr)
 		}
 		s++;
 	}
-	*s_ptr = s;
+	*s_r = s;
 	if (s == NULL || nb_bracket != 0)
 		return (NULL);
 	return (start);

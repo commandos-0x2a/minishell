@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/17 11:38:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/17 11:54:34 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ int	pipeline_control(t_mini *mini)
 			return (mini->exit_status);
 		}
 		i++;
-		if ((is_pipe & IS_PIPE) == 0)
+		if ((is_pipe & IS_NEXT_PIPE) == 0)
 			break ;
 		lst_move2next(&mini->tokens);
 	}
@@ -131,4 +131,57 @@ int	pipeline_control(t_mini *mini)
 	free(command_pid);
 	mini->ctx = NULL;
 	return (wait_children(victim_pid));
+}
+
+
+/*
+if builtin run return 0
+return 
+*/
+
+int	pipeline_control2(t_mini *mini, int in_fd, int is_pipe)
+{
+	pid_t	victim_pid;
+	int		pipefds[2];
+	
+	if (mini->tokens && mini->tokens->str)
+		return (0);
+	
+	set_null_token(mini->tokens, &is_pipe);
+	if (is_pipe = 0 && is_builtin(mini, get_argv0(mini->tokens)))
+		return (run_builtin_command(mini));
+	
+	if ((is_pipe & IS_NEXT_PIPE) && pipe(pipefds) == -1)
+		return (-1);
+		
+	victim_pid = execute_complex_command(mini, in_fd, pipefds, is_pipe);
+
+	if (is_pipe & IS_NEXT_PIPE)
+		close(pipefds[1]);
+	if (is_pipe & IS_PREV_PIPE)
+		close(in_fd);
+
+	if (victim_pid == -1)
+	{
+		if (is_pipe & IS_NEXT_PIPE)
+			close(pipefds[0]);
+		return (-1);
+	}
+	mini->exit_status = wait_child_stop(victim_pid);
+	if (mini->exit_status != 128 + SIGSTOP)
+		return (-mini->exit_status);
+
+	if (is_pipe & IS_NEXT_PIPE)
+	{
+		lst_move2next(&mini->tokens);
+		victim_pid = pipeline_control2(mini, pipefds[0], is_pipe);
+		if (victim_pid == -1)
+		{
+			kill(victim_pid, SIGKILL);
+		}
+		return (victim_pid);
+	}
+	
+
+	return (victim_pid);	
 }
