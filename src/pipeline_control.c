@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/17 11:54:34 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/17 22:13:15 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,33 +28,12 @@ static void set_null_token(t_list *lst, int *is_pipe)
 	}
 }
 
-static int	get_nb_command(t_list *lst)
-{
-	int	nb_pipeline;
-
-	nb_pipeline = 1;
-	while (lst && lst->str)
-	{
-		if (ft_strcmp(lst->str, "|") == 0)
-			nb_pipeline++;
-		lst = lst->next;
-	}
-	return (nb_pipeline);
-}
-
 static int	run_builtin_command(t_mini *mini)
 {
-	int	heredoc_fd;
+	int		heredoc_fd;
 	char	**argv;
 
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
-	if(mini->is_interupted)
-	{
-		if (heredoc_fd > 0)
-			close(heredoc_fd);
-		mini->is_interupted = 0;
-		return (mini->exit_status);
-	}
 	if (heredoc_fd < 0)
 		return (PRINT_SYSCALL_ERROR, -1);
 	if (redirection_handler(mini, heredoc_fd, 0) != 0)
@@ -73,115 +52,72 @@ static int	run_builtin_command(t_mini *mini)
 	argv = lst_2_argv(&mini->tokens);
 	if (!argv)
 		return (PRINT_ALLOCATE_ERROR, -1);
-	return (handle_builtin(mini, argv, 0));
+	mini->exit_status = handle_builtin(mini, argv, 0);
+	return (0);
 }
-
-int	pipeline_control(t_mini *mini)
-{
-	int		is_pipe;
-	int		fd;
-	int		i;
-	int		nb_commands;
-	pid_t	victim_pid;
-	pid_t	*command_pid;
-	int		wstatus;
-
-	nb_commands = get_nb_command(mini->tokens);
-	if (nb_commands == 1 && is_builtin(mini, get_argv0(mini->tokens)))
-		return (run_builtin_command(mini));
-
-	command_pid = ft_calloc(nb_commands, sizeof(pid_t));
-	if (!command_pid)
-		return (-1);
-	mini->ctx = command_pid;
-	fd = -1;
-	is_pipe = 0;
-	i = 0;
-	while (mini->tokens && mini->tokens->str)
-	{
-		set_null_token(mini->tokens, &is_pipe);
-		command_pid[i] = execute_complex_command(mini, &fd, is_pipe);
-		if (command_pid[i] == -1)
-			break ;
-		mini->exit_status = wait_child_stop(command_pid[i]);
-		if (mini->exit_status != 128 + SIGSTOP)
-		{
-			while (i--)
-				kill(command_pid[i], SIGKILL);
-			free(command_pid);
-			if (fd > 0)
-				close(fd);
-			mini->ctx = NULL;
-			return (mini->exit_status);
-		}
-		i++;
-		if ((is_pipe & IS_NEXT_PIPE) == 0)
-			break ;
-		lst_move2next(&mini->tokens);
-	}
-	if (i > 0)
-		victim_pid = command_pid[i - 1];
-	i = 0;
-	while (i < nb_commands)
-	{
-		if (command_pid[i] != -1)
-			kill(command_pid[i], SIGCONT);
-		i++;
-	}
-	free(command_pid);
-	mini->ctx = NULL;
-	return (wait_children(victim_pid));
-}
-
 
 /*
-if builtin run return 0
-return 
+	if builtin run return 0 and stored exit status in mini.exit_status
+	if syscall fail return -1
+	return child_pid 
+	<< 1 cat | << 2 cat | << 3 cat
 */
-
-int	pipeline_control2(t_mini *mini, int in_fd, int is_pipe)
+static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 {
-	pid_t	victim_pid;
+	pid_t	victim[2];
 	int		pipefds[2];
-	
-	if (mini->tokens && mini->tokens->str)
+
+	if (!mini->tokens || !mini->tokens->str)
 		return (0);
-	
 	set_null_token(mini->tokens, &is_pipe);
-	if (is_pipe = 0 && is_builtin(mini, get_argv0(mini->tokens)))
+	if (is_pipe == 0 && is_builtin(mini, get_argv0(mini->tokens)))
 		return (run_builtin_command(mini));
-	
+
 	if ((is_pipe & IS_NEXT_PIPE) && pipe(pipefds) == -1)
 		return (-1);
-		
-	victim_pid = execute_complex_command(mini, in_fd, pipefds, is_pipe);
 
-	if (is_pipe & IS_NEXT_PIPE)
-		close(pipefds[1]);
-	if (is_pipe & IS_PREV_PIPE)
-		close(in_fd);
-
-	if (victim_pid == -1)
+	victim[0] = execute_complex_command(mini, in_fd, pipefds, is_pipe);
+	if (victim[0] == -1)
 	{
 		if (is_pipe & IS_NEXT_PIPE)
 			close(pipefds[0]);
 		return (-1);
 	}
-	mini->exit_status = wait_child_stop(victim_pid);
+	mini->exit_status = wait_child_stop(victim[0]);
 	if (mini->exit_status != 128 + SIGSTOP)
-		return (-mini->exit_status);
+		return (-2);
 
 	if (is_pipe & IS_NEXT_PIPE)
 	{
 		lst_move2next(&mini->tokens);
-		victim_pid = pipeline_control2(mini, pipefds[0], is_pipe);
-		if (victim_pid == -1)
+		victim[1] = pipeline_control_iter(mini, pipefds[0], is_pipe);
+		if (victim[1] < 0)
 		{
-			kill(victim_pid, SIGKILL);
+			close(pipefds[0]);
+			fprintf(stderr, "close: %d\n", pipefds[0]);
+			kill(victim[0], SIGKILL);
+			return (victim[1]);
 		}
-		return (victim_pid);
+		kill(victim[0], SIGCONT);
+		return (victim[1]);
 	}
-	
+	kill(victim[0], SIGCONT);
+	return (victim[0]);
+}
 
-	return (victim_pid);	
+int	pipeline_control(t_mini *mini)
+{
+	pid_t	victim;
+
+	victim = pipeline_control_iter(mini, 0, 0);
+	if (victim < 0)
+	{
+		wait_children(victim);
+		if (victim == -1)
+			return (-1);
+		return (0);
+	}
+	if (victim > 0)
+		mini->exit_status = wait_children(victim);
+	return (0);
 }

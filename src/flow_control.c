@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 02:19:13 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 09:22:33 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/17 19:00:39 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ int	flow_control(t_mini *mini)
 		set_null_token(mini->tokens, &op);
 		if (test)
 		{
-			mini->exit_status = pipeline_control(mini);
+			if (pipeline_control(mini) == -1)
+				return (-1);
 			test = !mini->exit_status;
 			if (op == 2)
 				test = !test;

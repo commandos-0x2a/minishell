@@ -101,7 +101,7 @@ int		handle_wildcards(t_mini *mini);
 
 /*  execution  */
 int		flow_control(t_mini *mini);
-int		pipeline_control(t_mini *mini);
+int	pipeline_control(t_mini *mini);
 int	execute_complex_command(t_mini *mini, int in_fd, \
 							int pipefds[2], int is_pipe);
 void	execute_simple_command(t_mini *mini);
