@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 17:47:06 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 23:28:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/15 23:57:58 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	wait_children(int target_pid)
 	int	child_pid;
 
 	process_status = 1;
-	child_pid = waitpid(-1, &wstatus, WUNTRACED);
+	child_pid = waitpid(WAIT_ANY, &wstatus, WUNTRACED);
 	while (child_pid != -1)
 	{
 		// if (child_pid == target_pid)
