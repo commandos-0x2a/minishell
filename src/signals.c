@@ -98,13 +98,11 @@ void	restore_signal_handlers(void)
 
 
 
-
 static void	restore_prompt(int sig)
 {
 	g_sig = sig;
-	if (signal_controller(SIG_HEREDOC_ACTIVE, 0, SIG_SET))
-		return ;
-	write(STDOUT_FILENO, "\n", 1);
+	fprintf(stderr, "(%d)\n", getpid());
+	// write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
 #ifdef __linux__
 	rl_replace_line("", 1);
@@ -114,10 +112,7 @@ static void	restore_prompt(int sig)
 
 static void	signal_handler(int sig)
 {
-	extern const char *const sys_siglist [32];
-
 	g_sig = sig;
-	fprintf(stderr, "%d: catch %s signal\n", getpid(), sys_siglist[sig]);
 }
 
 void	setup_signals(void)
@@ -130,11 +125,9 @@ void	setup_signals(void)
 	sigaction(SIGINT, &sa, NULL);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGTSTP, SIG_IGN);
-	signal_controller(SIG_INTERACTIVE_MODE, 1, SIG_RETURN);
-	signal_controller(SIG_EXECUTION_MODE, 0, SIG_RETURN);
 }
 
-void	setup_heredoc_signals(void)
+void	setup_signals2(void)
 {
 	struct sigaction	sa;
 

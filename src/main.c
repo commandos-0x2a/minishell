@@ -39,7 +39,6 @@ char *get_prompt(void)
     return (prompt);
 }
 
-
 int main()
 {
 	char		*line;
@@ -57,10 +56,12 @@ int main()
 		PRINT_ALLOCATE_ERROR;
 		return (1);
 	}
-	setup_signals();
 	while (1)
 	{
+		setup_signals();
 		line = readline(get_prompt());
+		setup_signals2();
+	
 		if (!line) // ctrl-D handling
 		{
 			printf("\nexit\n");
@@ -80,10 +81,7 @@ int main()
 			}
 			if (check_syntax(mini.tokens))
 			{
-				// terminal_config(STDIN_FILENO);
-				// reset_signals();
 				flow_control(&mini);
-				// terminal_reset(STDIN_FILENO);
 			}
 			lst_clean(&mini.tokens);
 		}

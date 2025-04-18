@@ -81,7 +81,7 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 	{
 		if (is_pipe & IS_NEXT_PIPE)
 			close(pipefds[0]);
-			return (-1);
+		return (-1);
 	}
 	mini->exit_status = wait_child_stop(victim[0]);
 	if (mini->exit_status != 128 + SIGSTOP)

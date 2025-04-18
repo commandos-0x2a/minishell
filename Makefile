@@ -21,8 +21,9 @@ FILES = builtins/builtins			\
 			utils/ft_getenv			\
 			utils/ft_setenv			\
 			utils/get_full_path		\
-			utils/signals			\
-			utils/ft_list				\
+			utils/ft_list			\
+			\
+			signals					\
 			str_expander			\
 			wait_children			\
 			here_doc				\

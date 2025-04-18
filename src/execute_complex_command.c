@@ -43,7 +43,6 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 	int	heredoc_fd;
 	int	err;
 
-	setup_heredoc_signals();
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
 		return (-1);
@@ -52,7 +51,6 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 		return (-1);
 	reset_signals();
 
-	
 	if (pipex_handler(is_pipe, in_fd, pipefds) != 0)
 		return (-1);
 	err = redirection_handler(mini, heredoc_fd, 1);

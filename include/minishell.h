@@ -143,8 +143,8 @@ void	set_heredoc_active(int active);
 void	save_signal_handlers(void);
 void	restore_signal_handlers(void);
 
-void	setup_heredoc_signals(void);
 void	setup_signals(void);
+void	setup_signals2(void);
 void	reset_signals(void);
 
 #endif

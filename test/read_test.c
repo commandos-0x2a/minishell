@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 volatile int	g_sig;
 
@@ -17,7 +18,7 @@ int	simple_here_doc()
 {
 	int 	nbytes;
 	char	*line;
-	ssize_t	_read;
+	ssize_t	bytes_read;
 
 	write(1, "> ", 2);
 	while (1)
@@ -35,12 +36,12 @@ int	simple_here_doc()
 			line = malloc(nbytes + 1);
 			if (!line)
 				return (-1);	// Allocation failed
-			_read = read(STDIN_FILENO, line, nbytes);
-			if (_read < 0)
+			bytes_read = read(STDIN_FILENO, line, nbytes);
+			if (bytes_read < 0)
 				return (-1);	// Error
-			if (_read == 0)
+			if (bytes_read == 0)
 				return (0);		// EOF
-			line[_read] = '\0';
+			line[bytes_read] = '\0';
 			write(1, "> ", 2);
 		}
 	}
