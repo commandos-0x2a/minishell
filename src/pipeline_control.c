@@ -45,9 +45,7 @@ static int	run_builtin_command(t_mini *mini)
 	if (heredoc_fd > 0)
 		close(heredoc_fd);
 	get_argv(&mini->tokens);
-	if (argv_expander2(mini) != 0)
-		return (PRINT_ALLOCATE_ERROR, -1);
-	if (handle_wildcards(mini) != 0)
+	if (expand_tokens(mini, mini->tokens) != 0)
 		return (PRINT_ALLOCATE_ERROR, -1);
 	argv = lst_2_argv(&mini->tokens);
 	if (!argv)

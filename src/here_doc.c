@@ -49,7 +49,7 @@ static int	handle_chunk(t_mini *mini, char *limiter, int nbytes, int out_fd)
 	line[bytes_read] = '\0';
 	if (line_cmp(line, limiter) == 0)
 		return (0);
-	line_expanded = expand_str(mini, line);
+	line_expanded = expand_env(mini, line);
 	if (!line_expanded)
 		return (-1);
 	line_len = ft_strlen(line_expanded);

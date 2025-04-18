@@ -35,9 +35,7 @@ void	execute_simple_command(t_mini *mini)
 		return ;
 	if (is_subshell(mini->tokens))
 		run_subshell(mini);
-	if (argv_expander2(mini) != 0)
-		return ;
-	if (handle_wildcards(mini) != 0)
+	if (expand_tokens(mini, mini->tokens) != 0)
 		return ;
 	argv = lst_2_argv(&mini->tokens);
 	if (!argv)

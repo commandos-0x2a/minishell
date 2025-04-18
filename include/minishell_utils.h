@@ -19,16 +19,16 @@
 
 
 # define PRINT_ERRNO \
-	ft_fprintf(2, PREFIX"%s: %s\n", __func__, strerror(errno))
-
-# define PRINT_ALLOCATE_ERROR PRINT_ERRNO
-
-# define PRINT_FILE_ERROR(filename) \
-	ft_fprintf(2, PREFIX"%s: %s\n", filename, strerror(errno))
-
-# define PRINT_SYSCALL_ERROR PRINT_ERRNO
+	ft_fprintf(2, PREFIX"%s:%d: %s\n", __FILE__, __LINE__, strerror(errno))
 	
+# define PRINT_ALLOCATE_ERROR \
+	ft_fprintf(2, PREFIX"%s:%d: %s\n", __FILE__, __LINE__, strerror(errno))
 	
+	# define PRINT_FILE_ERROR(filename) \
+	ft_fprintf(2, PREFIX"%s:%d: %s %s\n", __FILE__, __LINE__, filename, strerror(errno))
+	
+# define PRINT_SYSCALL_ERROR \
+	ft_fprintf(2, PREFIX"%s:%d: %s\n", __FILE__, __LINE__, strerror(errno))
 
 
 // libft function

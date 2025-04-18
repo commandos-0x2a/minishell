@@ -12,27 +12,36 @@
 
 #include "minishell.h"
 
-static int	check_ambiguous(t_mini *mini, char *token)
+static int	is_ambiguous(t_mini *mini, char **filename_r)
 {
-	char	*s;
+	t_list	*lst;
 
-	s = expand_env(mini, token);
-	if (!s)
+	lst = ft_calloc(1, sizeof(*lst));
+	if (!lst)
 	{
 		PRINT_ALLOCATE_ERROR;
+		return (-1);
+	}
+	lst->str = ft_strdup(*filename_r);
+	if (!lst->str)
+	{
+		lst_clean(&lst);
+		return (-1);
+	}
+	if (expand_tokens(mini, lst) != 0)
+	{
+		lst_clean(&lst);
+		return (-1);
+	}
+	if (!lst->str || (lst->next && lst->next->str))
+	{
+		lst_clean(&lst);
+		ft_fprintf(2, PREFIX"%s: ambiguous redirect\n", *filename_r);
 		return (1);
 	}
-	while (*s)
-	{
-		if (*s == '*')
-		{
-			ft_fprintf(2, PREFIX"%s: ambiguous redirect\n", token);
-			return (1);
-		}
-		if (*s == '\'' || *s == '"')
-			s = ft_strchr(s + 1, *s);
-		s++;
-	}
+	*filename_r = lst->str;
+	lst->str = NULL;
+	lst_clean(&lst);
 	return (0);
 }
 
@@ -41,14 +50,9 @@ static int	in_redirection(t_mini *mini, char *token, int change_std)
 	int		fd;
 	char	*filename;
 
-	if (check_ambiguous(mini, token))
-		return (1);
-	filename = expand_str(mini, token);
-	if (!filename)
-	{
-		PRINT_ALLOCATE_ERROR;
+	filename = token;
+	if (is_ambiguous(mini, &filename) != 0)
 		return (-1);
-	}
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 	{
@@ -71,14 +75,9 @@ static int	out_append(t_mini *mini, char *token, int change_std)
 	int		fd;
 	char	*filename;
 
-	if (check_ambiguous(mini, token))
-		return (1);
-	filename = expand_str(mini, token);
-	if (!filename)
-	{
-		PRINT_ALLOCATE_ERROR;
+	filename = token;
+	if (is_ambiguous(mini, &filename) != 0)
 		return (-1);
-	}
 	fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd == -1)
 	{
@@ -101,14 +100,9 @@ static int	out_redirection(t_mini *mini, char *token, int change_std)
 	int		fd;
 	char	*filename;
 
-	if (check_ambiguous(mini, token))
-		return (1);
-	filename = expand_str(mini, token);
-	if (!filename)
-	{
-		PRINT_ALLOCATE_ERROR;
+	filename = token;
+	if (is_ambiguous(mini, &filename) != 0)
 		return (-1);
-	}
 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 	{

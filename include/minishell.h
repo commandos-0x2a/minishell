@@ -98,11 +98,11 @@ char	*get_argv0(t_list *lst);
 void	get_argv(t_list **lst);
 
 /*  expander  */
-char	*expand_str(t_mini *mini, char *str);
+char	**expand_str(t_mini *mini, char *str);
 char	*expand_env(t_mini *mini, char *str);
-char	**argv_expander(t_mini *mini, char **argv);
-int		argv_expander2(t_mini *mini);
-int		handle_wildcards(t_mini *mini);
+char 	**expand_wildcard(char *pattern);
+int		expand_tokens(t_mini *mini, t_list *lst);
+char	*remove_qouts(char *str);
 
 
 # define IS_NEXT_PIPE	0b01

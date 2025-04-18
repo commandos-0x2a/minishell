@@ -18,23 +18,28 @@
 */
 int	is_builtin(t_mini *mini, char *cmd)
 {
+	char	**slices;
+
 	if (!cmd)
 		return (0);
-	cmd = expand_str(mini, cmd);
-	if (!cmd)
+	slices = expand_str(mini, cmd);
+	if (!slices || !*slices)
+	{
+		free_dptr(slices);
 		return (-1);
-	if (ft_strcmp(cmd, "cd") == 0 || \
-		ft_strcmp(cmd, "exit") == 0 || \
-		ft_strcmp(cmd, "export") == 0 || \
-		ft_strcmp(cmd, "unset") == 0 ||	\
-		ft_strcmp(cmd, "echo") == 0 || \
-		ft_strcmp(cmd, "pwd") == 0 || \
-		ft_strcmp(cmd, "env") == 0)
+	}
+	if (ft_strcmp(*slices, "cd") == 0 || \
+		ft_strcmp(*slices, "exit") == 0 || \
+		ft_strcmp(*slices, "export") == 0 || \
+		ft_strcmp(*slices, "unset") == 0 ||	\
+		ft_strcmp(*slices, "echo") == 0 || \
+		ft_strcmp(*slices, "pwd") == 0 || \
+		ft_strcmp(*slices, "env") == 0)
 		{
-			free(cmd);
+			free_dptr(slices);
 			return (1);
 		}
-	free(cmd);
+	free_dptr(slices);
 	return (0);
 }
 

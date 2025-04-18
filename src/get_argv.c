@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void lst_remove_one(t_list **lst, t_list *prev)
+void	lst_remove_one(t_list **lst, t_list *prev)
 {
 	t_list	*cur;
 
@@ -26,6 +26,48 @@ void lst_remove_one(t_list **lst, t_list *prev)
 	if (cur->str)
 		free(cur->str);
 	free(cur);
+}
+
+char	**lst_2_argv(t_list **lst)
+{
+	char		**argv;
+	t_list		*current;
+	static int	i;
+	int			_i;
+
+	_i = i++;
+	if (!*lst || !(*lst)->str)
+	{
+		lst_clean(lst);
+		i = 0;
+		return (ft_calloc(_i + 1, sizeof(char *)));
+	}
+	current = *lst;
+	*lst = (*lst)->next;
+	argv = lst_2_argv(lst);
+	if (!argv)
+		free(current->str);
+	else
+		argv[_i] = current->str;
+	free(current);
+	return (argv);
+}
+
+char	*get_argv0(t_list *lst)
+{
+	
+	while (lst && lst->str)
+	{
+		if (!ft_strcmp(lst->str, "<<") \
+			|| !ft_strcmp(lst->str, ">>") \
+			|| !ft_strcmp(lst->str, "<") \
+			|| !ft_strcmp(lst->str, ">"))
+			lst = lst->next;
+		else
+			return (lst->str);
+		lst = lst->next;
+	}
+	return (NULL);
 }
 
 void	get_argv(t_list **lst)
@@ -54,29 +96,4 @@ void	get_argv(t_list **lst)
 		cur = cur->next;
 	}
 	*lst = start;
-}
-
-char	**lst_2_argv(t_list **lst)
-{
-	char	**argv;
-	t_list	*current;
-	static int	i;
-	int			_i;
-
-	_i = i++;
-	if (!*lst || !(*lst)->str)
-	{
-		lst_clean(lst);
-		i = 0;
-		return (ft_calloc(_i + 1, sizeof(char *)));
-	}
-	current = *lst;
-	*lst = (*lst)->next;
-	argv = lst_2_argv(lst);
-	if (!argv)
-		free(current->str);
-	else
-		argv[_i] = current->str;
-	free(current);
-	return (argv);
 }

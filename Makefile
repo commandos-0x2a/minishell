@@ -25,11 +25,11 @@ FILES = builtins/builtins			\
 			\
 			subshell				\
 			signals					\
-			str_expander			\
+			expander				\
+			expand_wildcard			\
 			wait_children			\
 			here_doc				\
 			get_argv				\
-			get_argv0				\
 			add_space_to_line		\
  			flow_control			\
  			pipeline_control		\
@@ -37,7 +37,6 @@ FILES = builtins/builtins			\
 			execute_simple_command	\
 			redirection_handler		\
 			main					\
-			wildcard				\
 			tokenizer				\
 			check_syntax			\
 #
