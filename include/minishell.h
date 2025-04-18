@@ -53,6 +53,8 @@
 # define MAX_PROMPT_STYLE 32
 # define MAX_CONFIG_LINE 256
 
+# define MAXLINE 4096
+
 typedef struct s_list
 {
 	char			*str;
@@ -67,6 +69,8 @@ typedef struct s_mini
 	void	*ctx;
 	int		is_interupted;
 }	t_mini;
+
+extern volatile int	g_sig;
 
 void	mini_clean(t_mini *mini);
 
@@ -114,7 +118,6 @@ int		wait_child_stop(pid_t victim);
 
 /*  redirection handling  */
 int	redirection_handler(t_mini *mini, int heredoc_fd, int change_std);
-int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd);
 int	heredoc_forever(t_mini *mini, t_list *lst);
 
 /*  environment variables  */
@@ -139,7 +142,8 @@ int		heredoc_is_active(void);
 void	set_heredoc_active(int active);
 void	save_signal_handlers(void);
 void	restore_signal_handlers(void);
-void	reset_signals_child(void);
+
+void	setup_heredoc_signals(void);
 void	setup_signals(void);
 void	reset_signals(void);
 

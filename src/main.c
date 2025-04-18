@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/14 15:32:23 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/18 09:42:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <strings.h>
 #include <stdlib.h>
 
+volatile int	g_sig;
 
 void	mini_clean(t_mini *mini)
 {
@@ -25,12 +26,6 @@ void	mini_clean(t_mini *mini)
 		lst_clean(&mini->env);
 	if (mini->ctx)
 		free(mini->ctx);	
-}
-
-void handle_line(char *line)
-{
-	if (line && *line)
-		add_history(line);
 }
 
 char *get_prompt(void)
@@ -64,26 +59,20 @@ int main()
 		PRINT_ALLOCATE_ERROR;
 		return (1);
 	}
-
-
-	// setup_signals();
-	// terminal_config(STDIN_FILENO);
+	setup_signals();
 	while (1)
 	{
-		setup_signals();
 		line = readline(get_prompt());
-		
-		reset_signals();
-
 		if (!line) // ctrl-D handling
 		{
 			printf("\nexit\n");
 			break;
 		}
-		handle_line(line);
 		
 		if (*line)
 		{
+			add_history(line);
+			g_sig = 0;
 			mini.tokens = tokenizer(line);
 			free(line);
 			if (!mini.tokens)
@@ -101,6 +90,6 @@ int main()
 			lst_clean(&mini.tokens);
 		}
 	}
-	lst_clean(&mini.env);
+	mini_clean(&mini);
 	return (0);
 }

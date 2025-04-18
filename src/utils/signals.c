@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/14 20:00:05 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/18 10:02:09 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,34 +84,6 @@ static int	signal_controller(t_signal_event event, int set_value, int is_setter)
 		return (handle_handler_events(event, is_setter));
 }
 
-static void	restore_prompt(int sig)
-{
-	if (signal_controller(SIG_HEREDOC_ACTIVE, 0, SIG_SET))
-		return ;
-	(void)sig;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
-#ifdef __linux__
-	rl_replace_line("", 1);
-#endif
-	rl_redisplay();
-}
-
-static void	ignore_handler(int sig)
-{
-	(void)sig;
-}
-
-int	heredoc_is_active(void)
-{
-	return (signal_controller(SIG_HEREDOC_ACTIVE, 0, SIG_SET));
-}
-
-void	set_heredoc_active(int active)
-{
-	signal_controller(SIG_HEREDOC_ACTIVE, active, 1);
-}
-
 void	save_signal_handlers(void)
 {
 	signal_controller(SIG_INT_HANDLER, 0, 1);
@@ -122,6 +94,30 @@ void	restore_signal_handlers(void)
 {
 	signal_controller(SIG_INT_HANDLER, 0, SIG_SET);
 	signal_controller(SIG_QUIT_HANDLER, 0, SIG_SET);
+}
+
+
+
+
+static void	restore_prompt(int sig)
+{
+	g_sig = sig;
+	if (signal_controller(SIG_HEREDOC_ACTIVE, 0, SIG_SET))
+		return ;
+	write(STDOUT_FILENO, "\n", 1);
+	rl_on_new_line();
+#ifdef __linux__
+	rl_replace_line("", 1);
+#endif
+	rl_redisplay();
+}
+
+static void	signal_handler(int sig)
+{
+	extern const char *const sys_siglist [32];
+
+	g_sig = sig;
+	fprintf(stderr, "%d: catch %s signal\n", getpid(), sys_siglist[sig]);
 }
 
 void	setup_signals(void)
@@ -138,18 +134,23 @@ void	setup_signals(void)
 	signal_controller(SIG_EXECUTION_MODE, 0, SIG_RETURN);
 }
 
-void	reset_signals(void)
+void	setup_heredoc_signals(void)
 {
-	signal(SIGINT, ignore_handler);
-	signal(SIGQUIT, SIG_DFL);
-	signal_controller(SIG_INTERACTIVE_MODE, 0, SIG_RETURN);
-	signal_controller(SIG_EXECUTION_MODE, 1, SIG_RETURN);
+	struct sigaction	sa;
+
+	sa.sa_handler = signal_handler;
+	sa.sa_flags = SA_RESTART;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGINT, &sa, NULL);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGTSTP, SIG_IGN);
 }
 
-void	reset_signals_child(void)
+void	reset_signals(void)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
+	signal(SIGTSTP, SIG_DFL);
 	signal_controller(SIG_INTERACTIVE_MODE, 0, SIG_RETURN);
 	signal_controller(SIG_EXECUTION_MODE, 1, SIG_RETURN);
 }

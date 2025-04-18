@@ -6,18 +6,26 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 17:31:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/18 09:56:35 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "minishell.h"
 
-static void	handle_cmd_execution(t_mini *mini, char **argv)
+void	execute_simple_command(t_mini *mini)
 {
+	char	**argv;
 	char	full_path[PATH_MAX];
 	int		err;
 
+	if (argv_expander2(mini) != 0)
+		return ;
+	if (handle_wildcards(mini) != 0)
+		return ;
+	argv = lst_2_argv(&mini->tokens);
+	if (!argv)
+		return ;
 	if (is_builtin(mini, argv[0]))
 		handle_builtin(mini, argv, 1);
 	err = get_full_path(mini->env, full_path, argv[0]);
@@ -29,27 +37,4 @@ static void	handle_cmd_execution(t_mini *mini, char **argv)
 	free_dptr(argv);
 	mini_clean(mini);
 	exit(err);
-}
-
-void	execute_simple_command(t_mini *mini)
-{
-	char		**argv;
-
-	if (argv_expander2(mini) != 0)
-	{
-		PRINT_ALLOCATE_ERROR;
-		return ;
-	}
-	if (handle_wildcards(mini) != 0)
-	{
-		PRINT_ALLOCATE_ERROR;
-		return ;
-	}
-	argv = lst_2_argv(&mini->tokens);
-	if (!argv)
-	{
-		PRINT_ALLOCATE_ERROR;
-		return ;
-	}
-	handle_cmd_execution(mini, argv);
 }
