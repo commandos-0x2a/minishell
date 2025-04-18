@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/18 09:42:21 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/18 14:32:23 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,7 @@ void	mini_clean(t_mini *mini)
 	if (mini->tokens)
 		lst_clean(&mini->tokens);	
 	if (mini->env)
-		lst_clean(&mini->env);
-	if (mini->ctx)
-		free(mini->ctx);	
+		lst_clean(&mini->env);	
 }
 
 char *get_prompt(void)

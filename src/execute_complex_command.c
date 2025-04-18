@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/18 10:41:10 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/18 14:27:47 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 	return (0);
 }
 
-static	void	exit_handler(t_mini *mini, int exit_status)
+void	exit_handler(t_mini *mini, int exit_status)
 {
 	mini_clean(mini);
 	if (g_sig != 0)

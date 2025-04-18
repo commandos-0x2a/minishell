@@ -55,6 +55,8 @@
 
 # define MAXLINE 4096
 
+// # define DEBUG
+
 typedef struct s_list
 {
 	char			*str;
@@ -66,8 +68,6 @@ typedef struct s_mini
 	t_list	*tokens;
 	t_list	*env;
 	int		exit_status;
-	void	*ctx;
-	int		is_interupted;
 }	t_mini;
 
 extern volatile int	g_sig;

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/18 10:59:22 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/18 14:32:14 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ static int	handle_chunk(t_mini *mini, char *limiter, int nbytes, int out_fd)
 	char	line[MAXLINE + 1];
 	ssize_t	bytes_read;
 	char	*line_expanded;
+	ssize_t	line_len;
 
 	bytes_read = read(STDIN_FILENO, line, nbytes);
 	if (bytes_read == -1)
@@ -50,7 +51,9 @@ static int	handle_chunk(t_mini *mini, char *limiter, int nbytes, int out_fd)
 	line_expanded = expand_str(mini, line);
 	if (!line_expanded)
 		return (-1);
-	write(out_fd, line_expanded, ft_strlen(line_expanded));
+	line_len = ft_strlen(line_expanded);
+	if (write(out_fd, line_expanded, line_len) != line_len)
+		return (-1);
 	free(line_expanded);
 	return (1);
 }
