@@ -29,7 +29,7 @@ static int	operation_type(char *str)
 
 static int	check_redirection_syntax(t_list *lst)
 {
-	if (!lst->next)
+	if (!lst->next || !lst->next->str)
 	{
 		ft_fprintf(2, PREFIX"syntax error near unexpected token `newline'\n");
 		return (0);
@@ -45,12 +45,7 @@ static int	check_redirection_syntax(t_list *lst)
 
 static int	check_pipe_or_logical_syntax(t_list *lst, t_list *prev_tokens)
 {
-	if (!lst->next || !lst->next->str)
-	{
-		ft_fprintf(2, PREFIX"syntax error near unexpected token `%s'\n", lst->str);
-		return (0);
-	}
-	if (!prev_tokens)
+	if (!lst->next || !lst->next->str || !prev_tokens || !prev_tokens->str)
 	{
 		ft_fprintf(2, PREFIX"syntax error near unexpected token `%s'\n", lst->str);
 		return (0);
@@ -69,27 +64,23 @@ static int	check_pipe_or_logical_syntax(t_list *lst, t_list *prev_tokens)
 int	check_syntax(t_list *lst)
 {
 	t_list	*prev_tokens;
+	int		op_type;
 
 	prev_tokens = NULL;
 	while (lst && lst->str)
 	{
-		if (ft_strcmp(lst->str, ">>") == 0 || \
-			ft_strcmp(lst->str, ">") == 0 || \
-			ft_strcmp(lst->str, "<<") == 0 || \
-			ft_strcmp(lst->str, "<") == 0)
+		op_type = operation_type(lst->str);
+		if (op_type == 1)
 		{
 			if (!check_redirection_syntax(lst))
 				return (0);
 		}
-		else if (ft_strcmp(lst->str, "|") == 0 || \
-				ft_strcmp(lst->str, "||") == 0 || \
-				ft_strcmp(lst->str, "&&") == 0)
+		else if (op_type == 2)
 		{
 			if (!check_pipe_or_logical_syntax(lst, prev_tokens))
 				return (0);
 		}
-		if (!prev_tokens)
-			prev_tokens = lst;
+		prev_tokens = lst;
 		lst = lst->next;
 	}
 	return (1);

@@ -23,6 +23,7 @@ FILES = builtins/builtins			\
 			utils/get_full_path		\
 			utils/ft_list			\
 			\
+			subshell				\
 			signals					\
 			str_expander			\
 			wait_children			\

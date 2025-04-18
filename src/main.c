@@ -26,6 +26,14 @@ void	mini_clean(t_mini *mini)
 		lst_clean(&mini->env);	
 }
 
+void	exit_handler(t_mini *mini, int exit_status)
+{
+	mini_clean(mini);
+	if (g_sig != 0)
+		exit(128 + g_sig);
+	exit(exit_status);
+}
+
 char *get_prompt(void)
 {
     static char prompt[PROMPT_MAX];

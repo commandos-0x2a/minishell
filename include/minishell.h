@@ -72,7 +72,13 @@ typedef struct s_mini
 
 extern volatile int	g_sig;
 
+/*  subshell  */
+void	run_subshell(t_mini *mini);
+int		is_subshell(t_list *lst);
+int		subshell_syntax(t_list *lst);
+
 void	mini_clean(t_mini *mini);
+void	exit_handler(t_mini *mini, int exit_status);
 
 
 /*  t_list  */

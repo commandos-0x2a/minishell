@@ -46,11 +46,6 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
 		return (-1);
-	kill(getpid(), SIGSTOP);
-	if (g_sig != 0)
-		return (-1);
-	reset_signals();
-
 	if (pipex_handler(is_pipe, in_fd, pipefds) != 0)
 		return (-1);
 	err = redirection_handler(mini, heredoc_fd, 1);
@@ -59,14 +54,6 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 	if (err != 0)
 		return (err);
 	return (0);
-}
-
-void	exit_handler(t_mini *mini, int exit_status)
-{
-	mini_clean(mini);
-	if (g_sig != 0)
-		exit(128 + g_sig);
-	exit(exit_status);
 }
 
 int	execute_complex_command(t_mini *mini, int in_fd, \
@@ -82,7 +69,11 @@ int	execute_complex_command(t_mini *mini, int in_fd, \
 		g_sig = 0;
 		if (handle_file_descriptor(mini, in_fd, pipefds, is_pipe) != 0)
 			exit_handler(mini, EXIT_FAILURE);
-		
+		if (is_subshell(mini->tokens) && subshell_syntax(mini->tokens) == 0)
+		{
+			ft_fprintf(2, PREFIX"syntax error near unexpected token `('\n");
+			exit_handler(mini, 2);
+		}
 		get_argv(&mini->tokens);
 		if (!mini->tokens)
 			exit_handler(mini, EXIT_FAILURE);
