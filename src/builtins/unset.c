@@ -6,13 +6,11 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 12:00:00 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/14 06:14:03 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/19 18:20:33 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void lst_remove_one(t_list **lst, t_list *prev);
 
 static void	remove_env_var(t_list **env, char *var_name)
 {
@@ -26,7 +24,7 @@ static void	remove_env_var(t_list **env, char *var_name)
 	while (cur && cur->str)
 	{
 		if (ft_strncmp(cur->str, var_name, name_len) == 0 && \
-			cur->str[name_len] == '=')
+						cur->str[name_len] == '=')
 		{
 			if (!prev)
 				lst_remove_one(env, prev);
@@ -34,6 +32,7 @@ static void	remove_env_var(t_list **env, char *var_name)
 				lst_remove_one(&cur, prev);
 			return ;
 		}
+		prev = cur;
 		cur = cur->next;
 	}
 }

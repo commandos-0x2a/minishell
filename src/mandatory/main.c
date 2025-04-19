@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/18 14:32:23 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/19 21:59:10 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 #include <stdio.h>
 #include <strings.h>
 #include <stdlib.h>
-
-volatile int	g_sig;
 
 void	mini_clean(t_mini *mini)
 {
@@ -57,6 +55,7 @@ int main()
 	// 	// fds not standard
 	// 	return (1);
 	// }
+	setup_signals2();
 	ft_bzero(&mini, sizeof(t_mini));
 	mini.env = copy_env_variables();
 	if (!mini.env)
@@ -69,13 +68,11 @@ int main()
 		setup_signals();
 		line = readline(get_prompt());
 		setup_signals2();
-	
 		if (!line) // ctrl-D handling
 		{
 			printf("\nexit\n");
 			break;
 		}
-		
 		if (*line)
 		{
 			add_history(line);
@@ -88,9 +85,7 @@ int main()
 				continue ;
 			}
 			if (check_syntax(mini.tokens))
-			{
-				flow_control(&mini);
-			}
+				pipeline_control(&mini);
 			lst_clean(&mini.tokens);
 		}
 	}

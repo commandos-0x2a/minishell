@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/18 14:32:14 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/19 21:40:06 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ static int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd)
 			return (0);
 		if (nbytes > 0)
 		{
-			PIPE_BUF;
 			if (nbytes > MAXLINE)
 				nbytes = MAXLINE;
 			err = handle_chunk(mini, limiter, nbytes, out_fd);

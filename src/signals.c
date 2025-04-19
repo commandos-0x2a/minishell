@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/18 10:02:09 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/19 21:47:52 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,95 +14,12 @@
 #include <signal.h>
 #include <termios.h>
 
-typedef enum e_signal_event
-{
-	SIG_HEREDOC_ACTIVE,
-	SIG_INTERACTIVE_MODE,
-	SIG_EXECUTION_MODE,
-	SIG_INT_HANDLER,
-	SIG_QUIT_HANDLER
-}	t_signal_event;
-
-typedef enum e_setter
-{
-	SIG_SET,
-	SIG_RETURN,
-}	t_setter;
-
-static int	handle_mode_events(t_signal_event event, int set_value, int is_setter)
-{
-	static int	heredoc_active = 0;
-	static int	interactive_mode = 0;
-	static int	execution_mode = 0;
-
-	if (event == SIG_HEREDOC_ACTIVE)
-	{
-		if (is_setter)
-			heredoc_active = set_value;
-		return (heredoc_active);
-	}
-	else if (event == SIG_INTERACTIVE_MODE)
-	{
-		if (is_setter)
-			interactive_mode = set_value;
-		return (interactive_mode);
-	}
-	else if (event == SIG_EXECUTION_MODE)
-	{
-		if (is_setter)
-			execution_mode = set_value;
-		return (execution_mode);
-	}
-	return (0);
-}
-
-static int	handle_handler_events(t_signal_event event, int is_setter)
-{
-	static struct sigaction	old_int;
-	static struct sigaction	old_quit;
-
-	if (event == SIG_INT_HANDLER)
-	{
-		if (is_setter)
-			return (sigaction(SIGINT, NULL, &old_int));
-		return (sigaction(SIGINT, &old_int, NULL));
-	}
-	else if (event == SIG_QUIT_HANDLER)
-	{
-		if (is_setter)
-			return (sigaction(SIGQUIT, NULL, &old_quit));
-		return (sigaction(SIGQUIT, &old_quit, NULL));
-	}
-	return (0);
-}
-
-static int	signal_controller(t_signal_event event, int set_value, int is_setter)
-{
-	if (event <= SIG_EXECUTION_MODE)
-		return (handle_mode_events(event, set_value, is_setter));
-	else
-		return (handle_handler_events(event, is_setter));
-}
-
-void	save_signal_handlers(void)
-{
-	signal_controller(SIG_INT_HANDLER, 0, 1);
-	signal_controller(SIG_QUIT_HANDLER, 0, 1);
-}
-
-void	restore_signal_handlers(void)
-{
-	signal_controller(SIG_INT_HANDLER, 0, SIG_SET);
-	signal_controller(SIG_QUIT_HANDLER, 0, SIG_SET);
-}
-
-
+volatile int	g_sig;
 
 static void	restore_prompt(int sig)
 {
 	g_sig = sig;
-	fprintf(stderr, "(%d)\n", getpid());
-	// write(STDOUT_FILENO, "\n", 1);
+	write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
 #ifdef __linux__
 	rl_replace_line("", 1);
@@ -144,6 +61,4 @@ void	reset_signals(void)
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGTSTP, SIG_DFL);
-	signal_controller(SIG_INTERACTIVE_MODE, 0, SIG_RETURN);
-	signal_controller(SIG_EXECUTION_MODE, 1, SIG_RETURN);
 }

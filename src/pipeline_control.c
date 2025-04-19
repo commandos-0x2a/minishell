@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/19 12:11:46 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 01:56:59 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static int	run_builtin_command(t_mini *mini)
 	if builtin run return 0 and stored exit status in mini.exit_status
 	if syscall fail return -1
 	return child_pid 
-	<< 1 cat | << 2 cat | << 3 cat
+	<< 1 cat | << 2 cat | << 3 cat | << 4 cat | << 5 cat
 */
 static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 {
@@ -93,8 +93,11 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 	{
 		lst_move2next(&mini->tokens);
 		victim[1] = pipeline_control_iter(mini, pipefds[0], is_pipe);
+		if (victim[1] == -1)
+			kill(victim[0], SIGKILL);
+		else
+			kill(victim[0], SIGCONT);
 		close(pipefds[0]);
-		kill(victim[0], SIGCONT);
 		return (victim[1]);
 	}
 	kill(victim[0], SIGCONT);

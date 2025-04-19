@@ -6,11 +6,26 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 17:59:57 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 22:32:27 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/19 18:20:38 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	lst_remove_one(t_list **lst, t_list *prev)
+{
+	t_list	*cur;
+
+	if (!*lst)
+		return ;
+	cur = *lst;
+	if (prev)
+		prev->next = cur->next;
+	*lst = cur->next;
+	if (cur->str)
+		free(cur->str);
+	free(cur);
+}
 
 void	*lst_clean(t_list **lst)
 {

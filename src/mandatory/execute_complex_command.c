@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/19 01:41:01 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 00:11:19 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,18 @@ static int	pipex_handler(int is_pipe, int in_fd, int pipefds[2])
 	return (0);
 }
 
+static int	stop_process(void)
+{
+	if (g_sig != 0)
+		return (-1);
+	if (kill(getpid(), SIGSTOP) == -1)
+		return (-1);
+	if (g_sig != 0)
+		return (-1);
+	reset_signals();
+	return (0);
+}
+
 static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 									int pipefds[2], int is_pipe)
 {
@@ -45,6 +57,8 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
+		return (-1);
+	if (stop_process() != 0)
 		return (-1);
 	if (pipex_handler(is_pipe, in_fd, pipefds) != 0)
 		return (-1);
@@ -69,11 +83,6 @@ int	execute_complex_command(t_mini *mini, int in_fd, \
 		g_sig = 0;
 		if (handle_file_descriptor(mini, in_fd, pipefds, is_pipe) != 0)
 			exit_handler(mini, EXIT_FAILURE);
-		if (is_subshell(mini->tokens) && subshell_syntax(mini->tokens) == 0)
-		{
-			ft_fprintf(2, PREFIX"syntax error near unexpected token `('\n");
-			exit_handler(mini, 2);
-		}
 		get_argv(&mini->tokens);
 		if (!mini->tokens)
 			exit_handler(mini, EXIT_FAILURE);

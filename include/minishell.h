@@ -87,6 +87,8 @@ void	*lst_move2next(t_list **lst);
 void	*lst_clean(t_list **lst);
 char	**lst_2_argv(t_list **lst);
 char	**lst_2_dptr(t_list *lst);
+void	lst_remove_one(t_list **lst, t_list *prev);
+
 
 /*  tokenizer  */
 char	*add_space_to_line(const char *s);
