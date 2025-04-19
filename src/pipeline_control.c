@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/18 10:44:07 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/19 12:11:46 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 	if (!mini->tokens || !mini->tokens->str)
 		return (0);
 	set_null_token(mini->tokens, &is_pipe);
-	if (is_pipe == 0 && is_builtin(mini, get_argv0(mini->tokens)))
+	if (is_pipe == 0 && is_builtin(mini, get_argv0(mini->tokens), 1))
 		return (run_builtin_command(mini));
 
 	if ((is_pipe & IS_NEXT_PIPE) && pipe(pipefds) == -1)

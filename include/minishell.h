@@ -102,6 +102,7 @@ char	**expand_str(t_mini *mini, char *str);
 char	*expand_env(t_mini *mini, char *str);
 char 	**expand_wildcard(char *pattern);
 int		expand_tokens(t_mini *mini, t_list *lst);
+t_list	*expand_tokens_2lst(t_mini *mini, const char *str);
 char	*remove_qouts(char *str);
 
 
@@ -133,7 +134,7 @@ char	*ft_getenv(t_list *env, const char *name);
 
 /*  built-in commands  */
 int		handle_builtin(t_mini *mini, char **argv, int _exit);
-int		is_builtin(t_mini *mini, char *cmd);
+int		is_builtin(t_mini *mini, const char *cmd, int expand);
 int		ft_cd(t_mini *mini, char **argv);
 int		ft_echo(char **argv);
 int		ft_pwd(char **argv);

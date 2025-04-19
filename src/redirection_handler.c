@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_handler.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/14 15:43:09 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/19 12:05:33 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,23 +16,9 @@ static int	is_ambiguous(t_mini *mini, char **filename_r)
 {
 	t_list	*lst;
 
-	lst = ft_calloc(1, sizeof(*lst));
+	lst = expand_tokens_2lst(mini, *filename_r);
 	if (!lst)
-	{
-		PRINT_ALLOCATE_ERROR;
 		return (-1);
-	}
-	lst->str = ft_strdup(*filename_r);
-	if (!lst->str)
-	{
-		lst_clean(&lst);
-		return (-1);
-	}
-	if (expand_tokens(mini, lst) != 0)
-	{
-		lst_clean(&lst);
-		return (-1);
-	}
 	if (!lst->str || (lst->next && lst->next->str))
 	{
 		lst_clean(&lst);

@@ -6,41 +6,57 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/17 18:02:01 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/19 12:11:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+
+static int	check_builtin(const char *cmd)
+{
+	if (!cmd)
+		return (0);
+	if (ft_strcmp(cmd, "cd") == 0 || \
+		ft_strcmp(cmd, "exit") == 0 || \
+		ft_strcmp(cmd, "export") == 0 || \
+		ft_strcmp(cmd, "unset") == 0 ||	\
+		ft_strcmp(cmd, "echo") == 0 || \
+		ft_strcmp(cmd, "pwd") == 0 || \
+		ft_strcmp(cmd, "env") == 0)
+	{
+		return (1);
+	}
+	return (0);
+}
+
 /*
 * Regular built-ins can run in child process (output only)
 * Shell built-ins must run in parent process (modify shell state)
 */
-int	is_builtin(t_mini *mini, char *cmd)
+int	is_builtin(t_mini *mini, const char *cmd, int expand)
 {
-	char	**slices;
+	int		test;
+	t_list	*lst;
 
 	if (!cmd)
 		return (0);
-	slices = expand_str(mini, cmd);
-	if (!slices || !*slices)
+	if (expand)
 	{
-		free_dptr(slices);
-		return (-1);
-	}
-	if (ft_strcmp(*slices, "cd") == 0 || \
-		ft_strcmp(*slices, "exit") == 0 || \
-		ft_strcmp(*slices, "export") == 0 || \
-		ft_strcmp(*slices, "unset") == 0 ||	\
-		ft_strcmp(*slices, "echo") == 0 || \
-		ft_strcmp(*slices, "pwd") == 0 || \
-		ft_strcmp(*slices, "env") == 0)
+		lst = expand_tokens_2lst(mini, cmd);
+		if (!lst)
+			return (-1);
+		if (!lst->str)
 		{
-			free_dptr(slices);
-			return (1);
+			lst_clean(&lst);
+			return (0);
 		}
-	free_dptr(slices);
-	return (0);
+		test = check_builtin(lst->str);
+		lst_clean(&lst);
+	}
+	else
+		test = check_builtin(cmd);
+	return (test);
 }
 
 int	handle_builtin(t_mini *mini, char **argv, int _exit)

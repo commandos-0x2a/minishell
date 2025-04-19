@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   str_expander.c                                     :+:      :+:    :+:   */
+/*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/14 22:26:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/19 12:03:53 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,4 +204,25 @@ int	expand_tokens(t_mini *mini, t_list *lst)
 		}
 	}
 	return (0);
+}
+
+t_list	*expand_tokens_2lst(t_mini *mini, const char *str)
+{
+	t_list	*lst;
+
+	lst = ft_calloc(1, sizeof(*lst));
+	if (!lst)
+		return (NULL);
+	lst->str = ft_strdup(str);
+	if (!lst->str)
+	{
+		lst_clean(&lst);
+		return (NULL);
+	}
+	if (expand_tokens(mini, lst) != 0)
+	{
+		lst_clean(&lst);
+		return (NULL);
+	}
+	return (lst);
 }
