@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/20 18:07:18 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 18:59:40 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ static int	run_builtin_command(t_mini *mini)
 	if builtin run return 0 and stored exit status in mini.exit_status
 	if syscall fail return -1
 	return child_pid 
+	valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline_curses.supp ./minishell
 	<< 1 cat | << 2 cat | << 3 cat | << 4 cat | << 5 cat
 */
 static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)

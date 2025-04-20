@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 17:47:06 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/20 02:10:34 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 18:15:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	wait_child_stop(pid_t victim)
 	return (get_process_status(wstatus, victim));
 }
 
-int	wait_children(int target_pid)
+int	wait_children(pid_t victim)
 {
 	int	wstatus;
 	int	status;
@@ -78,7 +78,7 @@ int	wait_children(int target_pid)
 	while (child_pid != -1)
 	{
 		status = get_process_status(wstatus, child_pid);
-		if (child_pid == target_pid)
+		if (child_pid == victim)
 			ret_status = status;
 		child_pid = waitpid(WAIT_ANY, &wstatus, WUNTRACED);
 	}

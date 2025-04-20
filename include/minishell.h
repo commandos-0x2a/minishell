@@ -115,7 +115,7 @@ void	execute_simple_command(t_mini *mini);
 int		check_syntax(t_list *lst);
 
 /*  Wait children  */
-int		wait_children(int target_pid);
+int		wait_children(pid_t victim);
 int		wait_child_stop(pid_t victim);
 
 /*  redirection handling  */
