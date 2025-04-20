@@ -90,7 +90,7 @@ char	**lst_2_dptr(t_list *lst);
 void	lst_remove_one(t_list **lst, t_list *prev);
 
 /*  tokenizer  */
-char	*add_space_to_line(const char *s);
+char	*expand_line(const char *s);
 t_list	*tokenizer(char *s);
 
 /*  argv  */

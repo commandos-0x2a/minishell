@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/16 17:21:12 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 20:16:53 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ t_list	*tokenizer(char *s)
 	char	*expand_str;
 	t_list	*tokens;
 
-	expand_str = add_space_to_line(s);
+	expand_str = expand_line(s);
 	if (!expand_str)
 		return (NULL);
 	tokens = tokenizer_iter(expand_str, 0);

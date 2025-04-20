@@ -35,7 +35,7 @@ FILES = builtins/builtins			\
 			tokenizer				\
 #
 M_FILES = \
-			mandatory/add_space_to_line			\
+			mandatory/expand_line				\
 			mandatory/execute_simple_command	\
 			mandatory/here_doc					\
 			mandatory/expander					\
@@ -44,7 +44,7 @@ M_FILES = \
 			mandatory/execute_complex_command	\
 #
 B_FILES = \
-			bonus/add_space_to_line			\
+			bonus/expand_line				\
 			bonus/check_syntax				\
 			bonus/execute_complex_command	\
 			bonus/execute_simple_command	\
