@@ -108,31 +108,31 @@ static int	out_redirection(t_mini *mini, char *token, int change_std)
 
 int	redirection_handler(t_mini *mini, int heredoc_fd, int change_std)
 {
-	int		status;
+	int		err;
 	t_list	*lst;
 	
 	lst = mini->tokens;
-	status = 0;
+	err = 0;
 	while (lst && lst->str)
 	{
 		if (ft_strcmp(lst->str, "<<") == 0)
 		{
 			if (heredoc_fd > 0 && change_std)
-				status = dup2(heredoc_fd, STDIN_FILENO);
+				err = dup2(heredoc_fd, STDIN_FILENO);
 		}
 		else if (ft_strcmp(lst->str, "<") == 0)
-			status = in_redirection(mini, lst->next->str, change_std);
+			err = in_redirection(mini, lst->next->str, change_std);
 		else if (ft_strcmp(lst->str, ">>") == 0)
-			status = out_append(mini, lst->next->str, change_std);
+			err = out_append(mini, lst->next->str, change_std);
 		else if (ft_strcmp(lst->str, ">") == 0)
-			status = out_redirection(mini, lst->next->str, change_std);
+			err = out_redirection(mini, lst->next->str, change_std);
 		else
 		{
 			lst = lst->next;
 			continue ;
 		}
-		if (status != 0)
-			return (status);
+		if (err != 0)
+			return (err);
 		lst = lst->next->next;
 	}
 	return (0);

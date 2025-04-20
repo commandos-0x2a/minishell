@@ -33,26 +33,23 @@ FILES = builtins/builtins			\
  			pipeline_control		\
 			redirection_handler		\
 			tokenizer				\
+			heredoc					\
 #
-M_FILES = \
-			mandatory/expand_line				\
-			mandatory/execute_simple_command	\
-			mandatory/here_doc					\
-			mandatory/expander					\
-			mandatory/check_syntax				\
-			mandatory/main						\
+M_FILES =	mandatory/main						\
 			mandatory/execute_complex_command	\
+			mandatory/execute_simple_command	\
+			mandatory/check_syntax				\
+			mandatory/expand_line				\
+			mandatory/expander					\
 #
-B_FILES = \
-			bonus/expand_line				\
-			bonus/check_syntax				\
+B_FILES =	bonus/main						\
 			bonus/execute_complex_command	\
 			bonus/execute_simple_command	\
-			bonus/expand_wildcard			\
+			bonus/check_syntax				\
+			bonus/expand_line				\
 			bonus/expander					\
+			bonus/expand_wildcard			\
  			bonus/flow_control				\
-			bonus/here_doc					\
-			bonus/main						\
 			bonus/subshell					\
 #
 

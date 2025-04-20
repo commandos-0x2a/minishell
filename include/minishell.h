@@ -26,10 +26,6 @@
 # include <stdio.h>
 # ifdef __linux__
 #  include <linux/limits.h>
-// #  include <bits/termios-c_lflag.h>
-// #  include <asm-generic/termbits.h>
-// #  include <bits/sigaction.h>
-// #  include <asm-generic/signal-defs.h>
 # else
 #  include <limits.h>
 # endif

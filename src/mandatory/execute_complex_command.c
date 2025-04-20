@@ -57,10 +57,16 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
+	{
+		if (is_pipe & IS_PREV_PIPE)
+			close(in_fd);
+		if (is_pipe & IS_NEXT_PIPE)
+			close(pipefds[1]);
+		return (-1);
+	}
+	if (pipex_handler(is_pipe, in_fd, pipefds) != 0)
 		return (-1);
 	if (stop_process() != 0)
-		return (-1);
-	if (pipex_handler(is_pipe, in_fd, pipefds) != 0)
 		return (-1);
 	err = redirection_handler(mini, heredoc_fd, 1);
 	if (heredoc_fd > 0)
@@ -92,7 +98,5 @@ int	execute_complex_command(t_mini *mini, int in_fd, \
 	}
 	if (is_pipe & IS_NEXT_PIPE)
 		close(pipefds[1]);
-	if (is_pipe & IS_PREV_PIPE)
-		close(in_fd);
 	return (pid);
 }

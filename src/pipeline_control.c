@@ -73,11 +73,7 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 		return (run_builtin_command(mini));
 
 	if ((is_pipe & IS_NEXT_PIPE) && pipe(pipefds) == -1)
-	{
-		if (is_pipe & IS_PREV_PIPE)
-			close(in_fd);
 		return (-1);
-	}
 
 	victim[0] = execute_complex_command(mini, in_fd, pipefds, is_pipe);
 	if (victim[0] == -1)
