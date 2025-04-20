@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/19 19:20:00 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 11:37:51 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	execute_simple_command(t_mini *mini)
 		run_subshell(mini);
 	if (expand_tokens(mini, mini->tokens) != 0)
 		return ;
-	argv = lst_2_argv(&mini->tokens);
+	argv = lst_2_argv(&mini->tokens, 1);
 	if (!argv)
 		return ;
 	if (is_builtin(mini, argv[0], 0))

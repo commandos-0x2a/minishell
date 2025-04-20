@@ -6,13 +6,13 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 19:32:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/19 12:22:38 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 11:36:48 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**lst_2_argv(t_list **lst)
+char	**lst_2_argv(t_list **lst, int flcean)
 {
 	char		**argv;
 	t_list		*current;
@@ -22,13 +22,14 @@ char	**lst_2_argv(t_list **lst)
 	_i = i++;
 	if (!*lst || !(*lst)->str)
 	{
-		lst_clean(lst);
+		if (flcean)
+			lst_clean(lst);
 		i = 0;
 		return (ft_calloc(_i + 1, sizeof(char *)));
 	}
 	current = *lst;
 	*lst = (*lst)->next;
-	argv = lst_2_argv(lst);
+	argv = lst_2_argv(lst, flcean);
 	if (!argv)
 		free(current->str);
 	else

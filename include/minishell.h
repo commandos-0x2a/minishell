@@ -46,8 +46,7 @@
 
 # define HOSTNAME_MAX 64
 # define USERNAME_MAX 32
-# define PATH_MAX_LEN 3000
-# define PROMPT_MAX (HOSTNAME_MAX + USERNAME_MAX + PATH_MAX_LEN + 10)
+# define PROMPT_MAX (HOSTNAME_MAX + USERNAME_MAX + PATH_MAX + 10)
 
 // Define maximum sizes for config values
 # define MAX_PROMPT_STYLE 32
@@ -55,7 +54,9 @@
 
 # define MAXLINE 4096
 
-// # define DEBUG
+# define IS_NEXT_PIPE	0b01
+# define IS_PREV_PIPE	0b10
+# define IS_PIPE_MASK	0b11
 
 typedef struct s_list
 {
@@ -72,23 +73,21 @@ typedef struct s_mini
 
 extern volatile int	g_sig;
 
-/*  subshell  */
-void	run_subshell(t_mini *mini);
-int		is_subshell(t_list *lst);
-int		subshell_syntax(t_list *lst);
-
 void	mini_clean(t_mini *mini);
 void	exit_handler(t_mini *mini, int exit_status);
 
+/*  subshell  */
+int		is_subshell(t_list *lst);
+int		subshell_syntax(t_list *lst);
+void	run_subshell(t_mini *mini);
 
 /*  t_list  */
 t_list	*lst_expand(t_list *lst, char **slices);
 void	*lst_move2next(t_list **lst);
 void	*lst_clean(t_list **lst);
-char	**lst_2_argv(t_list **lst);
+char	**lst_2_argv(t_list **lst, int flcean);
 char	**lst_2_dptr(t_list *lst);
 void	lst_remove_one(t_list **lst, t_list *prev);
-
 
 /*  tokenizer  */
 char	*add_space_to_line(const char *s);
@@ -107,15 +106,10 @@ int		expand_tokens(t_mini *mini, t_list *lst);
 t_list	*expand_tokens_2lst(t_mini *mini, const char *str);
 char	*remove_qouts(char *str);
 
-
-# define IS_NEXT_PIPE	0b01
-# define IS_PREV_PIPE	0b10
-# define IS_PIPE_MASK	0b11
-
 /*  execution  */
 int		flow_control(t_mini *mini);
-int	pipeline_control(t_mini *mini);
-int	execute_complex_command(t_mini *mini, int in_fd, \
+int		pipeline_control(t_mini *mini);
+int		execute_complex_command(t_mini *mini, int in_fd, \
 							int pipefds[2], int is_pipe);
 void	execute_simple_command(t_mini *mini);
 int		check_syntax(t_list *lst);
@@ -124,15 +118,13 @@ int		check_syntax(t_list *lst);
 int		wait_children(int target_pid);
 int		wait_child_stop(pid_t victim);
 
-
 /*  redirection handling  */
-int	redirection_handler(t_mini *mini, int heredoc_fd, int change_std);
-int	heredoc_forever(t_mini *mini, t_list *lst);
+int		redirection_handler(t_mini *mini, int heredoc_fd, int change_std);
+int		heredoc_forever(t_mini *mini, t_list *lst);
 
 /*  environment variables  */
 t_list	*copy_env_variables(void);
 char	*ft_getenv(t_list *env, const char *name);
-
 
 /*  built-in commands  */
 int		handle_builtin(t_mini *mini, char **argv, int _exit);
@@ -147,11 +139,6 @@ int		ft_export(t_mini *mini, char **argv);
 int		ft_unset(t_mini *mini, char **argv);
 
 /* signal handling functions */
-int		heredoc_is_active(void);
-void	set_heredoc_active(int active);
-void	save_signal_handlers(void);
-void	restore_signal_handlers(void);
-
 void	setup_signals(void);
 void	setup_signals2(void);
 void	reset_signals(void);

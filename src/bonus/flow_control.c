@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 02:19:13 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/17 19:00:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 11:59:50 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	flow_control(t_mini *mini)
 {
 	int			op;
 	int			test;
-
+	
 	test = 1;
 	while (mini->tokens && mini->tokens->str)
 	{
@@ -45,12 +45,16 @@ int	flow_control(t_mini *mini)
 		{
 			if (pipeline_control(mini) == -1)
 				return (-1);
-			test = !mini->exit_status;
-			if (op == 2)
-				test = !test;
+			
+			if (op == 1)
+				test = !mini->exit_status;
+			else if (op == 2)
+				test = mini->exit_status;
 		}
 		if (op == 0)
 			break ;
+		if (op == 2)
+			test = !test;
 		lst_move2next(&mini->tokens);
 	}
 	return (0);

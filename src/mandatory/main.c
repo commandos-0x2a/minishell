@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/19 21:59:10 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 02:09:04 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,12 @@ void	exit_handler(t_mini *mini, int exit_status)
 char *get_prompt(void)
 {
     static char prompt[PROMPT_MAX];
-    char cwd[PATH_MAX_LEN];
+    char cwd[PATH_MAX];
 
     if (getcwd(cwd, sizeof(cwd)) == NULL)
         strcpy(cwd, "~");
 
-    cwd[PATH_MAX_LEN - 1] = '\0';
+    cwd[PATH_MAX - 1] = '\0';
     snprintf(prompt, PROMPT_MAX, "%s$ ", cwd);
     return (prompt);
 }

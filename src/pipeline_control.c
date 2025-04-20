@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/20 01:56:59 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 11:37:01 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static int	run_builtin_command(t_mini *mini)
 	get_argv(&mini->tokens);
 	if (expand_tokens(mini, mini->tokens) != 0)
 		return (PRINT_ALLOCATE_ERROR, -1);
-	argv = lst_2_argv(&mini->tokens);
+	argv = lst_2_argv(&mini->tokens, 0);
 	if (!argv)
 		return (PRINT_ALLOCATE_ERROR, -1);
 	mini->exit_status = handle_builtin(mini, argv, 0);
