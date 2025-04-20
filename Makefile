@@ -1,4 +1,5 @@
 NAME		= minishell
+B_NAME		= minishell_bonus
 
 CC			= cc
 LDFLAGS		= -L./libft -lft -lreadline -lncurses
@@ -7,6 +8,10 @@ CPPFLAGS	= -I./libft/include -I./include
 
 SRCDIR = src
 OBJDIR = build
+
+ifeq ($(DEBUG), 1)
+CFLAGS += -DDEBUG
+endif
 
 FILES = builtins/builtins			\
 			builtins/cd				\
@@ -21,34 +26,52 @@ FILES = builtins/builtins			\
 			utils/ft_getenv			\
 			utils/ft_setenv			\
 			utils/get_full_path		\
-			utils/signals			\
-			utils/ft_list				\
-			str_expander			\
+			utils/ft_list			\
+			signals					\
 			wait_children			\
-			here_doc				\
 			get_argv				\
-			get_argv0				\
-			add_space_to_line		\
- 			flow_control			\
  			pipeline_control		\
-			execute_complex_command	\
-			execute_simple_command	\
 			redirection_handler		\
-			main					\
-			wildcard				\
 			tokenizer				\
-			check_syntax			\
+#
+M_FILES = \
+			mandatory/add_space_to_line			\
+			mandatory/execute_simple_command	\
+			mandatory/here_doc					\
+			mandatory/expander					\
+			mandatory/check_syntax				\
+			mandatory/main						\
+			mandatory/execute_complex_command	\
+#
+B_FILES = \
+			bonus/add_space_to_line			\
+			bonus/check_syntax				\
+			bonus/execute_complex_command	\
+			bonus/execute_simple_command	\
+			bonus/expand_wildcard			\
+			bonus/expander					\
+ 			bonus/flow_control				\
+			bonus/here_doc					\
+			bonus/main						\
+			bonus/subshell					\
 #
 
-OBJECTS 			= $(FILES:%=$(OBJDIR)/%.o)
+OBJECTS = $(FILES:%=$(OBJDIR)/%.o)
+M_OBJECTS = $(M_FILES:%=$(OBJDIR)/%.o)
+B_OBJECTS = $(B_FILES:%=$(OBJDIR)/%.o)
 
 all: libft $(NAME)
+
+bonus: libft $(B_NAME)
 
 libft:
 	@$(MAKE) -C libft
 
-$(NAME): $(OBJECTS) libft/libft.a
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+$(NAME): $(M_OBJECTS) $(OBJECTS) libft/libft.a
+	$(CC) $(M_OBJECTS) $(OBJECTS) $(LDFLAGS) -o $@
+
+$(B_NAME): $(B_OBJECTS) $(OBJECTS) libft/libft.a
+	$(CC) $(B_OBJECTS) $(OBJECTS) $(LDFLAGS) -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(dir $@)
@@ -56,10 +79,10 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 clean:
 #	$(MAKE) -C libft clean
-	rm -f $(OBJECTS)
+	rm -f $(M_OBJECTS) $(OBJECTS) $(B_OBJECTS)
 
 fclean: clean
-	rm -f $(NAME)
+	rm -f $(NAME) $(B_NAME)
 
 re: fclean all
 

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 21:05:57 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/21 12:39:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/19 12:16:57 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,13 @@
 
 int	ft_pwd(char **argv)
 {
-	char	cwd[PATH_MAX_LEN];
+	char	cwd[PATH_MAX];
 
-	(void)argv;
+	if (argv[0] && argv[1])
+	{
+		ft_fprintf(2, "pwd: too many arguments\n");
+		return (1);
+	}
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 	{
 		ft_fprintf(2, "minishell: pwd: %s\n", strerror(errno));

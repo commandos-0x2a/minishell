@@ -6,75 +6,82 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/16 18:43:50 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 01:53:58 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "get_next_line.h"
-
-/*
-** Handles EOF (end of file) during heredoc input
-*/
-static int	handle_heredoc_eof(char *limiter)
-{
-	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
-		ft_fprintf(2, "\n" PREFIX ": warning: here-document delimited by "
-			"end-of-file (wanted `%s`)\n", limiter);
-	return (1);
-}
+#include <sys/ioctl.h>
 
 /*
 ** Processes a line read during heredoc input
 ** Returns 1 if limiter is matched, 0 to continue, -1 on error
 */
-static int	process_heredoc_line(t_mini *mini, char *line, char *limiter,
-		int out_fd)
+static int	line_cmp(char *line, char *limiter)
 {
-	char	*line_expand;
 	size_t	limiter_len;
 
-	limiter_len = ft_strlen(limiter);
-	if (ft_strncmp(line, limiter, limiter_len) == 0
-		&& (line[limiter_len] == '\n' || line[limiter_len] == '\0'))
+	if (!*line)
 	{
-		free(line);
-		return (1);
+		ft_fprintf(2, "\n" PREFIX ": warning: here-document delimited by "
+			"end-of-file (wanted `%s`)\n", limiter);
+		return (0);
 	}
-	line_expand = expand_str(mini, line);
-	free(line);
-	if (!line_expand)
+	limiter_len = ft_strlen(limiter);
+	if (ft_strncmp(line, limiter, limiter_len) == 0 \
+		&& (line[limiter_len] == '\n' || line[limiter_len] == '\0'))
+		return (0);
+	return (1);
+}
+
+static int	handle_chunk(t_mini *mini, char *limiter, int nbytes, int out_fd)
+{
+	char	line[MAXLINE + 1];
+	ssize_t	bytes_read;
+	char	*line_expanded;
+	ssize_t	line_len;
+
+	bytes_read = read(STDIN_FILENO, line, nbytes);
+	if (bytes_read == -1)
 		return (-1);
-	write(out_fd, line_expand, ft_strlen(line_expand));
-	free(line_expand);
-	return (0);
+	line[bytes_read] = '\0';
+	if (line_cmp(line, limiter) == 0)
+		return (0);
+	line_expanded = expand_env(mini, line);
+	if (!line_expanded)
+		return (-1);
+	line_len = ft_strlen(line_expanded);
+	if (write(out_fd, line_expanded, line_len) != line_len)
+		return (-1);
+	free(line_expanded);
+	return (1);
 }
 
 /*
 ** Main heredoc reading function
 ** Handles input for a heredoc until delimiter is reached
 */
-int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd)
+static int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd)
 {
-	char	*line;
-	int		process_result;
+	int		err;
+	int		nbytes;
 
+	write(STDOUT_FILENO, "> ", 2);
 	while (1)
 	{
-		if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
+		if (ioctl(STDIN_FILENO, FIONREAD, &nbytes) == -1)
+			return (-1);
+		if (g_sig != 0)
+			return (0);
+		if (nbytes > 0)
+		{
+			if (nbytes > MAXLINE)
+				nbytes = MAXLINE;
+			err = handle_chunk(mini, limiter, nbytes, out_fd);
+			if (err <= 0)
+				return (err);
 			write(STDOUT_FILENO, "> ", 2);
-		line = get_next_line(STDIN_FILENO);
-		if (!line)
-		{
-			handle_heredoc_eof(limiter);
-			break ;
-		}
-		process_result = process_heredoc_line(mini, line, limiter, out_fd);
-		if (process_result != 0)
-		{
-			if (process_result < 0)
-				return (-1);
-			break ;
 		}
 	}
 	return (0);
@@ -98,7 +105,8 @@ int	heredoc_forever(t_mini *mini, t_list *lst)
 				close(fd);
 			if (pipe(pipefd) == -1)
 				return (-1);
-			if (heredoc_start_read(mini, lst->str, pipefd[1]) != 0)
+			if (heredoc_start_read(mini, lst->str, pipefd[1]) != 0 \
+									|| g_sig != 0)
 			{
 				close(pipefd[0]);
 				close(pipefd[1]);

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/17 22:26:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 18:07:18 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,9 @@ static int	run_builtin_command(t_mini *mini)
 	if (heredoc_fd > 0)
 		close(heredoc_fd);
 	get_argv(&mini->tokens);
-	if (argv_expander2(mini) != 0)
+	if (expand_tokens(mini, mini->tokens) != 0)
 		return (PRINT_ALLOCATE_ERROR, -1);
-	if (handle_wildcards(mini) != 0)
-		return (PRINT_ALLOCATE_ERROR, -1);
-	argv = lst_2_argv(&mini->tokens);
+	argv = lst_2_argv(&mini->tokens, 0);
 	if (!argv)
 		return (PRINT_ALLOCATE_ERROR, -1);
 	mini->exit_status = handle_builtin(mini, argv, 0);
@@ -60,7 +58,7 @@ static int	run_builtin_command(t_mini *mini)
 	if builtin run return 0 and stored exit status in mini.exit_status
 	if syscall fail return -1
 	return child_pid 
-	<< 1 cat | << 2 cat | << 3 cat
+	<< 1 cat | << 2 cat | << 3 cat | << 4 cat | << 5 cat
 */
 static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 {
@@ -70,7 +68,7 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 	if (!mini->tokens || !mini->tokens->str)
 		return (0);
 	set_null_token(mini->tokens, &is_pipe);
-	if (is_pipe == 0 && is_builtin(mini, get_argv0(mini->tokens)))
+	if (is_pipe == 0 && is_builtin(mini, get_argv0(mini->tokens), 1))
 		return (run_builtin_command(mini));
 
 	if ((is_pipe & IS_NEXT_PIPE) && pipe(pipefds) == -1)
@@ -85,18 +83,21 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 	}
 	mini->exit_status = wait_child_stop(victim[0]);
 	if (mini->exit_status != 128 + SIGSTOP)
+	{
+		if (is_pipe & IS_NEXT_PIPE)
+			close(pipefds[0]);
 		return (-2);
+	}
+
 	if (is_pipe & IS_NEXT_PIPE)
 	{
 		lst_move2next(&mini->tokens);
 		victim[1] = pipeline_control_iter(mini, pipefds[0], is_pipe);
-		if (victim[1] < 0)
-		{
-			close(pipefds[0]);
+		if (victim[1] == -1)
 			kill(victim[0], SIGKILL);
-			return (victim[1]);
-		}
-		kill(victim[0], SIGCONT);
+		else
+			kill(victim[0], SIGCONT);
+		close(pipefds[0]);
 		return (victim[1]);
 	}
 	kill(victim[0], SIGCONT);

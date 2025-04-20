@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/17 23:20:47 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 18:08:19 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,37 +16,34 @@
 #include <strings.h>
 #include <stdlib.h>
 
-volatile int	g_status;
-
 void	mini_clean(t_mini *mini)
 {
 	if (mini->tokens)
 		lst_clean(&mini->tokens);	
 	if (mini->env)
-		lst_clean(&mini->env);
-	if (mini->ctx)
-		free(mini->ctx);	
+		lst_clean(&mini->env);	
 }
 
-void handle_line(char *line)
+void	exit_handler(t_mini *mini, int exit_status)
 {
-	if (line && *line)
-		add_history(line);
+	mini_clean(mini);
+	if (g_sig != 0)
+		exit(128 + g_sig);
+	exit(exit_status);
 }
 
 char *get_prompt(void)
 {
     static char prompt[PROMPT_MAX];
-    char cwd[PATH_MAX_LEN];
+    char cwd[PATH_MAX];
 
     if (getcwd(cwd, sizeof(cwd)) == NULL)
         strcpy(cwd, "~");
 
-    cwd[PATH_MAX_LEN - 1] = '\0';
+    cwd[PATH_MAX - 1] = '\0';
     snprintf(prompt, PROMPT_MAX, "%s$ ", cwd);
     return (prompt);
 }
-
 
 int main()
 {
@@ -65,26 +62,22 @@ int main()
 		PRINT_ALLOCATE_ERROR;
 		return (1);
 	}
-
-
-	// setup_signals();
-	// terminal_config(STDIN_FILENO);
 	while (1)
 	{
 		setup_signals();
 		line = readline(get_prompt());
-		
-		reset_signals();
-
+		setup_signals2();
+	 
 		if (!line) // ctrl-D handling
 		{
 			printf("\nexit\n");
 			break;
 		}
-		handle_line(line);
 		
 		if (*line)
 		{
+			add_history(line);
+			g_sig = 0;
 			mini.tokens = tokenizer(line);
 			free(line);
 			if (!mini.tokens)
@@ -94,14 +87,11 @@ int main()
 			}
 			if (check_syntax(mini.tokens))
 			{
-				// terminal_config(STDIN_FILENO);
-				// reset_signals();
 				flow_control(&mini);
-				// terminal_reset(STDIN_FILENO);
 			}
 			lst_clean(&mini.tokens);
 		}
 	}
-	lst_clean(&mini.env);
+	mini_clean(&mini);
 	return (0);
 }

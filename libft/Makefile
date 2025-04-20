@@ -56,6 +56,7 @@ FILES =	\
 		ft_printf/ft_fprintf					\
 		ft_printf/ft_vprintf					\
 		ft_printf/ft_vfprintf					\
+		ft_printf/ft_snprintf					\
 		ft_printf/utils/ft_printf_redirect		\
 		ft_printf/utils/ft_flags_parser			\
 		ft_printf/utils/ft_handlers				\

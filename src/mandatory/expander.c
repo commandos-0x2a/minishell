@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   str_expander.c                                     :+:      :+:    :+:   */
+/*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/14 22:26:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/19 21:55:40 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,73 +68,6 @@ static char *expand_env_var(t_mini *mini, char *str, int *i)
 	}
 }
 
-char	*expand_str(t_mini *mini, char *str)
-{
-	char	*result;
-	char	*temp;
-	char	quote_char;
-	int		i;
-
-	result = ft_strdup("");
-	quote_char = 0;
-	i = 0;
-	while (str[i] && result)
-	{
-		// Handle quotes
-		if ((str[i] == '\'' || str[i] == '\"') && !quote_char)
-		{
-			quote_char = str[i++];
-			continue;
-		}
-		if (str[i] == quote_char)
-		{
-			quote_char = 0;
-			i++;
-			continue;
-		}
-
-		// Handle environment variables
-		if (str[i] == '$' && quote_char != '\'')
-		{
-			temp = expand_env_var(mini, str, &i);
-			if (temp)
-				result = join_and_free(result, temp);
-			continue;
-		}
-
-		// Normal character
-		result = join_and_free(result, ft_substr(str, i, 1));
-		i++;
-	}
-	return (result);
-}
-
-char	**argv_expander(t_mini *mini, char **argv)
-{
-	int		i;
-	int		len;
-	char	**new_argv;
-
-	i = 0;
-	len = 0;
-	while (argv[len])
-		len++;
-	new_argv = ft_calloc(len + 1, sizeof(char *));
-	if (!new_argv)
-		return (NULL);
-	while (argv[i])
-	{
-		new_argv[i] = expand_str(mini, argv[i]);
-		if (!new_argv[i])
-		{
-			free_dptr(new_argv);
-			return (NULL);
-		}
-		i++;
-	}
-	return (new_argv);
-}
-
 char	*expand_env(t_mini *mini, char *str)
 {
 	char	*result;
@@ -171,26 +104,28 @@ char	*expand_env(t_mini *mini, char *str)
 
 char	*remove_qouts(char *str)
 {
-	char	*s1;
-	char	*s2;
-	char	*null_char;
+	char	*src;
+	char	*dst;
+	char	qout;
 
-	s1 = str;
-	null_char = ft_strchr(str, '\0'); 
-	while (*s1)
+	dst = str;
+	src = str;
+	qout = '\0';
+	while (*src)
 	{
-		if (*s1 == '\'' || *s1 == '\"')
+		if ((*src == '\'' || *src == '\"') \
+			&& (qout == *src || qout == '\0'))
 		{
-			s2 = ft_strchr(s1 + 1, *s1);
-			if (!s2)
-				return (str);
-			
-			ft_memmove(s2, s2 + 1, null_char-- - s2);
-			ft_memmove(s1, s1 + 1, null_char-- - s1);
-			s1 = s2;
+			if (!qout)
+				qout = *src;
+			else
+				qout = '\0';
+			src++;
 		}
-		s1++;
+		else
+			*dst++ = *src++;
 	}
+	*dst = '\0';
 	return (str);
 }
 
@@ -228,27 +163,54 @@ static char	**mini_tokonizer(char *s, int i)
 	return (tokens);
 }
 
-int	argv_expander2(t_mini *mini)
+char	**expand_str(t_mini *mini, char *str)
 {
 	char	*expanded_str;
 	char	**slices;
-	t_list	*lst;
 
-	lst = mini->tokens;
+	expanded_str = expand_env(mini, str);
+	if (!expanded_str)
+		return (NULL);
+	slices = mini_tokonizer(expanded_str, 0);
+	free(expanded_str);
+	return (slices);
+}
+
+int	expand_tokens(t_mini *mini, t_list *lst)
+{
+	char	**slices;
+
 	while (lst && lst->str)
 	{
-		expanded_str = expand_env(mini, lst->str);
-		if (!expanded_str)
-			return (1);
-		slices = mini_tokonizer(expanded_str, 0);
-		free(expanded_str);
+		slices = expand_str(mini, lst->str);
 		if (!slices)
-			return (1);
+			return (-1);
 		lst = lst_expand(lst, slices);
 		free(slices);
 		if (!lst)
-			return (1);
+			return (-1);
 		lst = lst->next;
 	}
 	return (0);
+}
+
+t_list	*expand_tokens_2lst(t_mini *mini, const char *str)
+{
+	t_list	*lst;
+
+	lst = ft_calloc(1, sizeof(*lst));
+	if (!lst)
+		return (NULL);
+	lst->str = ft_strdup(str);
+	if (!lst->str)
+	{
+		lst_clean(&lst);
+		return (NULL);
+	}
+	if (expand_tokens(mini, lst) != 0)
+	{
+		lst_clean(&lst);
+		return (NULL);
+	}
+	return (lst);
 }
