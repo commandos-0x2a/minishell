@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/17 17:19:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/17 23:20:16 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,13 @@ static int	handle_child_process(t_mini *mini, int in_fd, \
 	return (0);
 }
 
+
+static void	setup_signals_child()
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
+
 /*
 fds:
 	in_fd		IS_PREV_PIPE
@@ -71,9 +78,10 @@ int	execute_complex_command(t_mini *mini, int in_fd, \
 	pid = fork();
 	if (pid == 0)
 	{
+		g_status = 0;
 		if (is_pipe & IS_NEXT_PIPE)
 			close(pipefds[0]);
-		reset_signals_child();
+		setup_signals_child();
 		handle_child_process(mini, in_fd, pipefds, is_pipe);
 		
 		get_argv(&mini->tokens);

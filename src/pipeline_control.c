@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/17 22:13:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/17 22:26:04 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 	mini->exit_status = wait_child_stop(victim[0]);
 	if (mini->exit_status != 128 + SIGSTOP)
 		return (-2);
-
 	if (is_pipe & IS_NEXT_PIPE)
 	{
 		lst_move2next(&mini->tokens);
@@ -94,7 +93,6 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 		if (victim[1] < 0)
 		{
 			close(pipefds[0]);
-			fprintf(stderr, "close: %d\n", pipefds[0]);
 			kill(victim[0], SIGKILL);
 			return (victim[1]);
 		}

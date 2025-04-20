@@ -53,6 +53,8 @@
 # define MAX_PROMPT_STYLE 32
 # define MAX_CONFIG_LINE 256
 
+extern volatile int	g_status;
+
 typedef struct s_list
 {
 	char			*str;
@@ -139,7 +141,6 @@ int		heredoc_is_active(void);
 void	set_heredoc_active(int active);
 void	save_signal_handlers(void);
 void	restore_signal_handlers(void);
-void	reset_signals_child(void);
 void	setup_signals(void);
 void	reset_signals(void);
 

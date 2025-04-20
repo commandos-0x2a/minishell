@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/14 20:00:05 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/17 22:33:07 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,14 +141,6 @@ void	setup_signals(void)
 void	reset_signals(void)
 {
 	signal(SIGINT, ignore_handler);
-	signal(SIGQUIT, SIG_DFL);
-	signal_controller(SIG_INTERACTIVE_MODE, 0, SIG_RETURN);
-	signal_controller(SIG_EXECUTION_MODE, 1, SIG_RETURN);
-}
-
-void	reset_signals_child(void)
-{
-	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	signal_controller(SIG_INTERACTIVE_MODE, 0, SIG_RETURN);
 	signal_controller(SIG_EXECUTION_MODE, 1, SIG_RETURN);
