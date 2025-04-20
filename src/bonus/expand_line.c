@@ -10,22 +10,25 @@ static size_t	operation_len(const char *s)
 	return (0);
 }
 
-char	*get_line(int fd)
+static char	*get_line(int fd)
 {
 	size_t	nbytes;
-	char *line;
-	ssize_t lines_read;
+	char 	*line;
+	ssize_t	lines_read;
 
 	if (ioctl(fd, FIONREAD, &nbytes) == -1)
-		return (NULL);
+		return (PRINT_SYSCALL_ERROR, NULL);
 	line = malloc(sizeof(char) * (nbytes + 1));
-	if(!line)
-		return (NULL);
+	if (line == NULL)
+		return (PRINT_ALLOCATE_ERROR, NULL);
 	lines_read = read(fd, line, nbytes);
 	if(lines_read == -1)
-		return (free(line), NULL);
+	{
+		free(line);
+		return (PRINT_SYSCALL_ERROR, NULL);
+	}
 	line[lines_read] = 0;
-	return (line);	
+	return (line);
 }
 
 char	*expand_line(const char *s)
@@ -35,7 +38,7 @@ char	*expand_line(const char *s)
 	char *line;
 
 	if (pipe(pipe_fds) == -1)
-		return (NULL);
+		return (PRINT_SYSCALL_ERROR, NULL);
 	while (*s)
 	{
 		op_len = operation_len(s);

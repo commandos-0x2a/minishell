@@ -96,7 +96,7 @@ t_list	*tokenizer(char *s)
 
 	expand_str = expand_line(s);
 	if (!expand_str)
-		return (NULL);
+		return (PRINT_ALLOCATE_ERROR, NULL);
 	tokens = tokenizer_iter(expand_str, 0);
 	free(expand_str);
 	return (tokens);

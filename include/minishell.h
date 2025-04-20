@@ -39,6 +39,8 @@
 # include <sys/types.h>
 # include <termios.h>
 # include <signal.h>
+# include <sys/ioctl.h>
+
 
 # include "minishell_utils.h"
 

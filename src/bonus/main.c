@@ -82,7 +82,7 @@ int main()
 			free(line);
 			if (!mini.tokens)
 			{
-				PRINT_ALLOCATE_ERROR;
+				// PRINT_ALLOCATE_ERROR;
 				continue ;
 			}
 			if (check_syntax(mini.tokens))
