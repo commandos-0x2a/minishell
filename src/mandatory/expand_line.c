@@ -15,6 +15,7 @@ char	*get_line(int fd)
 	char *line;
 	ssize_t lines_read;
 
+	nbytes = 0;
 	if (ioctl(fd, FIONREAD, &nbytes) == -1)
 		return (NULL);
 	line = malloc(sizeof(char) * (nbytes + 1));

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/19 21:37:33 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 21:48:46 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,12 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 	int	heredoc_fd;
 	int	err;
 
+	if (pipex_handler(is_pipe, in_fd, pipefds) != 0)
+		return (-1);
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
 		return (-1);
 	if (stop_process() != 0)
-		return (-1);
-	if (pipex_handler(is_pipe, in_fd, pipefds) != 0)
 		return (-1);
 	err = redirection_handler(mini, heredoc_fd, 1);
 	if (heredoc_fd > 0)

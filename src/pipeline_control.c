@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/20 18:59:40 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/20 21:46:02 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,11 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 		return (run_builtin_command(mini));
 
 	if ((is_pipe & IS_NEXT_PIPE) && pipe(pipefds) == -1)
+	{
+		if (is_pipe & IS_PREV_PIPE)
+			close(in_fd);
 		return (-1);
+	}
 
 	victim[0] = execute_complex_command(mini, in_fd, pipefds, is_pipe);
 	if (victim[0] == -1)
