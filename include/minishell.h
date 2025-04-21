@@ -54,7 +54,7 @@
 
 # define IS_NEXT_PIPE	0b01
 # define IS_PREV_PIPE	0b10
-# define IS_PIPE_MASK	0b11
+# define pipe_mask_MASK	0b11
 
 typedef struct s_list
 {
@@ -65,6 +65,7 @@ typedef struct s_list
 typedef struct s_mini
 {
 	t_list	*tokens;
+	t_list	*alias;
 	t_list	*env;
 	int		exit_status;
 }	t_mini;
@@ -108,7 +109,7 @@ char	*remove_qouts(char *str);
 int		flow_control(t_mini *mini);
 int		pipeline_control(t_mini *mini);
 int		execute_complex_command(t_mini *mini, int in_fd, \
-							int pipefds[2], int is_pipe);
+							int pipefds[2], int pipe_mask);
 void	execute_simple_command(t_mini *mini);
 int		check_syntax(t_list *lst);
 
