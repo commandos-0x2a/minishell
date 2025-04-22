@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/20 20:16:53 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/21 14:12:28 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static t_list	*add_token(t_list **lst, char *token)
 {
 	t_list	*new;
-	
+
 	if (!token)
 	{
 		lst_clean(lst);
@@ -89,7 +89,7 @@ static t_list	*tokenizer_iter(char *s, int i)
 	return (lst);
 }
 
-t_list	*tokenizer(char *s)
+t_list	*tokenizer(const char *s)
 {
 	char	*expand_str;
 	t_list	*tokens;

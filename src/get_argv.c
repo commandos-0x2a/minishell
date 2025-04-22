@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 19:32:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/20 11:36:48 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/21 01:14:50 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ char	**lst_2_argv(t_list **lst, int flcean)
 
 char	*get_argv0(t_list *lst)
 {
-	
 	while (lst && lst->str)
 	{
 		if (!ft_strcmp(lst->str, "<<") \
@@ -73,7 +72,7 @@ void	get_argv(t_list **lst)
 		{
 			lst_remove_one(&cur, prev);
 			lst_remove_one(&cur, prev);
-			continue;
+			continue ;
 		}
 		if (!prev)
 			start = cur;

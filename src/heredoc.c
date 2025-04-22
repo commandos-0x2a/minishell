@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   here_doc.c                                         :+:      :+:    :+:   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/19 21:40:06 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/21 01:16:26 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd)
 		if (ioctl(STDIN_FILENO, FIONREAD, &nbytes) == -1)
 			return (-1);
 		if (g_sig != 0)
-			return (0);
+			return (1);
 		if (nbytes > 0)
 		{
 			if (nbytes > MAXLINE)
@@ -108,8 +108,7 @@ int	heredoc_forever(t_mini *mini, t_list *lst)
 				close(fd);
 			if (pipe(pipefd) == -1)
 				return (-1);
-			if (heredoc_start_read(mini, lst->str, pipefd[1]) != 0 \
-									|| g_sig != 0)
+			if (heredoc_start_read(mini, lst->str, pipefd[1]) != 0)
 			{
 				close(pipefd[0]);
 				close(pipefd[1]);

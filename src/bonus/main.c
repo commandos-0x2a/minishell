@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/20 18:08:19 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/21 14:34:52 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 void	mini_clean(t_mini *mini)
 {
 	if (mini->tokens)
-		lst_clean(&mini->tokens);	
+		lst_clean(&mini->tokens);
 	if (mini->env)
-		lst_clean(&mini->env);	
+		lst_clean(&mini->env);
 }
 
 void	exit_handler(t_mini *mini, int exit_status)
@@ -32,29 +32,25 @@ void	exit_handler(t_mini *mini, int exit_status)
 	exit(exit_status);
 }
 
-char *get_prompt(void)
+char	*get_prompt(void)
 {
-    static char prompt[PROMPT_MAX];
-    char cwd[PATH_MAX];
+	static char	prompt[PROMPT_MAX];
+	char		cwd[PATH_MAX];
 
-    if (getcwd(cwd, sizeof(cwd)) == NULL)
-        strcpy(cwd, "~");
-
-    cwd[PATH_MAX - 1] = '\0';
-    snprintf(prompt, PROMPT_MAX, "%s$ ", cwd);
-    return (prompt);
+	if (getcwd(cwd, sizeof(cwd)) == NULL)
+		strcpy(cwd, "~");
+	cwd[PATH_MAX - 1] = '\0';
+	snprintf(prompt, PROMPT_MAX, "%s$ ", cwd);
+	return (prompt);
 }
 
-int main()
+int main(void)
 {
 	char		*line;
 	t_mini		mini;
 
-	// if (!isatty(0) || !isatty(1) || !isatty(2))
-	// {
-	// 	// fds not standard
-	// 	return (1);
-	// }
+	if (!isatty(0) || !isatty(1) || !isatty(2))
+		return (1);
 	ft_bzero(&mini, sizeof(t_mini));
 	mini.env = copy_env_variables();
 	if (!mini.env)

@@ -20,11 +20,9 @@ FILES = builtins/builtins			\
 			builtins/exit			\
 			builtins/export			\
 			builtins/pwd			\
-			builtins/test			\
 			builtins/unset			\
 			utils/dptr				\
 			utils/ft_getenv			\
-			utils/ft_setenv			\
 			utils/get_full_path		\
 			utils/ft_list			\
 			signals					\

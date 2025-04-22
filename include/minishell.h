@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
-#define MINISHELL_H
+# define MINISHELL_H
 
 # define __USE_XOPEN2K8
 # define _GNU_SOURCE // for WUNTRACED
@@ -37,10 +37,23 @@
 # include <signal.h>
 # include <sys/ioctl.h>
 
-
-# include "minishell_utils.h"
-
 # define PREFIX "minishell: "
+
+# define PRINT_ERRNO \
+	ft_fprintf(2, PREFIX"%s:%d: %s\n", \
+		__FILE__, __LINE__, strerror(errno))
+
+# define PRINT_ALLOCATE_ERROR \
+	ft_fprintf(2, PREFIX"%s:%d: %s\n", \
+		__FILE__, __LINE__, strerror(errno))
+
+	# define PRINT_FILE_ERROR(filename) \
+	ft_fprintf(2, PREFIX"%s:%d: %s %s\n", \
+		__FILE__, __LINE__, filename, strerror(errno))
+
+# define PRINT_SYSCALL_ERROR \
+	ft_fprintf(2, PREFIX"%s:%d: %s\n", \
+		__FILE__, __LINE__, strerror(errno))
 
 # define HOSTNAME_MAX 64
 # define USERNAME_MAX 32
@@ -89,7 +102,7 @@ void	lst_remove_one(t_list **lst, t_list *prev);
 
 /*  tokenizer  */
 char	*expand_line(const char *s);
-t_list	*tokenizer(char *s);
+t_list	*tokenizer(const char *s);
 
 /*  argv  */
 int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);
@@ -99,7 +112,7 @@ void	get_argv(t_list **lst);
 /*  expander  */
 char	**expand_str(t_mini *mini, char *str);
 char	*expand_env(t_mini *mini, char *str);
-char 	**expand_wildcard(char *pattern);
+char	**expand_wildcard(char *pattern);
 int		expand_tokens(t_mini *mini, t_list *lst);
 t_list	*expand_tokens_2lst(t_mini *mini, const char *str);
 char	*remove_qouts(char *str);
@@ -140,5 +153,9 @@ int		ft_unset(t_mini *mini, char **argv);
 void	setup_signals(void);
 void	setup_signals2(void);
 void	reset_signals(void);
+
+/*  utils functions  */
+char	**copy_dptr(char **dptr);
+void	free_dptr(char **ptr);
 
 #endif

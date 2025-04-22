@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/19 21:47:52 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/21 01:20:11 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,12 @@
 
 volatile int	g_sig;
 
+// rl_replace_line("", 1);
 static void	restore_prompt(int sig)
 {
 	g_sig = sig;
 	write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
-#ifdef __linux__
-	rl_replace_line("", 1);
-#endif
 	rl_redisplay();
 }
 

@@ -5,58 +5,53 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/04/19 12:03:53 by yaltayeh         ###   ########.fr       */
+/*   Created: 2025/04/21 14:16:31 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/04/21 14:18:51 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <ctype.h>
 
-static char *join_and_free(char *s1, char *s2)
+static char	*join_and_free(char *s1, char *s2)
 {
-    char *result;
+	char	*result;
 
-    result = ft_strjoin(2, s1, s2);
-    free(s1);
-    free(s2);
-    return (result);
+	result = ft_strjoin(2, s1, s2);
+	free(s1);
+	free(s2);
+	return (result);
 }
 
-static char *expand_env_var(t_mini *mini, char *str, int *i)
+static char	*expand_env_var(t_mini *mini, char *str, int *i)
 {
 	char	*var_name;
 	char	*var_value;
 	int		start;
 	int		len;
 
-	// try to handle the $? case
-	(*i)++;  // Skip the '$'
-	// Handle $? special parameter
+	(*i)++;
 	if (str[*i] == '?')
 	{
 		(*i)++;
 		return (ft_itoa(mini->exit_status, 0));
 	}
-	else if (str[*i] == '\0' || str[*i] == ' ' || str[*i] == '\'' || str[*i] == '\"')
+	else if (str[*i] == '\0' || str[*i] == ' ' \
+		|| str[*i] == '\'' || str[*i] == '\"')
 		return (ft_strdup("$"));
-	// Handle numeric variables (like $1, $2, etc.)
 	else if (ft_isdigit(str[*i]))
 	{
 		(*i)++;
-		return (ft_strdup("")); // Return empty string for numeric vars
+		return (ft_strdup(""));
 	}
 	else
 	{
 		start = *i;
-		// Include numbers in variable names, but don't start with them
 		while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
 			(*i)++;
-		
 		len = *i - start;
 		if (len == 0)
 			return (ft_strdup("$"));
-		
 		var_name = ft_substr(str, start, len);
 		if (!var_name)
 			return (NULL);
@@ -80,21 +75,17 @@ char	*expand_env(t_mini *mini, char *str)
 	i = 0;
 	while (str[i] && result)
 	{
-		// Handle quotes
 		if ((str[i] == '\'' || str[i] == '\"') && !quote_char)
 			quote_char = str[i];
 		else if (str[i] == quote_char)
 			quote_char = 0;
-
-		// Handle environment variables
 		else if (str[i] == '$' && quote_char != '\'')
 		{
 			temp = expand_env_var(mini, str, &i);
 			if (temp)
 				result = join_and_free(result, temp);
-			continue;
+			continue ;
 		}
-		// Normal character
 		temp = ft_substr(str, i, 1);
 		result = join_and_free(result, temp);
 		i++;

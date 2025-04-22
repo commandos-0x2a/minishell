@@ -1,21 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   wildcard.c                                         :+:      :+:    :+:   */
+/*   expand_wildcard.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/14 22:30:02 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/21 14:34:08 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
-
 #include "minishell.h"
 #include <dirent.h>
-
 
 static int	is_contain_wildcard(char *pattern)
 {
@@ -38,7 +34,6 @@ static int	is_contain_wildcard(char *pattern)
 	}
 	return (0);
 }
-
 
 /*
  * This function is like playing a matching game!
@@ -67,7 +62,7 @@ static int	is_contain_wildcard(char *pattern)
  * The * is like a magic star that matches anything!
  * The ? is like a surprise box that matches any letter! 
  */
-static int match_pattern(const char *pattern, const char *str, char qout)
+static int	match_pattern(const char *pattern, const char *str, char qout)
 {
 	while (*pattern && *str)
 	{
@@ -79,16 +74,14 @@ static int match_pattern(const char *pattern, const char *str, char qout)
 			else
 				qout = *pattern;
 			pattern++;
-			continue;
+			continue ;
 		}
 		else if (*pattern == '*' && qout == '\0')
 		{
-			// Skip consecutive asterisks
 			while (*pattern == '*')
 				pattern++;
 			if (!*pattern)
 				return (1);
-			// Try matching the rest of pattern with every substring
 			while (*str)
 			{
 				if (match_pattern(pattern, str, qout))
@@ -101,11 +94,10 @@ static int match_pattern(const char *pattern, const char *str, char qout)
 		{
 			pattern++;
 			str++;
-			continue;
+			continue ;
 		}
 		return (0);
 	}
-	// Skip any remaining asterisks
 	while (*pattern == '*')
 		pattern++;
 	return (*pattern == '\0' && *str == '\0');
@@ -118,24 +110,23 @@ static int match_pattern(const char *pattern, const char *str, char qout)
 * Then it carefully moves all your old toys to the new box
 * and adds the new toy at the end!
 */
-static char **add_to_array(char **arr, char *str, int *size)
+static char	**add_to_array(char **arr, char *str, int *size)
 {
-	char **new_arr;
-	int i;	
+	char	**new_arr;
+	int		i;
+
 	new_arr = malloc(sizeof(char *) * (*size + 2));
 	if (!new_arr)
-	    return (NULL);
-	
+		return (NULL);
 	i = 0;
 	while (i < *size)
 	{
-	    new_arr[i] = arr[i];
-	    i++;
+		new_arr[i] = arr[i];
+		i++;
 	}
 	new_arr[i] = ft_strdup(str);
 	new_arr[i + 1] = NULL;
 	*size += 1;
-	
 	free(arr);
 	return (new_arr);
 }
@@ -146,36 +137,35 @@ static char **add_to_array(char **arr, char *str, int *size)
 * Just like when you line up your stuffed animals:
 * First comes Bear, then Cat, then Dog, then Elephant!
 */
-static void sort_strings(char **arr, int size)
+static void	sort_strings(char **arr, int size)
 {
-    char *temp;
-    int i;
-    int j;
+	char	*temp;
+	int		i;
+	int		j;
 
-    i = 0;
-    while (i < size - 1)
-    {
-        j = 0;
-        while (j < size - i - 1)
-        {
-            if (ft_strcmp(arr[j], arr[j + 1]) > 0)
-            {
-                temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-            }
-            j++;
-        }
-        i++;
-    }
+	i = 0;
+	while (i < size - 1)
+	{
+		j = 0;
+		while (j < size - i - 1)
+		{
+			if (ft_strcmp(arr[j], arr[j + 1]) > 0)
+			{
+				temp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = temp;
+			}
+			j++;
+		}
+		i++;
+	}
 }
-
 
 static char	**original_argument(char *pattern)
 {
 	char	**ret;
 
-	ret = ft_calloc(2, sizeof(char *));	
+	ret = ft_calloc(2, sizeof(char *));
 	if (!ret)
 		return (NULL);
 	ret[0] = ft_strdup(pattern);
@@ -185,9 +175,8 @@ static char	**original_argument(char *pattern)
 		return (NULL);
 	}
 	remove_qouts(ret[0]);
-	return (ret);  // keep original argument
+	return (ret);
 }
-
 
 /*
 * This is like a treasure hunt in your room! 
@@ -196,48 +185,42 @@ static char	**original_argument(char *pattern)
 * and finds the ones that match your pattern!
 * Just like finding all blue toys in your room!
 */
-char **expand_wildcard(char *pattern)
+char	**expand_wildcard(char *pattern)
 {
 	DIR				*dir;
 	struct dirent	*entry;
 	char			**files;
 	int				size;
 
-    // Check if pattern contains wildcards
-    if (is_contain_wildcard(pattern) == 0)
+	if (is_contain_wildcard(pattern) == 0)
 		return (original_argument(pattern));
-
 	dir = opendir(".");
 	if (!dir)
 		return (NULL);
-
 	files = ft_calloc(1, sizeof(char *));
 	if (!files)
 	{
 		closedir(dir);
 		return (NULL);
 	}
-    size = 0;
-
-    while ((entry = readdir(dir)) != NULL)
-    {
-        // Skip hidden files unless pattern starts with .
-        if (entry->d_name[0] == '.' && pattern[0] != '.')
-            continue;
-
-        if (match_pattern(pattern, entry->d_name, '\0'))
-        {
-            files = add_to_array(files, entry->d_name, &size);
-            if (!files)
-            {
-                closedir(dir);
-                return (NULL);
-            }
-        }
-    }
-    closedir(dir);
-
-	// Sort the files array
+	size = 0;
+	entry = readdir(dir);
+	while (entry)
+	{
+		if (entry->d_name[0] == '.' && pattern[0] != '.')
+			;
+		else if (match_pattern(pattern, entry->d_name, '\0'))
+		{
+			files = add_to_array(files, entry->d_name, &size);
+			if (!files)
+			{
+				closedir(dir);
+				return (NULL);
+			}
+		}
+		entry = readdir(dir);
+	}
+	closedir(dir);
 	if (size > 0)
 		sort_strings(files, size);
 	if (size == 0)
@@ -245,8 +228,7 @@ char **expand_wildcard(char *pattern)
 		free(files);
 		return (original_argument(pattern));
 	}
-
-    return (files);
+	return (files);
 }
 
 /*

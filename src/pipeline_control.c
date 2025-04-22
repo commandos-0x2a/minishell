@@ -6,13 +6,13 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/20 21:46:02 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/21 01:17:19 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void set_null_token(t_list *lst, int *is_pipe)
+static void	set_null_token(t_list *lst, int *is_pipe)
 {
 	*is_pipe <<= 1;
 	while (lst && lst->str)
@@ -58,7 +58,8 @@ static int	run_builtin_command(t_mini *mini)
 	if builtin run return 0 and stored exit status in mini.exit_status
 	if syscall fail return -1
 	return child_pid 
-	valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline_curses.supp ./minishell
+	valgrind --leak-check=full --show-leak-kinds=all \
+		--suppressions=readline_curses.supp ./minishell
 	<< 1 cat | << 2 cat | << 3 cat | << 4 cat | << 5 cat
 */
 static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
@@ -71,10 +72,8 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 	set_null_token(mini->tokens, &is_pipe);
 	if (is_pipe == 0 && is_builtin(mini, get_argv0(mini->tokens), 1))
 		return (run_builtin_command(mini));
-
 	if ((is_pipe & IS_NEXT_PIPE) && pipe(pipefds) == -1)
 		return (-1);
-
 	victim[0] = execute_complex_command(mini, in_fd, pipefds, is_pipe);
 	if (victim[0] == -1)
 	{
@@ -89,7 +88,6 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
 			close(pipefds[0]);
 		return (-2);
 	}
-
 	if (is_pipe & IS_NEXT_PIPE)
 	{
 		lst_move2next(&mini->tokens);

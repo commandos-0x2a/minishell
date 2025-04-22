@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/19 12:05:33 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/21 01:17:30 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ int	redirection_handler(t_mini *mini, int heredoc_fd, int change_std)
 {
 	int		err;
 	t_list	*lst;
-	
+
 	lst = mini->tokens;
 	err = 0;
 	while (lst && lst->str)
