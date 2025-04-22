@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 19:32:20 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/22 15:04:10 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:13:02 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ char	*get_argv0(t_list *lst)
 {
 	while (lst && lst->str)
 	{
-		if (!ft_strcmp(lst->str, "<<") \
-			|| !ft_strcmp(lst->str, ">>") \
-			|| !ft_strcmp(lst->str, "<") \
-			|| !ft_strcmp(lst->str, ">"))
+		if (ft_strcmp(lst->str, "<<") == 0
+			|| ft_strcmp(lst->str, ">>") == 0
+			|| ft_strcmp(lst->str, "<") == 0
+			|| ft_strcmp(lst->str, ">") == 0)
 			lst = lst->next;
 		else
 			return (lst->str);
@@ -65,9 +65,9 @@ void	get_argv(t_list **lst)
 	start = NULL;
 	while (cur && cur->str)
 	{
-		if (ft_strcmp(cur->str, "<<") == 0 \
-			|| ft_strcmp(cur->str, "<") == 0 \
-			|| ft_strcmp(cur->str, ">>") == 0 \
+		if (ft_strcmp(cur->str, "<<") == 0
+			|| ft_strcmp(cur->str, "<") == 0
+			|| ft_strcmp(cur->str, ">>") == 0
 			|| ft_strcmp(cur->str, ">") == 0)
 		{
 			lst_remove_one(&cur, prev);

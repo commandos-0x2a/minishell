@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/21 01:16:26 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:36:23 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,26 +30,35 @@ static int	line_cmp(char *line, char *limiter)
 		return (0);
 	}
 	limiter_len = ft_strlen(limiter);
-	if (ft_strncmp(line, limiter, limiter_len) == 0 \
+	if (ft_strncmp(line, limiter, limiter_len) == 0
 		&& (line[limiter_len] == '\n' || line[limiter_len] == '\0'))
 		return (0);
 	return (1);
 }
 
-static int	handle_chunk(t_mini *mini, char *limiter, int nbytes, int out_fd)
+static int	handle_chunk(t_mini *mini, char *limiter, ssize_t nbytes, int out_fd)
 {
-	char	line[MAXLINE + 1];
-	ssize_t	bytes_read;
+	char	*line;
 	char	*line_expanded;
 	ssize_t	line_len;
 
-	bytes_read = read(STDIN_FILENO, line, nbytes);
-	if (bytes_read == -1)
+	line = malloc(nbytes + 1);
+	if (!line)
 		return (-1);
-	line[bytes_read] = '\0';
+	nbytes = read(STDIN_FILENO, line, nbytes);
+	if (nbytes == -1)
+	{
+		free(line);
+		return (-1);
+	}
+	line[nbytes] = '\0';
 	if (line_cmp(line, limiter) == 0)
+	{
+		free(line);
 		return (0);
+	}
 	line_expanded = expand_env(mini, line);
+	free(line);
 	if (!line_expanded)
 		return (-1);
 	line_len = ft_strlen(line_expanded);
@@ -70,6 +79,7 @@ static int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd)
 
 	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
 		write(STDOUT_FILENO, "> ", 2);
+	remove_qouts(limiter);
 	while (1)
 	{
 		if (ioctl(STDIN_FILENO, FIONREAD, &nbytes) == -1)
@@ -78,8 +88,6 @@ static int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd)
 			return (1);
 		if (nbytes > 0)
 		{
-			if (nbytes > MAXLINE)
-				nbytes = MAXLINE;
 			err = handle_chunk(mini, limiter, nbytes, out_fd);
 			if (err <= 0)
 				return (err);

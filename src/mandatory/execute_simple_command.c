@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/20 11:37:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:40:07 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	execute_simple_command(t_mini *mini)
 			return ;
 		}
 		execve(full_path, argv, env);
-		free_dptr(env);
+		free(env);
 		PRINT_FILE_ERROR(full_path);
 		err = 1;
 	}

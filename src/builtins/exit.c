@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 21:30:57 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/03/24 12:11:35 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:29:20 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ int	ft_exit(char **argv, int *_exit)
 	if (!argv[1])
 	{
 		*_exit = 1;
+		if (g_sig != 0)
+			return (128 + g_sig);
 		return (0);
 	}
 	status = ft_atoi(argv[1]);

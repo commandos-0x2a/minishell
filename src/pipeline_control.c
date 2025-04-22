@@ -6,13 +6,13 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/22 15:03:51 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:15:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void set_null_token(t_list *lst, int *pipe_mask)
+static void	set_null_token(t_list *lst, int *pipe_mask)
 {
 	*pipe_mask <<= 1;
 	while (lst && lst->str)
@@ -54,8 +54,8 @@ static int	run_builtin_command(t_mini *mini)
 	return (0);
 }
 
-
-static pid_t	execute_command(t_mini *mini, int in_fd, int pipefds[2], int pipe_mask)
+static pid_t	execute_command(t_mini *mini, int in_fd,	\
+								int pipefds[2], int pipe_mask)
 {
 	pid_t	victim;
 
@@ -80,7 +80,9 @@ static pid_t	execute_command(t_mini *mini, int in_fd, int pipefds[2], int pipe_m
 	if builtin run return 0 and stored exit status in mini.exit_status
 	if syscall fail return -1
 	return child_pid 
-	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=readline_curses.supp ./minishell
+	valgrind --leak-check=full --show-leak-kinds=all
+			--trace-children=yes --track-fds=yes
+			--suppressions=readline_curses.supp ./minishell
 	<< 1 cat > 1 | << 2 cat > 2| << 3 cat > 3
 */
 static int	pipeline_control_iter(t_mini *mini, int in_fd, int pipe_mask)
@@ -88,8 +90,6 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int pipe_mask)
 	pid_t	victim[2];
 	int		pipefds[2];
 
-	if (!mini->tokens || !mini->tokens->str)
-		return (0);
 	set_null_token(mini->tokens, &pipe_mask);
 	if (pipe_mask == 0 && is_builtin(mini, get_argv0(mini->tokens), 1))
 		return (run_builtin_command(mini));
@@ -98,7 +98,7 @@ static int	pipeline_control_iter(t_mini *mini, int in_fd, int pipe_mask)
 	victim[0] = execute_command(mini, in_fd, pipefds, pipe_mask);
 	if (victim[0] < 0)
 		return (victim[0]);
-	if (pipe_mask & IS_NEXT_PIPE)
+	if ((pipe_mask & IS_NEXT_PIPE) && mini->tokens && mini->tokens->str)
 	{
 		lst_move2next(&mini->tokens);
 		victim[1] = pipeline_control_iter(mini, pipefds[0], pipe_mask);
