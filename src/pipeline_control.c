@@ -6,20 +6,20 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/21 01:17:19 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:03:51 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	set_null_token(t_list *lst, int *is_pipe)
+static void set_null_token(t_list *lst, int *pipe_mask)
 {
-	*is_pipe <<= 1;
+	*pipe_mask <<= 1;
 	while (lst && lst->str)
 	{
 		if (ft_strcmp(lst->str, "|") == 0)
 		{
-			*is_pipe |= 1;
+			*pipe_mask |= 1;
 			free(lst->str);
 			lst->str = NULL;
 			return ;
@@ -54,44 +54,54 @@ static int	run_builtin_command(t_mini *mini)
 	return (0);
 }
 
+
+static pid_t	execute_command(t_mini *mini, int in_fd, int pipefds[2], int pipe_mask)
+{
+	pid_t	victim;
+
+	victim = execute_complex_command(mini, in_fd, pipefds, pipe_mask);
+	if (victim == -1)
+	{
+		if (pipe_mask & IS_NEXT_PIPE)
+			close(pipefds[0]);
+		return (-1);
+	}
+	mini->exit_status = wait_child_stop(victim);
+	if (mini->exit_status != 128 + SIGSTOP)
+	{
+		if (pipe_mask & IS_NEXT_PIPE)
+			close(pipefds[0]);
+		return (-2);
+	}
+	return (victim);
+}
+
 /*
 	if builtin run return 0 and stored exit status in mini.exit_status
 	if syscall fail return -1
 	return child_pid 
-	valgrind --leak-check=full --show-leak-kinds=all \
-		--suppressions=readline_curses.supp ./minishell
-	<< 1 cat | << 2 cat | << 3 cat | << 4 cat | << 5 cat
+	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=readline_curses.supp ./minishell
+	<< 1 cat > 1 | << 2 cat > 2| << 3 cat > 3
 */
-static int	pipeline_control_iter(t_mini *mini, int in_fd, int is_pipe)
+static int	pipeline_control_iter(t_mini *mini, int in_fd, int pipe_mask)
 {
 	pid_t	victim[2];
 	int		pipefds[2];
 
 	if (!mini->tokens || !mini->tokens->str)
 		return (0);
-	set_null_token(mini->tokens, &is_pipe);
-	if (is_pipe == 0 && is_builtin(mini, get_argv0(mini->tokens), 1))
+	set_null_token(mini->tokens, &pipe_mask);
+	if (pipe_mask == 0 && is_builtin(mini, get_argv0(mini->tokens), 1))
 		return (run_builtin_command(mini));
-	if ((is_pipe & IS_NEXT_PIPE) && pipe(pipefds) == -1)
+	if ((pipe_mask & IS_NEXT_PIPE) && pipe(pipefds) == -1)
 		return (-1);
-	victim[0] = execute_complex_command(mini, in_fd, pipefds, is_pipe);
-	if (victim[0] == -1)
-	{
-		if (is_pipe & IS_NEXT_PIPE)
-			close(pipefds[0]);
-		return (-1);
-	}
-	mini->exit_status = wait_child_stop(victim[0]);
-	if (mini->exit_status != 128 + SIGSTOP)
-	{
-		if (is_pipe & IS_NEXT_PIPE)
-			close(pipefds[0]);
-		return (-2);
-	}
-	if (is_pipe & IS_NEXT_PIPE)
+	victim[0] = execute_command(mini, in_fd, pipefds, pipe_mask);
+	if (victim[0] < 0)
+		return (victim[0]);
+	if (pipe_mask & IS_NEXT_PIPE)
 	{
 		lst_move2next(&mini->tokens);
-		victim[1] = pipeline_control_iter(mini, pipefds[0], is_pipe);
+		victim[1] = pipeline_control_iter(mini, pipefds[0], pipe_mask);
 		if (victim[1] == -1)
 			kill(victim[0], SIGKILL);
 		else

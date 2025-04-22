@@ -6,15 +6,15 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/20 18:08:30 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/21 17:37:11 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	pipex_handler(int is_pipe, int in_fd, int pipefds[2])
+static int	pipex_handler(int pipe_mask, int in_fd, int pipefds[2])
 {
-	if (is_pipe & IS_PREV_PIPE)
+	if (pipe_mask & IS_PREV_PIPE)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
 		{
@@ -24,7 +24,7 @@ static int	pipex_handler(int is_pipe, int in_fd, int pipefds[2])
 		}
 		close(in_fd);
 	}
-	if (is_pipe & IS_NEXT_PIPE)
+	if (pipe_mask & IS_NEXT_PIPE)
 	{
 		if (dup2(pipefds[1], STDOUT_FILENO) == -1)
 		{
@@ -50,7 +50,7 @@ static int	stop_process(void)
 }
 
 static int	handle_file_descriptor(t_mini *mini, int in_fd, \
-									int pipefds[2], int is_pipe)
+									int pipefds[2], int pipe_mask)
 {
 	int	heredoc_fd;
 	int	err;
@@ -58,13 +58,13 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
 	{
-		if (is_pipe & IS_PREV_PIPE)
+		if (pipe_mask & IS_PREV_PIPE)
 			close(in_fd);
-		if (is_pipe & IS_NEXT_PIPE)
+		if (pipe_mask & IS_NEXT_PIPE)
 			close(pipefds[1]);
 		return (-1);
 	}
-	if (pipex_handler(is_pipe, in_fd, pipefds) != 0)
+	if (pipex_handler(pipe_mask, in_fd, pipefds) != 0)
 		return (-1);
 	if (stop_process() != 0)
 		return (-1);
@@ -77,17 +77,17 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 }
 
 int	execute_complex_command(t_mini *mini, int in_fd, \
-							int pipefds[2], int is_pipe)
+							int pipefds[2], int pipe_mask)
 {
 	int	pid;
 
 	pid = fork();
 	if (pid == 0)
 	{
-		if (is_pipe & IS_NEXT_PIPE)
+		if (pipe_mask & IS_NEXT_PIPE)
 			close(pipefds[0]);
 		g_sig = 0;
-		if (handle_file_descriptor(mini, in_fd, pipefds, is_pipe) != 0)
+		if (handle_file_descriptor(mini, in_fd, pipefds, pipe_mask) != 0)
 			exit_handler(mini, EXIT_FAILURE);
 		get_argv(&mini->tokens);
 		if (!mini->tokens)
@@ -96,7 +96,9 @@ int	execute_complex_command(t_mini *mini, int in_fd, \
 		PRINT_ALLOCATE_ERROR;	
 		exit_handler(mini, EXIT_FAILURE);
 	}
-	if (is_pipe & IS_NEXT_PIPE)
+	if (pipe_mask & IS_NEXT_PIPE)
 		close(pipefds[1]);
+	if (pipe_mask & IS_PREV_PIPE)
+		close(in_fd);
 	return (pid);
 }
