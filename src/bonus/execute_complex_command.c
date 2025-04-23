@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/21 21:21:06 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:03:55 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 	}
 	if (stop_process() != 0)
 		return (-1);
-	err = redirection_handler(mini, heredoc_fd, 1);
+	err = redirection_handler(mini, heredoc_fd);
 	if (heredoc_fd > 0)
 		close(heredoc_fd);
 	if (err != 0)

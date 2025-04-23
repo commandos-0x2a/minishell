@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/21 14:34:52 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:03:35 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 void	mini_clean(t_mini *mini)
 {
 	if (mini->tokens)
-		lst_clean(&mini->tokens);
+		lst_clean(&mini->tokens);	
 	if (mini->env)
-		lst_clean(&mini->env);
+		lst_clean(&mini->env);	
 }
 
 void	exit_handler(t_mini *mini, int exit_status)
@@ -32,25 +32,83 @@ void	exit_handler(t_mini *mini, int exit_status)
 	exit(exit_status);
 }
 
-char	*get_prompt(void)
+char *get_prompt(void)
 {
-	static char	prompt[PROMPT_MAX];
-	char		cwd[PATH_MAX];
+    static char prompt[PROMPT_MAX];
+    char cwd[PATH_MAX];
 
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
-		strcpy(cwd, "~");
-	cwd[PATH_MAX - 1] = '\0';
-	snprintf(prompt, PROMPT_MAX, "%s$ ", cwd);
-	return (prompt);
+    if (getcwd(cwd, sizeof(cwd)) == NULL)
+        strcpy(cwd, "~");
+
+    cwd[PATH_MAX - 1] = '\0';
+    snprintf(prompt, PROMPT_MAX, "%s$ ", cwd);
+    return (prompt);
 }
 
-int main(void)
+int	ft_ttyname_r(int fd, char *buf, size_t len)
+{
+	char	*tty_path;
+	
+	tty_path = ttyname(fd);
+	fprintf(stderr, "tty_path: %s\n", tty_path);
+	if (!tty_path)
+		return (-1);
+	if (ft_strlcpy(buf, tty_path, len) >= len)
+	{
+		free(tty_path);
+		return (-1);
+	}
+	free(tty_path);
+	return (0);
+}
+
+int	restore_tty(char tty_path[PATH_MAX])
+{
+	int	fd;
+
+	if (!isatty(STDERR_FILENO))
+	{
+		fd = open(tty_path, O_RDONLY);
+		if (fd == -1)
+			return (-1);
+		if (fd != STDERR_FILENO && dup2(fd, STDERR_FILENO) == -1)
+		{
+			close(fd);
+			return (-1);
+		}
+		close(fd);
+	}
+	if (!isatty(STDOUT_FILENO))
+	{
+		fd = open(tty_path, O_WRONLY);
+		if (fd == -1)
+			return (-1);
+		if (fd != STDOUT_FILENO && dup2(fd, STDOUT_FILENO) == -1)
+		{
+			close(fd);
+			return (-1);
+		}
+		close(fd);
+	}
+	return (0);
+}
+
+int main()
 {
 	char		*line;
 	t_mini		mini;
+	char		tty_path[PATH_MAX];
 
-	if (!isatty(0) || !isatty(1) || !isatty(2))
+	// if (!isatty(0) || !isatty(1) || !isatty(2))
+	// {
+	// 	// fds not standard
+	// 	return (1);
+	// }
+	if (ft_ttyname_r(0, tty_path, sizeof(tty_path)) != 0)
 		return (1);
+	
+
+	setup_signals2();
 	ft_bzero(&mini, sizeof(t_mini));
 	mini.env = copy_env_variables();
 	if (!mini.env)
@@ -58,33 +116,35 @@ int main(void)
 		PRINT_ALLOCATE_ERROR;
 		return (1);
 	}
+	g_sig = 0;
 	while (1)
 	{
+		if (restore_tty(tty_path) == -1)
+		{
+			mini_clean(&mini);
+			PRINT_SYSCALL_ERROR;
+			return (-1);
+		}
 		setup_signals();
 		line = readline(get_prompt());
 		setup_signals2();
-	 
 		if (!line) // ctrl-D handling
 		{
 			printf("\nexit\n");
 			break;
 		}
-		
 		if (*line)
 		{
 			add_history(line);
-			g_sig = 0;
 			mini.tokens = tokenizer(line);
 			free(line);
 			if (!mini.tokens)
 			{
-				// PRINT_ALLOCATE_ERROR;
+				PRINT_ALLOCATE_ERROR;
 				continue ;
 			}
 			if (check_syntax(mini.tokens))
-			{
 				flow_control(&mini);
-			}
 			lst_clean(&mini.tokens);
 		}
 	}

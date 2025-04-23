@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/22 15:15:22 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:01:21 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static int	run_builtin_command(t_mini *mini)
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
 		return (PRINT_SYSCALL_ERROR, -1);
-	if (redirection_handler(mini, heredoc_fd, 0) != 0)
+	if (redirection_handler(mini, heredoc_fd) != 0)
 	{
 		if (heredoc_fd > 0)
 			close(heredoc_fd);

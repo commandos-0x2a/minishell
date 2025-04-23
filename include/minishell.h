@@ -131,7 +131,7 @@ int		wait_children(pid_t victim);
 int		wait_child_stop(pid_t victim);
 
 /*  redirection handling  */
-int		redirection_handler(t_mini *mini, int heredoc_fd, int change_std);
+int		redirection_handler(t_mini *mini, int heredoc_fd);
 int		heredoc_forever(t_mini *mini, t_list *lst);
 
 /*  environment variables  */

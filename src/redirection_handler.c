@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/22 15:20:16 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:00:37 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int	is_ambiguous(t_mini *mini, char **filename_r)
 	return (0);
 }
 
-static int	in_redirection(t_mini *mini, char *token, int change_std)
+static int	in_redirection(t_mini *mini, char *token)
 {
 	int		fd;
 	char	*filename;
@@ -47,7 +47,7 @@ static int	in_redirection(t_mini *mini, char *token, int change_std)
 		return (-1);
 	}
 	free(filename);
-	if (change_std && dup2(fd, STDIN_FILENO))
+	if (dup2(fd, STDIN_FILENO))
 	{
 		close(fd);
 		return (-1);
@@ -56,7 +56,7 @@ static int	in_redirection(t_mini *mini, char *token, int change_std)
 	return (0);
 }
 
-static int	out_append(t_mini *mini, char *token, int change_std)
+static int	out_append(t_mini *mini, char *token)
 {
 	int		fd;
 	char	*filename;
@@ -72,7 +72,7 @@ static int	out_append(t_mini *mini, char *token, int change_std)
 		return (-1);
 	}
 	free(filename);
-	if (change_std && dup2(fd, STDOUT_FILENO) == -1)
+	if (dup2(fd, STDOUT_FILENO) == -1)
 	{
 		close(fd);
 		return (-1);
@@ -81,7 +81,7 @@ static int	out_append(t_mini *mini, char *token, int change_std)
 	return (0);
 }
 
-static int	out_redirection(t_mini *mini, char *token, int change_std)
+static int	out_redirection(t_mini *mini, char *token)
 {
 	int		fd;
 	char	*filename;
@@ -97,7 +97,7 @@ static int	out_redirection(t_mini *mini, char *token, int change_std)
 		return (-1);
 	}
 	free(filename);
-	if (change_std && dup2(fd, STDOUT_FILENO) == -1)
+	if (dup2(fd, STDOUT_FILENO) == -1)
 	{
 		close(fd);
 		return (-1);
@@ -106,7 +106,7 @@ static int	out_redirection(t_mini *mini, char *token, int change_std)
 	return (0);
 }
 
-int	redirection_handler(t_mini *mini, int heredoc_fd, int change_std)
+int	redirection_handler(t_mini *mini, int heredoc_fd)
 {
 	int		err;
 	t_list	*lst;
@@ -117,15 +117,15 @@ int	redirection_handler(t_mini *mini, int heredoc_fd, int change_std)
 	{
 		if (ft_strcmp(lst->str, "<<") == 0)
 		{
-			if (heredoc_fd > 0 && change_std)
+			if (heredoc_fd > 0)
 				err = dup2(heredoc_fd, STDIN_FILENO);
 		}
 		else if (ft_strcmp(lst->str, "<") == 0)
-			err = in_redirection(mini, lst->next->str, change_std);
+			err = in_redirection(mini, lst->next->str);
 		else if (ft_strcmp(lst->str, ">>") == 0)
-			err = out_append(mini, lst->next->str, change_std);
+			err = out_append(mini, lst->next->str);
 		else if (ft_strcmp(lst->str, ">") == 0)
-			err = out_redirection(mini, lst->next->str, change_std);
+			err = out_redirection(mini, lst->next->str);
 		else
 		{
 			lst = lst->next;
