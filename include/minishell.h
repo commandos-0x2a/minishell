@@ -39,6 +39,9 @@
 
 # define PREFIX "minishell: "
 
+# define SINGLE_QUOTE 0x1//-111
+# define DOUBLE_QUOTE 0x2//-110
+
 # define PRINT_ERRNO \
 	ft_fprintf(2, PREFIX"%s:%d: %s\n", \
 		__FILE__, __LINE__, strerror(errno))
@@ -63,11 +66,8 @@
 # define MAX_PROMPT_STYLE 32
 # define MAX_CONFIG_LINE 256
 
-# define MAXLINE 4096
-
 # define IS_NEXT_PIPE	0b01
 # define IS_PREV_PIPE	0b10
-# define pipe_mask_MASK	0b11
 
 typedef struct s_list
 {
@@ -78,7 +78,6 @@ typedef struct s_list
 typedef struct s_mini
 {
 	t_list	*tokens;
-	t_list	*alias;
 	t_list	*env;
 	int		exit_status;
 }	t_mini;
@@ -102,15 +101,10 @@ char	**lst_2_dptr(t_list *lst);
 void	lst_remove_one(t_list **lst, t_list *prev);
 
 /*  tokenizer  */
-char	*expand_line(const char *s);
 t_list	*tokenizer(const char *s);
 
-/*  argv  */
-int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);
-char	*get_argv0(t_list *lst);
-void	get_argv(t_list **lst);
-
-/*  expander  */
+/*  expand  */
+char	*expand_line(const char *s);
 char	**expand_str(t_mini *mini, char *str);
 char	*expand_env(t_mini *mini, char *str);
 char	**expand_wildcard(char *pattern);
@@ -119,6 +113,7 @@ t_list	*expand_tokens_2lst(t_mini *mini, const char *str);
 char	*remove_qouts(char *str);
 
 /*  execution  */
+int		execute_line(t_mini *mini);
 int		flow_control(t_mini *mini);
 int		pipeline_control(t_mini *mini);
 int		execute_complex_command(t_mini *mini, int in_fd, \
@@ -158,5 +153,8 @@ void	reset_signals(void);
 /*  utils functions  */
 char	**copy_dptr(char **dptr);
 void	free_dptr(char **ptr);
+int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);
+char	*get_argv0(t_list *lst);
+void	get_argv(t_list **lst);
 
 #endif

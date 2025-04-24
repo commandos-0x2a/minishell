@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_line.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/23 19:16:58 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/04/23 19:17:42 by yaltayeh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static size_t	operation_len(const char *s)
@@ -12,27 +24,27 @@ static size_t	operation_len(const char *s)
 char	*get_line(int fd)
 {
 	size_t	nbytes;
-	char *line;
-	ssize_t lines_read;
+	char	*line;
+	ssize_t	lines_read;
 
 	nbytes = 0;
 	if (ioctl(fd, FIONREAD, &nbytes) == -1)
 		return (NULL);
 	line = malloc(sizeof(char) * (nbytes + 1));
-	if(!line)
+	if (!line)
 		return (NULL);
 	lines_read = read(fd, line, nbytes);
-	if(lines_read == -1)
+	if (lines_read == -1)
 		return (free(line), NULL);
 	line[lines_read] = 0;
-	return (line);	
+	return (line);
 }
 
 char	*expand_line(const char *s)
 {
 	int		pipe_fds[2];
 	size_t	op_len;
-	char *line;
+	char	*line;
 
 	if (pipe(pipe_fds) == -1)
 		return (NULL);

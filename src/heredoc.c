@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/22 15:36:23 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/24 12:28:00 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ static int	line_cmp(char *line, char *limiter)
 	return (1);
 }
 
-static int	handle_chunk(t_mini *mini, char *limiter, ssize_t nbytes, int out_fd)
+static int	handle_chunk(t_mini *mini, char *limiter,
+						ssize_t nbytes, int out_fd)
 {
 	char	*line;
 	char	*line_expanded;

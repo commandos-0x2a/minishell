@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/23 14:03:55 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/24 12:12:16 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static int	stop_process(void)
 	return (0);
 }
 
-static int	handle_file_descriptor(t_mini *mini, int in_fd, \
+static int	handle_file_descriptor(t_mini *mini, int in_fd,
 									int pipefds[2], int pipe_mask)
 {
 	int	heredoc_fd;
@@ -81,7 +81,7 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd, \
 	return (0);
 }
 
-int	execute_complex_command(t_mini *mini, int in_fd, \
+int	execute_complex_command(t_mini *mini, int in_fd,
 							int pipefds[2], int pipe_mask)
 {
 	int	pid;
@@ -98,7 +98,6 @@ int	execute_complex_command(t_mini *mini, int in_fd, \
 		if (!mini->tokens)
 			exit_handler(mini, EXIT_FAILURE);
 		execute_simple_command(mini);
-		PRINT_ALLOCATE_ERROR;	
 		exit_handler(mini, EXIT_FAILURE);
 	}
 	if (pipe_mask & IS_NEXT_PIPE)

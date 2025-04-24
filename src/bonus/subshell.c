@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   subshell.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/24 12:12:22 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/04/24 12:12:34 by yaltayeh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	run_subshell(t_mini *mini)
@@ -25,7 +37,7 @@ void	run_subshell(t_mini *mini)
 		perror("flow_control");
 		exit_handler(mini, 1);
 	}
-	exit_handler(mini, 0);	
+	exit_handler(mini, 0);
 }
 
 int	is_subshell(t_list *lst)

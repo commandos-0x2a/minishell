@@ -16,8 +16,7 @@ void	remove_qouts(char *src)
 				qout = *src;
 			else
 				qout = '\0';
-			if (!*++src)
-				break ;
+			src++;
 			continue ;
 		}
 		*dst++ = *src++;

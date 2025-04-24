@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/23 14:00:37 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/24 13:41:33 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ static int	is_ambiguous(t_mini *mini, char **filename_r)
 
 	lst = expand_tokens_2lst(mini, *filename_r);
 	if (!lst)
+	{
+		PRINT_ALLOCATE_ERROR;
 		return (-1);
+	}
 	if (!lst->str || (lst->next && lst->next->str))
 	{
 		lst_clean(&lst);
@@ -49,6 +52,7 @@ static int	in_redirection(t_mini *mini, char *token)
 	free(filename);
 	if (dup2(fd, STDIN_FILENO))
 	{
+		PRINT_SYSCALL_ERROR;
 		close(fd);
 		return (-1);
 	}
@@ -74,6 +78,7 @@ static int	out_append(t_mini *mini, char *token)
 	free(filename);
 	if (dup2(fd, STDOUT_FILENO) == -1)
 	{
+		PRINT_SYSCALL_ERROR;
 		close(fd);
 		return (-1);
 	}
@@ -99,6 +104,7 @@ static int	out_redirection(t_mini *mini, char *token)
 	free(filename);
 	if (dup2(fd, STDOUT_FILENO) == -1)
 	{
+		PRINT_SYSCALL_ERROR;
 		close(fd);
 		return (-1);
 	}
@@ -111,15 +117,12 @@ int	redirection_handler(t_mini *mini, int heredoc_fd)
 	int		err;
 	t_list	*lst;
 
-	lst = mini->tokens;
 	err = 0;
+	lst = mini->tokens;
 	while (lst && lst->str)
 	{
 		if (ft_strcmp(lst->str, "<<") == 0)
-		{
-			if (heredoc_fd > 0)
-				err = dup2(heredoc_fd, STDIN_FILENO);
-		}
+			err = dup2(heredoc_fd, STDIN_FILENO);
 		else if (ft_strcmp(lst->str, "<") == 0)
 			err = in_redirection(mini, lst->next->str);
 		else if (ft_strcmp(lst->str, ">>") == 0)

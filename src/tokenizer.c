@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/21 14:12:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:51:15 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ static t_list	*tokenizer_iter(char *s, int i)
 	if (!start || !s)
 	{
 		write(2, PREFIX"syntax error\n", sizeof(PREFIX"syntax error\n") - 1);
-		return (NULL);
+		return ((void *)0x1);
 	}
 	if (start == s && !*s)
 		return (ft_calloc(1, sizeof(t_list)));

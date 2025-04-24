@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_line.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/24 12:13:24 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/04/24 12:14:06 by yaltayeh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static size_t	operation_len(const char *s)
 {
-	if (ft_strncmp(s, "&&", 2) == 0 || ft_strncmp(s, "||", 2) == 0 \
+	if (ft_strncmp(s, "&&", 2) == 0 || ft_strncmp(s, "||", 2) == 0
 		|| ft_strncmp(s, ">>", 2) == 0 || ft_strncmp(s, "<<", 2) == 0)
 		return (2);
 	else if (*s == '|' || *s == '<' || *s == '>')
@@ -13,7 +25,7 @@ static size_t	operation_len(const char *s)
 static char	*get_line(int fd)
 {
 	size_t	nbytes;
-	char 	*line;
+	char	*line;
 	ssize_t	lines_read;
 
 	nbytes = 0;
@@ -23,7 +35,7 @@ static char	*get_line(int fd)
 	if (line == NULL)
 		return (PRINT_ALLOCATE_ERROR, NULL);
 	lines_read = read(fd, line, nbytes);
-	if(lines_read == -1)
+	if (lines_read == -1)
 	{
 		free(line);
 		return (PRINT_SYSCALL_ERROR, NULL);
@@ -36,7 +48,7 @@ char	*expand_line(const char *s)
 {
 	int		pipe_fds[2];
 	size_t	op_len;
-	char *line;
+	char	*line;
 
 	if (pipe(pipe_fds) == -1)
 		return (PRINT_SYSCALL_ERROR, NULL);

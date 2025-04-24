@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 17:59:57 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/19 18:20:38 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/23 22:19:04 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,19 +76,19 @@ t_list	*lst_expand(t_list *lst, char **slices)
 		lst->str = slices[i];
 		i++;
 		if (!slices[i])
-			break;
+			break ;
 		if (!lst->next)
 			lst->next = ft_calloc(1, sizeof(t_list));
 		if (!lst->next)
 		{
-			lst->next = next; // reconnect with root for clean it
-			while (slices[i]) // free unused slices
+			lst->next = next;
+			while (slices[i])
 				free(slices[i++]);
 			return (NULL);
 		}
 		lst = lst->next;
 	}
-	lst->next = next; // reconnect with root
+	lst->next = next;
 	return (lst);
 }
 
@@ -108,4 +108,25 @@ char	**lst_2_dptr(t_list *lst)
 	if (dptr)
 		dptr[_i] = lst->str;
 	return (dptr);
+}
+
+t_list	*expand_tokens_2lst(t_mini *mini, const char *str)
+{
+	t_list	*lst;
+
+	lst = ft_calloc(1, sizeof(*lst));
+	if (!lst)
+		return (NULL);
+	lst->str = ft_strdup(str);
+	if (!lst->str)
+	{
+		lst_clean(&lst);
+		return (NULL);
+	}
+	if (expand_tokens(mini, lst) != 0)
+	{
+		lst_clean(&lst);
+		return (NULL);
+	}
+	return (lst);
 }

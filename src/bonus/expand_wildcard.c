@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/21 14:34:08 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:30:13 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ static int	is_contain_wildcard(char *pattern)
 	qout = '\0';
 	while (*pattern)
 	{
-		if ((*pattern == '\'' || *pattern == '\"') && \
-			(*pattern == qout || qout == '\0'))
+		if ((*pattern == '\'' || *pattern == '\"')
+			&& (*pattern == qout || qout == '\0'))
 		{
 			if (qout)
 				qout = '\0';
@@ -66,8 +66,8 @@ static int	match_pattern(const char *pattern, const char *str, char qout)
 {
 	while (*pattern && *str)
 	{
-		if ((*pattern == '\'' || *pattern == '\"') && \
-			(*pattern == qout || qout == '\0'))
+		if ((*pattern == SINGLE_QUOTE || *pattern == DOUBLE_QUOTE)
+			&& (*pattern == qout || qout == '\0'))
 		{
 			if (qout)
 				qout = '\0';

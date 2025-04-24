@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/23 14:01:21 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/24 12:39:03 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,10 @@ int	pipeline_control(t_mini *mini)
 	{
 		wait_children(victim);
 		if (victim == -1)
+		{
+			PRINT_SYSCALL_ERROR;
 			return (-1);
+		}
 		return (0);
 	}
 	if (victim > 0)
