@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 00:25:28 by yaltayeh          #+#    #+#             */
-/*   Updated: 2024/11/02 00:40:18 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 00:08:03 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ static void	ft_u_decimal_helper1(size_t *count, t_printf_data data)
 {
 	size_t	blank_count;
 
-	blank_count = ft_blank_apply(data.numbers[0], \
-					ft_max(data.numbers[1], *count), data.fd);
+	blank_count = ft_blank_apply(data.numbers[0],
+			ft_max(data.numbers[1], *count), data.fd);
 	*count += ft_zero_apply(data.numbers[1], *count, data.fd);
 	*count += blank_count;
 }

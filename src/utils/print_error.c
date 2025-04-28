@@ -1,37 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.c                                             :+:      :+:    :+:   */
+/*   print_error.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/05 17:26:15 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/14 06:32:32 by yaltayeh         ###   ########.fr       */
+/*   Created: 2025/04/26 17:23:00 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/04/26 23:51:49 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_test(t_mini *mini, char **argv)
+int	print_error(const char *file, int line)
 {
-	extern char	**environ;
-	char		*value;
-	int			i;
+	ft_fprintf(2, PREFIX"%s:%d: %s\n", file, line, strerror(errno));
+	return (-1);
+}
 
-	(void)argv;
-	// ft_setenv("MY_VAR", "my_value", 1);
-	value = ft_getenv(mini->env, "MY_VAR");
-	ft_fprintf(2, "Current MY_VAR=%s\n", value);
-	free(value);
-	i = 0;
-	while (environ[i])
-	{
-		if (ft_strncmp(environ[i], "MY_VAR=", 7) == 0)
-		{
-			ft_fprintf(2, "Found in environ: %s\n", environ[i]);
-			break ;
-		}
-		i++;
-	}
-	return (0);
+int	print_file_error(const char *file, int line, const char *target)
+{
+	ft_fprintf(2, PREFIX"%s:%d: %s: %s\n", file, line, target, strerror(errno));
+	return (-1);
 }

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/24 12:28:00 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/27 20:40:37 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,16 @@ static int	line_cmp(char *line, char *limiter)
 		if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
 			ft_fprintf(2, "\n" PREFIX ": warning: here-document delimited by "
 				"end-of-file (wanted `%s`)\n", limiter);
+		free(line);
 		return (0);
 	}
 	limiter_len = ft_strlen(limiter);
 	if (ft_strncmp(line, limiter, limiter_len) == 0
 		&& (line[limiter_len] == '\n' || line[limiter_len] == '\0'))
+	{
+		free(line);
 		return (0);
+	}
 	return (1);
 }
 
@@ -54,10 +58,7 @@ static int	handle_chunk(t_mini *mini, char *limiter,
 	}
 	line[nbytes] = '\0';
 	if (line_cmp(line, limiter) == 0)
-	{
-		free(line);
 		return (0);
-	}
 	line_expanded = expand_env(mini, line);
 	free(line);
 	if (!line_expanded)

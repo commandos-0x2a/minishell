@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:13:24 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/24 12:14:06 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 05:54:41 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,22 @@ static char	*get_line(int fd)
 
 	nbytes = 0;
 	if (ioctl(fd, FIONREAD, &nbytes) == -1)
-		return (PRINT_SYSCALL_ERROR, NULL);
+	{
+		print_error(__FILE__, __LINE__);
+		return (NULL);
+	}
 	line = malloc(sizeof(char) * (nbytes + 1));
 	if (line == NULL)
-		return (PRINT_ALLOCATE_ERROR, NULL);
+	{
+		print_error(__FILE__, __LINE__);
+		return (NULL);
+	}
 	lines_read = read(fd, line, nbytes);
 	if (lines_read == -1)
 	{
 		free(line);
-		return (PRINT_SYSCALL_ERROR, NULL);
+		print_error(__FILE__, __LINE__);
+		return (NULL);
 	}
 	line[lines_read] = 0;
 	return (line);
@@ -51,7 +58,10 @@ char	*expand_line(const char *s)
 	char	*line;
 
 	if (pipe(pipe_fds) == -1)
-		return (PRINT_SYSCALL_ERROR, NULL);
+	{
+		print_error(__FILE__, __LINE__);
+		return (NULL);
+	}
 	while (*s)
 	{
 		op_len = operation_len(s);

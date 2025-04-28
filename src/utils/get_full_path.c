@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 21:33:51 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/24 12:29:51 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/27 21:25:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,6 @@ static int	search_command_path(t_list *env,
 	char	*path_env;
 	char	*path;
 
-	if (ft_strlcpy(full_path, cmd, PATH_MAX) >= PATH_MAX)
-	{
-		errno = ENAMETOOLONG;
-		return (-1);
-	}
-	if (ft_strncmp(cmd, "/", 1) == 0
-		|| ft_strncmp(cmd, "./", 2) == 0
-		|| ft_strncmp(cmd, "../", 3) == 0)
-		return (0);
 	path_env = ft_getenv(env, "PATH");
 	if (!path_env && errno == ENOMEM)
 		return (-1);
@@ -51,6 +42,19 @@ int	get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd)
 {
 	int	err;
 
+	if (ft_strlcpy(full_path, cmd, PATH_MAX) >= PATH_MAX)
+	{
+		errno = ENAMETOOLONG;
+		return (1);
+	}
+	if (ft_strncmp(cmd, "/", 1) == 0
+		|| ft_strncmp(cmd, "./", 2) == 0
+		|| ft_strncmp(cmd, "../", 3) == 0)
+	{
+		if (access(full_path, X_OK) == 0)
+			return (0);
+		return (1);
+	}
 	err = search_command_path(env, full_path, cmd);
 	if (err == -1)
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/25 01:30:13 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/27 23:42:19 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	is_contain_wildcard(char *pattern)
 	qout = '\0';
 	while (*pattern)
 	{
-		if ((*pattern == '\'' || *pattern == '\"')
+		if ((*pattern == SINGLE_QUOTE || *pattern == DOUBLE_QUOTE)
 			&& (*pattern == qout || qout == '\0'))
 		{
 			if (qout)
@@ -230,31 +230,3 @@ char	**expand_wildcard(char *pattern)
 	}
 	return (files);
 }
-
-/*
-* This is our main helper function! 🌟
-* It's like a toy sorter that:
-* 1. Looks at each toy (argument)
-* 2. If it has special marks (* or ?), it finds matching toys
-* 3. Makes a new list with all the matching toys
-* It's like magic - give it "*.txt" and it finds all text files!
-*/
-// int	expand_wildcards(t_mini *mini)
-// {
-// 	t_list	*lst;
-// 	char	**slices;
-
-// 	lst = mini->tokens;
-// 	while (lst && lst->str)
-// 	{
-// 		slices = expand_wildcard(lst->str);
-// 		if (!slices)
-// 			return (1);
-// 		lst = lst_expand(lst, slices);
-// 		free(slices);
-// 		if (!lst)
-// 			return (1);
-// 		lst = lst->next;
-// 	}
-// 	return (0);
-// }

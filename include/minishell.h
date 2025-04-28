@@ -39,35 +39,17 @@
 
 # define PREFIX "minishell: "
 
-# define SINGLE_QUOTE 0x1//-111
-# define DOUBLE_QUOTE 0x2//-110
+enum	e_qouts
+{
+	SINGLE_QUOTE = 0x1,
+	DOUBLE_QUOTE = 0x2
+};
 
-# define PRINT_ERRNO \
-	ft_fprintf(2, PREFIX"%s:%d: %s\n", \
-		__FILE__, __LINE__, strerror(errno))
-
-# define PRINT_ALLOCATE_ERROR \
-	ft_fprintf(2, PREFIX"%s:%d: %s\n", \
-		__FILE__, __LINE__, strerror(errno))
-
-	# define PRINT_FILE_ERROR(filename) \
-	ft_fprintf(2, PREFIX"%s:%d: %s %s\n", \
-		__FILE__, __LINE__, filename, strerror(errno))
-
-# define PRINT_SYSCALL_ERROR \
-	ft_fprintf(2, PREFIX"%s:%d: %s\n", \
-		__FILE__, __LINE__, strerror(errno))
-
-# define HOSTNAME_MAX 64
-# define USERNAME_MAX 32
-# define PROMPT_MAX (HOSTNAME_MAX + USERNAME_MAX + PATH_MAX + 10)
-
-// Define maximum sizes for config values
-# define MAX_PROMPT_STYLE 32
-# define MAX_CONFIG_LINE 256
-
-# define IS_NEXT_PIPE	0b01
-# define IS_PREV_PIPE	0b10
+enum	e_is_pipe
+{
+	IS_NEXT_PIPE = 1,
+	IS_PREV_PIPE = 2
+};
 
 typedef struct s_list
 {
@@ -82,10 +64,21 @@ typedef struct s_mini
 	int		exit_status;
 }	t_mini;
 
+struct s_cmd
+{
+	char	**argv;
+	char	**env;
+	char	full_path[PATH_MAX];
+	int		err;
+};
+
 extern volatile int	g_sig;
 
 void	mini_clean(t_mini *mini);
 void	exit_handler(t_mini *mini, int exit_status);
+
+int		print_error(const char *file, int line);
+int		print_file_error(const char *file, int line, const char *target);
 
 /*  subshell  */
 int		is_subshell(t_list *lst);
@@ -102,6 +95,7 @@ void	lst_remove_one(t_list **lst, t_list *prev);
 
 /*  tokenizer  */
 t_list	*tokenizer(const char *s);
+char	*cut_slice(char **s_r);
 
 /*  expand  */
 char	*expand_line(const char *s);
@@ -116,9 +110,9 @@ char	*remove_qouts(char *str);
 int		execute_line(t_mini *mini);
 int		flow_control(t_mini *mini);
 int		pipeline_control(t_mini *mini);
-int		execute_complex_command(t_mini *mini, int in_fd, \
-							int pipefds[2], int pipe_mask);
-void	execute_simple_command(t_mini *mini);
+int		execute_complex_command(t_mini *mini, int in_fd,
+			int pipefds[2], int pipe_mask);
+int		execute_simple_command(t_mini *mini);
 int		check_syntax(t_list *lst);
 
 /*  Wait children  */
@@ -151,6 +145,8 @@ void	setup_signals2(void);
 void	reset_signals(void);
 
 /*  utils functions  */
+int		ft_ttyname_r(int fd, char *buf, size_t len);
+int		restore_tty(char tty_path[PATH_MAX]);
 char	**copy_dptr(char **dptr);
 void	free_dptr(char **ptr);
 int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);

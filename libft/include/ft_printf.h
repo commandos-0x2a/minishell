@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/08 20:02:23 by yaltayeh          #+#    #+#             */
-/*   Updated: 2024/11/15 15:47:12 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 00:04:20 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,15 @@ typedef struct s_printf_data
 
 int		ft_vprintf(const char *fmt, va_list	*ap);
 
-int		ft_printf(const char *fmt, ...) \
+int		ft_printf(const char *fmt, ...)
 		__attribute__((format(printf, 1, 2)));
 
-int		ft_fprintf(int fd, const char *fmt, ...) \
+int		ft_fprintf(int fd, const char *fmt, ...)
 		__attribute__((format(printf, 2, 3)));
 
 int		ft_vfprintf(int fd, const char *fmt, va_list *ap);
 
-int		ft_snprintf(char *str, size_t size, const char *format, ...) \
+int		ft_snprintf(char *str, size_t size, const char *format, ...)
 		__attribute__((format(printf, 3, 4)));
 
 t_flags	ft_flags_parser(const char **fmt, size_t *numbers, t_flags flags);

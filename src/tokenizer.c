@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/25 01:51:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/27 23:51:42 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,39 +34,6 @@ static t_list	*add_token(t_list **lst, char *token)
 	return (new);
 }
 
-static char	*cut_slice(char **s_r)
-{
-	char	*start;
-	int		nb_bracket;
-	char	*s;
-
-	s = *s_r;
-	while (*s == ' ')
-		s++;
-	start = s;
-	nb_bracket = 0;
-	while (*s && (*s != ' ' || nb_bracket))
-	{
-		if (*s == '(')
-			nb_bracket++;
-		if (*s == ')')
-			nb_bracket--;
-		if (nb_bracket < 0)
-			break ;
-		if (*s == '\'' || *s == '\"')
-		{
-			s = ft_strchr(s + 1, *s);
-			if (!s)
-				break ;
-		}
-		s++;
-	}
-	*s_r = s;
-	if (s == NULL || nb_bracket != 0)
-		return (NULL);
-	return (start);
-}
-
 static t_list	*tokenizer_iter(char *s, int i)
 {
 	char	*start;
@@ -81,8 +48,8 @@ static t_list	*tokenizer_iter(char *s, int i)
 	if (start == s && !*s)
 		return (ft_calloc(1, sizeof(t_list)));
 	lst = tokenizer_iter(s + !!*s, i + 1);
-	if (!lst)
-		return (NULL);
+	if (!lst || lst == (void *)0x1)
+		return (lst);
 	add_token(&lst, ft_substr(start, 0, s - start));
 	if (!lst)
 		return (NULL);
@@ -96,7 +63,10 @@ t_list	*tokenizer(const char *s)
 
 	expand_str = expand_line(s);
 	if (!expand_str)
-		return (PRINT_ALLOCATE_ERROR, NULL);
+	{
+		print_error(__FILE__, __LINE__);
+		return (NULL);
+	}
 	tokens = tokenizer_iter(expand_str, 0);
 	free(expand_str);
 	return (tokens);

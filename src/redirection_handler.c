@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/24 13:41:33 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/26 23:53:24 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,7 @@ static int	is_ambiguous(t_mini *mini, char **filename_r)
 
 	lst = expand_tokens_2lst(mini, *filename_r);
 	if (!lst)
-	{
-		PRINT_ALLOCATE_ERROR;
-		return (-1);
-	}
+		return (print_error(__FILE__, __LINE__));
 	if (!lst->str || (lst->next && lst->next->str))
 	{
 		lst_clean(&lst);
@@ -45,14 +42,14 @@ static int	in_redirection(t_mini *mini, char *token)
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 	{
-		PRINT_FILE_ERROR(filename);
+		print_file_error(__FILE__, __LINE__, filename);
 		free(filename);
 		return (-1);
 	}
 	free(filename);
 	if (dup2(fd, STDIN_FILENO))
 	{
-		PRINT_SYSCALL_ERROR;
+		print_error(__FILE__, __LINE__);
 		close(fd);
 		return (-1);
 	}
@@ -71,14 +68,14 @@ static int	out_append(t_mini *mini, char *token)
 	fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd == -1)
 	{
-		PRINT_FILE_ERROR(filename);
+		print_file_error(__FILE__, __LINE__, filename);
 		free(filename);
 		return (-1);
 	}
 	free(filename);
 	if (dup2(fd, STDOUT_FILENO) == -1)
 	{
-		PRINT_SYSCALL_ERROR;
+		print_error(__FILE__, __LINE__);
 		close(fd);
 		return (-1);
 	}
@@ -97,14 +94,14 @@ static int	out_redirection(t_mini *mini, char *token)
 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 	{
-		PRINT_FILE_ERROR(filename);
+		print_file_error(__FILE__, __LINE__, filename);
 		free(filename);
 		return (-1);
 	}
 	free(filename);
 	if (dup2(fd, STDOUT_FILENO) == -1)
 	{
-		PRINT_SYSCALL_ERROR;
+		print_error(__FILE__, __LINE__);
 		close(fd);
 		return (-1);
 	}

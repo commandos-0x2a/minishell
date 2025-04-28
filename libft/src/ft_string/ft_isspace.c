@@ -6,12 +6,12 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/08 20:05:57 by yaltayeh          #+#    #+#             */
-/*   Updated: 2024/11/02 00:44:11 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 00:05:42 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 int	ft_isspace(int c)
 {
-	return (c == ' ' || c == '\t' || c == '\r' \
+	return (c == ' ' || c == '\t' || c == '\r'
 		|| c == '\n' || c == '\v' || c == '\f');
 }

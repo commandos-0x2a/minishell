@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/24 12:39:03 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/26 18:54:41 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,21 +35,21 @@ static int	run_builtin_command(t_mini *mini)
 
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
-		return (PRINT_SYSCALL_ERROR, -1);
+		return (print_error(__FILE__, __LINE__));
 	if (redirection_handler(mini, heredoc_fd) != 0)
 	{
 		if (heredoc_fd > 0)
 			close(heredoc_fd);
-		return (PRINT_SYSCALL_ERROR, -1);
+		return (print_error(__FILE__, __LINE__));
 	}
 	if (heredoc_fd > 0)
 		close(heredoc_fd);
 	get_argv(&mini->tokens);
 	if (expand_tokens(mini, mini->tokens) != 0)
-		return (PRINT_ALLOCATE_ERROR, -1);
+		return (print_error(__FILE__, __LINE__));
 	argv = lst_2_argv(&mini->tokens, 0);
 	if (!argv)
-		return (PRINT_ALLOCATE_ERROR, -1);
+		return (print_error(__FILE__, __LINE__));
 	mini->exit_status = handle_builtin(mini, argv, 0);
 	return (0);
 }
@@ -123,7 +123,8 @@ int	pipeline_control(t_mini *mini)
 		wait_children(victim);
 		if (victim == -1)
 		{
-			PRINT_SYSCALL_ERROR;
+			ft_fprintf(2, PREFIX"%s:%d: %s\n", __FILE__,
+				__LINE__, strerror(errno));
 			return (-1);
 		}
 		return (0);

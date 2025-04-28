@@ -6,41 +6,35 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/25 01:38:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/27 21:17:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	execute_simple_command(t_mini *mini)
+int	execute_simple_command(t_mini *mini)
 {
-	char	**argv;
-	char	**env;
-	char	full_path[PATH_MAX];
-	int		err;
+	struct s_cmd	cmd;
 
 	if (expand_tokens(mini, mini->tokens) != 0)
-		return ;
-	argv = lst_2_argv(&mini->tokens, 1);
-	if (!argv)
-		return ;
-	if (is_builtin(mini, argv[0], 0))
-		handle_builtin(mini, argv, 1);
-	err = get_full_path(mini->env, full_path, argv[0]);
-	if (err == 0)
+		return (1);
+	cmd.argv = lst_2_argv(&mini->tokens, 1);
+	if (!cmd.argv)
+		return (1);
+	if (is_builtin(mini, cmd.argv[0], 0))
+		handle_builtin(mini, cmd.argv, 1);
+	cmd.err = get_full_path(mini->env, cmd.full_path, cmd.argv[0]);
+	if (cmd.err == 0)
 	{
-		env = lst_2_dptr(mini->env);
-		if (!env)
+		cmd.env = lst_2_dptr(mini->env);
+		if (cmd.env)
 		{
-			free_dptr(argv);
-			return ;
+			execve(cmd.full_path, cmd.argv, cmd.env);
+			print_file_error(__FILE__, __LINE__, cmd.full_path);
+			free(cmd.env);
 		}
-		execve(full_path, argv, env);
-		free(env);
-		PRINT_FILE_ERROR(full_path);
-		err = 1;
+		cmd.err = 1;
 	}
-	free_dptr(argv);
-	mini_clean(mini);
-	exit(err);
+	free_dptr(cmd.argv);
+	return (cmd.err);
 }

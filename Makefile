@@ -25,6 +25,8 @@ FILES = builtins/builtins			\
 			utils/ft_getenv			\
 			utils/get_full_path		\
 			utils/ft_list			\
+			utils/print_error		\
+			utils/tty				\
 			signals					\
 			wait_children			\
 			get_argv				\
@@ -41,6 +43,7 @@ M_FILES =	mandatory/execute_complex_command	\
 			mandatory/check_syntax				\
 			mandatory/expand_line				\
 			mandatory/expand_tokens				\
+			mandatory/cut_slice					\
 #
 B_FILES =	bonus/execute_complex_command	\
 			bonus/execute_simple_command	\
@@ -50,6 +53,8 @@ B_FILES =	bonus/execute_complex_command	\
 			bonus/expand_wildcard			\
  			bonus/flow_control				\
 			bonus/subshell					\
+			bonus/cut_slice					\
+
 #
 
 OBJECTS = $(FILES:%=$(OBJDIR)/%.o)

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 21:27:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/02/07 16:55:10 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 00:05:06 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	size_t	r_len;
 
 	s_len = ft_strlen(s);
-	if (s_len == 0|| len == 0 || start >= s_len)
+	if (s_len == 0 || len == 0 || start >= s_len)
 		return (ft_strdup(""));
 	r_len = s_len - start;
 	if (len < r_len)

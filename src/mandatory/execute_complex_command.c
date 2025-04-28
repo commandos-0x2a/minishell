@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/25 01:37:06 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/27 20:48:34 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd,
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
 	{
-		PRINT_SYSCALL_ERROR;
+		print_error(__FILE__, __LINE__);
 		if (pipe_mask & IS_PREV_PIPE)
 			close(in_fd);
 		if (pipe_mask & IS_NEXT_PIPE)
@@ -81,6 +81,7 @@ int	execute_complex_command(t_mini *mini, int in_fd,
 							int pipefds[2], int pipe_mask)
 {
 	int	pid;
+	int	err;
 
 	pid = fork();
 	if (pid == 0)
@@ -93,9 +94,9 @@ int	execute_complex_command(t_mini *mini, int in_fd,
 		get_argv(&mini->tokens);
 		if (!mini->tokens)
 			exit_handler(mini, EXIT_FAILURE);
-		execute_simple_command(mini);
-		PRINT_SYSCALL_ERROR;
-		exit_handler(mini, EXIT_FAILURE);
+		err = execute_simple_command(mini);
+		print_error(__FILE__, __LINE__);
+		exit_handler(mini, err);
 	}
 	if (pipe_mask & IS_NEXT_PIPE)
 		close(pipefds[1]);

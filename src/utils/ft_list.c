@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 17:59:57 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/23 22:19:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 05:50:40 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,51 +63,30 @@ void	*lst_move2next(t_list **lst)
 
 t_list	*lst_expand(t_list *lst, char **slices)
 {
-	int		i;
 	t_list	*next;
 
 	if (*slices)
 		free(lst->str);
 	next = lst->next;
 	lst->next = NULL;
-	i = 0;
-	while (slices[i])
+	while (*slices)
 	{
-		lst->str = slices[i];
-		i++;
-		if (!slices[i])
+		lst->str = *slices;
+		if (!*++slices)
 			break ;
 		if (!lst->next)
 			lst->next = ft_calloc(1, sizeof(t_list));
 		if (!lst->next)
 		{
 			lst->next = next;
-			while (slices[i])
-				free(slices[i++]);
+			while (*slices)
+				free(*slices++);
 			return (NULL);
 		}
 		lst = lst->next;
 	}
 	lst->next = next;
 	return (lst);
-}
-
-char	**lst_2_dptr(t_list *lst)
-{
-	char		**dptr;
-	static int	i;
-	int			_i;
-
-	_i = i++;
-	if (!lst || !lst->str)
-	{
-		i = 0;
-		return (ft_calloc(_i + 1, sizeof(char *)));
-	}
-	dptr = lst_2_dptr(lst->next);
-	if (dptr)
-		dptr[_i] = lst->str;
-	return (dptr);
 }
 
 t_list	*expand_tokens_2lst(t_mini *mini, const char *str)

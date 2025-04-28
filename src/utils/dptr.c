@@ -6,13 +6,11 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 13:05:17 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/03/24 18:16:44 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 00:25:37 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <libft.h>
-#include <stdio.h>
+#include "minishell.h"
 
 void	free_dptr(char **ptr)
 {
@@ -49,4 +47,22 @@ char	**copy_dptr(char **dptr)
 		ptr++;
 	}
 	return (dst);
+}
+
+char	**lst_2_dptr(t_list *lst)
+{
+	char		**dptr;
+	static int	i;
+	int			_i;
+
+	_i = i++;
+	if (!lst || !lst->str)
+	{
+		i = 0;
+		return (ft_calloc(_i + 1, sizeof(char *)));
+	}
+	dptr = lst_2_dptr(lst->next);
+	if (dptr)
+		dptr[_i] = lst->str;
+	return (dptr);
 }

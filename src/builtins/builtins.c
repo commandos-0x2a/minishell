@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 20:57:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/19 12:20:16 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/26 18:59:03 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@ static int	check_builtin(const char *cmd)
 {
 	if (!cmd)
 		return (0);
-	if (ft_strcmp(cmd, "cd") == 0 || \
-		ft_strcmp(cmd, "exit") == 0 || \
-		ft_strcmp(cmd, "export") == 0 || \
-		ft_strcmp(cmd, "unset") == 0 ||	\
-		ft_strcmp(cmd, "echo") == 0 || \
-		ft_strcmp(cmd, "pwd") == 0 || \
-		ft_strcmp(cmd, "env") == 0)
+	if (ft_strcmp(cmd, "cd") == 0
+		|| ft_strcmp(cmd, "exit") == 0
+		|| ft_strcmp(cmd, "export") == 0
+		|| ft_strcmp(cmd, "unset") == 0
+		|| ft_strcmp(cmd, "echo") == 0
+		|| ft_strcmp(cmd, "pwd") == 0
+		|| ft_strcmp(cmd, "env") == 0)
 	{
 		return (1);
 	}

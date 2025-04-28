@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 20:46:41 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/24 12:27:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 00:05:24 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,18 +55,6 @@ char	*ft_itoa(int n, int with_sign)
 	}
 	return (ret);
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 static int	ft_get_digits_len(int n)
 {

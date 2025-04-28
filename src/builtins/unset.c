@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 12:00:00 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/19 18:20:33 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/26 18:59:18 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ static void	remove_env_var(t_list **env, char *var_name)
 	prev = NULL;
 	while (cur && cur->str)
 	{
-		if (ft_strncmp(cur->str, var_name, name_len) == 0 && \
-						cur->str[name_len] == '=')
+		if (ft_strncmp(cur->str, var_name, name_len) == 0
+			&& cur->str[name_len] == '=')
 		{
 			if (!prev)
 				lst_remove_one(env, prev);

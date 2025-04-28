@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:28:44 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/25 01:43:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/26 18:50:55 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,7 @@ static char	**ft_split(char *s, int i)
 	while (*s && *s != ' ')
 	{
 		if (*s == SINGLE_QUOTE || *s == DOUBLE_QUOTE)
-		{
 			s = ft_strchr(s + 1, *s);
-			if (!s)
-				break ;
-		}
 		s++;
 	}
 	if (start == s && !*s)
@@ -54,7 +50,7 @@ void	replace_qouts(char *s)
 		{
 			next = ft_strchr(s + 1, *s);
 			if (!next)
-				break;
+				break ;
 			if (*s == '\'')
 			{
 				*s = SINGLE_QUOTE;
@@ -69,7 +65,6 @@ void	replace_qouts(char *s)
 		}
 		s++;
 	}
-	
 }
 
 char	*remove_qouts(char *str)
