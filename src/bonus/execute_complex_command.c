@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/24 12:12:16 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 20:35:26 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,7 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd,
 	if (pipex_handler(pipe_mask, in_fd, pipefds) != 0)
 		return (-1);
 	if (is_subshell(mini->tokens) && subshell_syntax(mini->tokens) == 0)
-	{
-		ft_fprintf(2, PREFIX"syntax error near unexpected token `('\n");
 		exit_handler(mini, 2);
-	}
 	if (stop_process() != 0)
 		return (-1);
 	err = redirection_handler(mini, heredoc_fd);

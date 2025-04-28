@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:16:31 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/25 01:44:30 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 21:39:09 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,31 @@ static void	tok_remove_qouts(t_list *lst)
 	}
 }
 
+static int	handle_wildcard(t_list **cur_r, t_list *last, char **slices)
+{
+	t_list	*cur;
+
+	cur = *cur_r;
+	last = last->next;
+	while (cur && cur->str && cur != last)
+	{
+		slices = expand_wildcard(cur->str);
+		if (!slices)
+			return (-1);
+		cur = lst_expand(cur, slices);
+		free(slices);
+		if (!cur)
+			return (-1);
+		cur = cur->next;
+	}
+	*cur_r = cur;
+	return (0);
+}
+
 int	expand_tokens(t_mini *mini, t_list *lst)
 {
 	char	**slices;
-	t_list	*end;
+	t_list	*last;
 	t_list	*cur;
 
 	cur = lst;
@@ -33,22 +54,12 @@ int	expand_tokens(t_mini *mini, t_list *lst)
 		slices = expand_str(mini, cur->str);
 		if (!slices)
 			return (-1);
-		end = lst_expand(cur, slices);
+		last = lst_expand(cur, slices);
 		free(slices);
-		if (!end)
+		if (!last)
 			return (-1);
-		end = end->next;
-		while (cur && cur->str && cur != end)
-		{
-			slices = expand_wildcard(cur->str);
-			if (!slices)
-				return (-1);
-			cur = lst_expand(cur, slices);
-			free(slices);
-			if (!cur)
-				return (-1);
-			cur = cur->next;
-		}
+		if (handle_wildcard(&cur, last, slices) != 0)
+			return (-1);
 	}
 	tok_remove_qouts(lst);
 	return (0);

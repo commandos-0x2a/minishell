@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:12:22 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/24 12:12:34 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 20:35:33 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,9 @@ int	is_subshell(t_list *lst)
 int	subshell_syntax(t_list *lst)
 {
 	if (lst->next || lst->next->str)
+	{
+		ft_fprintf(2, PREFIX"syntax error near unexpected token `('\n");
 		return (0);
+	}
 	return (1);
 }
