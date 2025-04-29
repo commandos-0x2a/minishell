@@ -14,7 +14,7 @@
 # define MINISHELL_H
 
 # define __USE_XOPEN2K8
-# define _GNU_SOURCE // for WUNTRACED
+# define _GNU_SOURCE
 
 # include <libft.h>
 # include <stddef.h>
@@ -24,6 +24,7 @@
 # include <errno.h>
 # include <string.h>
 # include <stdio.h>
+
 # ifdef __linux__
 #  include <linux/limits.h>
 # else
@@ -101,10 +102,11 @@ char	*cut_slice(char **s_r);
 char	*expand_line(const char *s);
 char	**expand_str(t_mini *mini, char *str);
 char	*expand_env(t_mini *mini, char *str);
-char	**expand_wildcard(char *pattern);
 int		expand_tokens(t_mini *mini, t_list *lst);
 t_list	*expand_tokens_2lst(t_mini *mini, const char *str);
 char	*remove_qouts(char *str);
+char	**expand_wildcard(char *pattern);
+int		match_pattern(const char *pattern, const char *str, char qout);
 
 /*  execution  */
 int		execute_line(t_mini *mini);
@@ -139,7 +141,7 @@ int		ft_test(t_mini *mini, char **argv);
 int		ft_export(t_mini *mini, char **argv);
 int		ft_unset(t_mini *mini, char **argv);
 
-/* signal handling functions */
+/*  signal handling functions  */
 void	setup_signals(void);
 void	setup_signals2(void);
 void	reset_signals(void);
@@ -152,5 +154,8 @@ void	free_dptr(char **ptr);
 int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);
 char	*get_argv0(t_list *lst);
 void	get_argv(t_list **lst);
+int		operation_type(char *str);
+size_t	operation_len(const char *s);
+char	*cut_slice(char **s_r);
 
 #endif

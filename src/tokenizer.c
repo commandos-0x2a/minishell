@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/28 21:38:13 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 23:00:55 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,12 @@ static t_list	*tokenizer_iter(char *s, int i)
 	return (lst);
 }
 
-char	*expand_line2(const char *s);
-
 t_list	*tokenizer(const char *s)
 {
 	char	*expand_str;
 	t_list	*tokens;
 
-	expand_str = expand_line2(s);
+	expand_str = expand_line(s);
 	if (!expand_str)
 	{
 		print_error(__FILE__, __LINE__);

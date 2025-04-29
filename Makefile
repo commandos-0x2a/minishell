@@ -27,6 +27,8 @@ FILES = builtins/builtins			\
 			utils/ft_list			\
 			utils/print_error		\
 			utils/tty				\
+			check_syntax			\
+			expand_line				\
 			signals					\
 			wait_children			\
 			get_argv				\
@@ -40,20 +42,17 @@ FILES = builtins/builtins			\
 #
 M_FILES =	mandatory/execute_complex_command	\
 			mandatory/execute_simple_command	\
-			mandatory/check_syntax				\
-			mandatory/expand_line				\
 			mandatory/expand_tokens				\
-			mandatory/cut_slice					\
+			mandatory/utils						\
 #
 B_FILES =	bonus/execute_complex_command	\
 			bonus/execute_simple_command	\
-			bonus/check_syntax				\
-			bonus/expand_line				\
 			bonus/expand_tokens				\
 			bonus/expand_wildcard			\
+			bonus/match_pattern				\
  			bonus/flow_control				\
 			bonus/subshell					\
-			bonus/cut_slice					\
+			bonus/utils						\
 
 #
 

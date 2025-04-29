@@ -6,26 +6,11 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 20:44:58 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/24 12:11:09 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/28 23:17:48 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static int	operation_type(char *str)
-{
-	if (ft_strcmp(str, ">>") == 0
-		|| ft_strcmp(str, ">") == 0
-		|| ft_strcmp(str, "<<") == 0
-		|| ft_strcmp(str, "<") == 0)
-		return (1);
-	else if (ft_strcmp(str, "|") == 0
-		|| ft_strcmp(str, "||") == 0
-		|| ft_strcmp(str, "&&") == 0)
-		return (2);
-	else
-		return (0);
-}
 
 static int	check_redirection_syntax(t_list *lst)
 {
@@ -51,9 +36,7 @@ static int	check_pipe_or_logical_syntax(t_list *lst, t_list *prev_tokens)
 			lst->str);
 		return (0);
 	}
-	if (ft_strcmp(lst->next->str, "|") == 0
-		|| ft_strcmp(lst->next->str, "||") == 0
-		|| ft_strcmp(lst->next->str, "&&") == 0)
+	if (operation_type(lst->next->str) == 2)
 	{
 		ft_fprintf(2, PREFIX"syntax error near unexpected token `%s'\n",
 			lst->next->str);

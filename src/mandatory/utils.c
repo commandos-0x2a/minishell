@@ -1,17 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cut_slice.c                                        :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/27 20:36:57 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/27 21:17:51 by yaltayeh         ###   ########.fr       */
+/*   Created: 2025/04/28 23:03:56 by yaltayeh          #+#    #+#             */
+/*   Updated: 2025/04/28 23:07:48 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <libft.h>
-#include <stdlib.h>
+
+int	operation_type(char *str)
+{
+	if (ft_strcmp(str, ">>") == 0
+		|| ft_strcmp(str, ">") == 0
+		|| ft_strcmp(str, "<<") == 0
+		|| ft_strcmp(str, "<") == 0)
+		return (1);
+	else if (ft_strcmp(str, "|") == 0)
+		return (2);
+	else
+		return (0);
+}
+
+size_t	operation_len(const char *s)
+{
+	if (ft_strncmp(s, ">>", 2) == 0 || ft_strncmp(s, "<<", 2) == 0)
+		return (2);
+	else if (*s == '|' || *s == '<' || *s == '>')
+		return (1);
+	return (0);
+}
 
 char	*cut_slice(char **s_r)
 {
