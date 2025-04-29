@@ -54,7 +54,7 @@ int	is_subshell(t_list *lst)
 
 int	subshell_syntax(t_list *lst)
 {
-	if (lst->next || lst->next->str)
+	if (lst && lst->next && lst->next->str)
 	{
 		ft_fprintf(2, PREFIX"syntax error near unexpected token `('\n");
 		return (0);

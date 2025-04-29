@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <libft.h>
+#include <linux/limits.h>
 
 int	ft_ttyname_r(int fd, char *buf, size_t len)
 {
@@ -22,11 +23,7 @@ int	ft_ttyname_r(int fd, char *buf, size_t len)
 	if (!tty_path)
 		return (-1);
 	if (ft_strlcpy(buf, tty_path, len) >= len)
-	{
-		free(tty_path);
 		return (-1);
-	}
-	free(tty_path);
 	return (0);
 }
 
@@ -36,23 +33,27 @@ int	restore_tty(char tty_path[PATH_MAX])
 	int	err;
 
 	err = 0;
-	if (!isatty(STDERR_FILENO))
+	if (!isatty(STDIN_FILENO))
 	{
-		fd = open(tty_path, O_RDONLY);
+		fd = open(tty_path, O_RDWR);
 		if (fd == -1)
 			return (-1);
-		if (fd != STDERR_FILENO)
-			err = dup2(fd, STDERR_FILENO);
-		close(fd);
+		if (fd != STDIN_FILENO)
+		{
+			err = dup2(fd, STDIN_FILENO);
+			close(fd);
+		}
 	}
 	if (err == 0 && !isatty(STDOUT_FILENO))
 	{
-		fd = open(tty_path, O_WRONLY);
+		fd = open(tty_path, O_RDWR);
 		if (fd == -1)
-			return (-1);
+		return (-1);
 		if (fd != STDOUT_FILENO)
+		{
 			err = dup2(fd, STDOUT_FILENO);
-		close(fd);
+			close(fd);
+		}
 	}
 	return (err);
 }
