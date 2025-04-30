@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_handler.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:12:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/26 23:53:24 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 17:43:08 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <fcntl.h>
 
 static int	is_ambiguous(t_mini *mini, char **filename_r)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_control.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/26 18:54:41 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 20:40:09 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ static pid_t	execute_command(t_mini *mini, int in_fd,	\
 			close(pipefds[0]);
 		return (-1);
 	}
-	mini->exit_status = wait_child_stop(victim);
+	mini->exit_status = wait_one_child(victim);
 	if (mini->exit_status != 128 + SIGSTOP)
 	{
 		if (pipe_mask & IS_NEXT_PIPE)
@@ -120,7 +120,7 @@ int	pipeline_control(t_mini *mini)
 	victim = pipeline_control_iter(mini, 0, 0);
 	if (victim < 0)
 	{
-		wait_children(victim);
+		wait_all_childrens(victim);
 		if (victim == -1)
 		{
 			ft_fprintf(2, PREFIX"%s:%d: %s\n", __FILE__,
@@ -130,6 +130,6 @@ int	pipeline_control(t_mini *mini)
 		return (0);
 	}
 	if (victim > 0)
-		mini->exit_status = wait_children(victim);
+		mini->exit_status = wait_all_childrens(victim);
 	return (0);
 }

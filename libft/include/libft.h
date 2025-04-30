@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42amman.com>      +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 21:15:57 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/01/08 18:43:04 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/04/30 17:44:12 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,8 @@
 # define LIBFT_H
 
 # include <stdlib.h>
-# include <unistd.h>
 # include <stdarg.h>
-# include <limits.h>
-# include "ft_printf.h"
+# include <unistd.h>
 
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);
@@ -73,6 +71,6 @@ int		ft_putendl_fd(char *s, int fd);
 int		ft_putnbr_fd(int n, int fd);
 
 char	*ft_strtok(char *s, const char *d);
-
 int		ft_str_is_numeric(const char *str);
+
 #endif

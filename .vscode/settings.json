@@ -1,0 +1,22 @@
+{
+    "files.associations": {
+        "minishell.h": "c",
+        "algorithm": "c",
+        "format": "c",
+        "minishell_bonus.h": "c",
+        "stat.h": "c",
+        "sstream": "c",
+        "termbits.h": "c",
+        "stddef.h": "c",
+        "get_next_line.h": "c",
+        "signal.h": "c",
+        "termios.h": "c",
+        "minishell_utils.h": "c",
+        "ioctl.h": "c",
+        "history.h": "c",
+        "struct_itimerspec.h": "c",
+        "libft.h": "c",
+        "limits.h": "c",
+        "stdarg.h": "c"
+    }
+}

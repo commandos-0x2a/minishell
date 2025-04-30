@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/30 08:55:57 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 20:24:09 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,14 @@ static int	pipex_handler(int pipe_mask, int in_fd, int pipefds[2])
 
 static int	stop_process(void)
 {
+	pid_t	victim;
+
 	if (g_sig != 0)
 		return (-1);
-	if (kill(getpid(), SIGSTOP) == -1)
+	victim = ft_getpid();
+	if (victim < 0)
+		return (-1);
+	if (kill(victim, SIGSTOP) == -1)
 		return (-1);
 	if (g_sig != 0)
 		return (-1);

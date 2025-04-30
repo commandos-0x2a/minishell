@@ -2,19 +2,18 @@ NAME		= minishell
 
 CC			= cc
 LDFLAGS		= -L./libft -lft -lreadline -lncurses
-CFLAGS		= -Wall -Wextra -Werror -g
+CFLAGS		= -Wall -Wextra -Werror
 CPPFLAGS	= -I./libft/include -I./include
 
 SRCDIR = src
 OBJDIR = build
 
 ifeq ($(DEBUG), 1)
-CFLAGS += -DDEBUG
+CFLAGS += -DDEBUG -g
 endif
 
 FILES = 	main					\
 			tokenizer				\
-			ft_readline				\
 			\
 			builtins/builtins		\
 			builtins/cd				\
@@ -34,6 +33,7 @@ FILES = 	main					\
 			utils/signals			\
 			utils/get_argv			\
 			utils/check_syntax		\
+			utils/ft_getpid			\
 			\
 			expand/expand_line		\
 			expand/expand_env		\
@@ -71,12 +71,13 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
-#	$(MAKE) -C libft clean
+#	 $(MAKE) -C libft clean
 	rm -f $(OBJECTS)
+	rm -rf $(OBJDIR)
 
 fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
 
-.PHONY: all libft clean fclean re
+.PHONY: all bonus libft clean fclean re

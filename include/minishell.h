@@ -17,26 +17,16 @@
 # define _GNU_SOURCE
 
 # include <libft.h>
-# include <stddef.h>
-# include <unistd.h>
 # include <sys/wait.h>
-# include <fcntl.h>
+# include <ft_printf.h>
 # include <errno.h>
 # include <string.h>
 # include <stdio.h>
-
 # ifdef __linux__
 #  include <linux/limits.h>
 # else
 #  include <limits.h>
 # endif
-
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <sys/types.h>
-# include <termios.h>
-# include <signal.h>
-# include <sys/ioctl.h>
 
 # define PREFIX "minishell: "
 
@@ -75,10 +65,9 @@ struct s_cmd
 
 extern volatile int	g_sig;
 
-char    *ft_readline(const char *prompt);
 void	mini_clean(t_mini *mini);
 void	exit_handler(t_mini *mini, int exit_status);
-
+int		check_syntax(t_list *lst);
 int		print_error(const char *file, int line);
 int		print_file_error(const char *file, int line, const char *target);
 
@@ -97,7 +86,8 @@ void	lst_remove_one(t_list **lst, t_list *prev);
 
 /*  tokenizer  */
 t_list	*tokenizer(const char *s);
-char	*cut_slice(char **s_r);
+char	*get_argv0(t_list *lst);
+void	get_argv(t_list **lst);
 
 /*  expand  */
 char	*expand_line(const char *s);
@@ -110,17 +100,16 @@ char	**expand_wildcard(char *pattern);
 int		match_pattern(const char *pattern, const char *str, char qout);
 
 /*  execution  */
-int		execute_line(t_mini *mini);
 int		flow_control(t_mini *mini);
 int		pipeline_control(t_mini *mini);
 int		execute_complex_command(t_mini *mini, int in_fd,
 			int pipefds[2], int pipe_mask);
 int		execute_simple_command(t_mini *mini);
-int		check_syntax(t_list *lst);
+int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);
 
 /*  Wait children  */
-int		wait_children(pid_t victim);
-int		wait_child_stop(pid_t victim);
+int		wait_all_childrens(pid_t victim);
+int		wait_one_child(pid_t victim);
 
 /*  redirection handling  */
 int		redirection_handler(t_mini *mini, int heredoc_fd);
@@ -138,23 +127,20 @@ int		ft_echo(char **argv);
 int		ft_pwd(char **argv);
 int		ft_env(t_mini *mini, char **argv);
 int		ft_exit(char **argv, int *_exit);
-int		ft_test(t_mini *mini, char **argv);
 int		ft_export(t_mini *mini, char **argv);
 int		ft_unset(t_mini *mini, char **argv);
 
 /*  signal handling functions  */
-void	setup_signals(void);
-void	setup_signals2(void);
+void	setup_prompt_signal(void);
+void	setup_default_signal(void);
 void	reset_signals(void);
 
 /*  utils functions  */
 int		ft_ttyname_r(int fd, char *buf, size_t len);
 int		restore_tty(char tty_path[PATH_MAX]);
+pid_t   ft_getpid(void);
+
 char	**copy_dptr(char **dptr);
 void	free_dptr(char **ptr);
-int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);
-char	*get_argv0(t_list *lst);
-void	get_argv(t_list **lst);
-char	*cut_slice(char **s_r);
 
 #endif

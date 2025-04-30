@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 20:54:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2024/11/02 11:09:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 17:44:04 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <limits.h>
 
 static int	add_check_overflow(int	*res, int a, int b)
 {

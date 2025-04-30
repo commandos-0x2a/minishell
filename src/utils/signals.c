@@ -3,24 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:07:47 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/21 01:20:11 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 20:32:48 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <signal.h>
-#include <termios.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
 volatile int	g_sig;
 
-// rl_replace_line("", 1);
 static void	restore_prompt(int sig)
 {
 	g_sig = sig;
 	write(STDOUT_FILENO, "\n", 1);
+	rl_replace_line("", 1);
 	rl_on_new_line();
 	rl_redisplay();
 }
@@ -30,7 +31,7 @@ static void	signal_handler(int sig)
 	g_sig = sig;
 }
 
-void	setup_signals(void)
+void	setup_prompt_signal(void)
 {
 	struct sigaction	sa;
 
@@ -42,7 +43,7 @@ void	setup_signals(void)
 	signal(SIGTSTP, SIG_IGN);
 }
 
-void	setup_signals2(void)
+void	setup_default_signal(void)
 {
 	struct sigaction	sa;
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wait_children.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 17:47:06 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/21 17:28:32 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 20:10:26 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,26 @@
 
 #ifdef DEBUG
 
-static int	get_process_status(int wstatus, pid_t pid)
+static int	get_process_status(int wstatus, pid_t victim)
 {
 	if (WIFEXITED(wstatus))
 	{
-		ft_fprintf(2, "%d: is exited by %d\n", pid, WEXITSTATUS(wstatus));
+		ft_fprintf(2, "%d: is exited by %d\n", victim, WEXITSTATUS(wstatus));
 		return (WEXITSTATUS(wstatus));
 	}
 	else if (WIFSIGNALED(wstatus))
 	{
-		ft_fprintf(2, "%d: is signaled by %d\n", pid, WTERMSIG(wstatus));
+		ft_fprintf(2, "%d: is signaled by %d\n", victim, WTERMSIG(wstatus));
 		return (128 + WTERMSIG(wstatus));
 	}
 	else if (WIFSTOPPED(wstatus))
 	{
-		ft_fprintf(2, "%d: is stopped\n", pid);
+		ft_fprintf(2, "%d: is stopped\n", victim);
 		return (128 + SIGSTOP);
 	}
 	else if (WIFCONTINUED(wstatus))
 	{
-		ft_fprintf(2, "%d: is continued\n", pid);
+		ft_fprintf(2, "%d: is continued\n", victim);
 		return (128 + SIGCONT);
 	}
 	return (1);
@@ -41,9 +41,9 @@ static int	get_process_status(int wstatus, pid_t pid)
 
 #else
 
-static int	get_process_status(int wstatus, pid_t pid)
+static int	get_process_status(int wstatus, pid_t victim)
 {
-	(void)pid;
+	(void)victim;
 	if (WIFEXITED(wstatus))
 		return (WEXITSTATUS(wstatus));
 	else if (WIFSIGNALED(wstatus))
@@ -57,7 +57,7 @@ static int	get_process_status(int wstatus, pid_t pid)
 
 #endif
 
-int	wait_child_stop(pid_t victim)
+int	wait_one_child(pid_t victim)
 {
 	int	wstatus;
 
@@ -66,7 +66,7 @@ int	wait_child_stop(pid_t victim)
 	return (get_process_status(wstatus, victim));
 }
 
-int	wait_children(pid_t victim)
+int	wait_all_childrens(pid_t victim)
 {
 	int	wstatus;
 	int	status;

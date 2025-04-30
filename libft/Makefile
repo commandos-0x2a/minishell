@@ -3,7 +3,7 @@ NAME	= libft.a
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror -g
 SRCDIR		= src
-OBJDIR		= obj
+OBJDIR		= build
 CPPFLAGS	+= -I./include
 
 FILES =	\
@@ -64,9 +64,6 @@ FILES =	\
 		ft_printf/utils/ft_decimal_handler		\
 		ft_printf/utils/ft_u_decimal_handler	\
 		ft_printf/utils/ft_flags_apply			\
-		\
-		get_next_line/get_next_line			\
-		get_next_line/get_next_line_utils	\
 #
 
 OBJECTS	= $(FILES:%=$(OBJDIR)/%.o)
@@ -83,6 +80,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 clean:
 	@rm -f $(OBJECTS)
 	@rm -f $(NAME)
+	@rm -rf $(OBJDIR)
 
 re: clean all
 

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/30 09:10:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 19:47:05 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char	*cut_slice(char **s_r)
 	return (start);
 }
 */
-char	*cut_slice(char **s_r)
+static char	*cut_slice(char **s_r)
 {
 	char	*start;
 	int		nb_bracket;

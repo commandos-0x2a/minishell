@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/27 20:40:37 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 17:38:30 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "get_next_line.h"
 #include <sys/ioctl.h>
 
 /*
