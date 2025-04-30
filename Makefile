@@ -14,6 +14,7 @@ endif
 
 FILES = 	main					\
 			tokenizer				\
+			ft_readline				\
 			\
 			builtins/builtins		\
 			builtins/cd				\

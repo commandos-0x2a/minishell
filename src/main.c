@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/30 08:52:25 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 10:05:08 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ char	*read_prompt(void)
 		strcpy(cwd, "~");
 	cwd[PATH_MAX - 1] = '\0';
 	ft_snprintf(prompt, PATH_MAX + 3, "%s$ ", cwd);
-	return (readline(prompt));
+	return (ft_readline(prompt));
 }
 
 int	start(t_mini *mini, char tty_path[PATH_MAX])

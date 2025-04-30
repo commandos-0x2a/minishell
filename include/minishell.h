@@ -75,6 +75,7 @@ struct s_cmd
 
 extern volatile int	g_sig;
 
+char    *ft_readline(const char *prompt);
 void	mini_clean(t_mini *mini);
 void	exit_handler(t_mini *mini, int exit_status);
 
