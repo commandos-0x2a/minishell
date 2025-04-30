@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 09:21:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/30 13:17:45 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 14:38:57 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,11 @@ static int	start_read(char *dst)
 	err = read(0, &c, 1);
 	while (err > 0 && i < LINE_MAX - 1)
 	{
-		if (c == '\n')
+		if (c == 4)
+			return (0);
+		if (c == '\n' || c == 13)
 			break;
-		printf("%d\n", c);
+		printf("%d ", c);
 		fflush(stdout);
 		// if (c == 127 || c == '\b')
 		// {
@@ -74,6 +76,22 @@ int	setup_terminal_config(struct termios *orginal)
 
 	tcgetattr(0, orginal);
 	config = *orginal;
+	
+	// Disable input processing
+    // config.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+
+    // Disable output processing
+    // config.c_oflag &= ~(OPOST);
+
+    // Disable canonical mode, echo, signals
+    config.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+
+    // Set character size
+    // config.c_cflag |= (CS8);
+
+    // Read returns each byte, no timeout
+    config.c_cc[VMIN] = 1;
+    config.c_cc[VTIME] = 0;
 	
 	tcsetattr(0, TCSANOW, &config);
 	return (0);
