@@ -3,14 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   check_syntax.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 20:44:58 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/28 23:17:48 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 09:08:20 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int	operation_type(char *str)
+{
+	if (ft_strcmp(str, ">>") == 0
+		|| ft_strcmp(str, ">") == 0
+		|| ft_strcmp(str, "<<") == 0
+		|| ft_strcmp(str, "<") == 0)
+		return (1);
+	else if (ft_strcmp(str, "|") == 0
+		|| ft_strcmp(str, "||") == 0
+		|| ft_strcmp(str, "&&") == 0)
+		return (2);
+	else
+		return (0);
+}
 
 static int	check_redirection_syntax(t_list *lst)
 {

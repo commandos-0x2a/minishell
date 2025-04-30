@@ -154,8 +154,6 @@ void	free_dptr(char **ptr);
 int		get_full_path(t_list *env, char full_path[PATH_MAX], char *cmd);
 char	*get_argv0(t_list *lst);
 void	get_argv(t_list **lst);
-int		operation_type(char *str);
-size_t	operation_len(const char *s);
 char	*cut_slice(char **s_r);
 
 #endif

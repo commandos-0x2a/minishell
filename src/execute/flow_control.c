@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   flow_control.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 08:13:50 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/28 23:11:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 08:51:58 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,4 @@ int	flow_control(t_mini *mini)
 		lst_move2next(&mini->tokens);
 	}
 	return (0);
-}
-
-int	execute_line(t_mini *mini)
-{
-	return (flow_control(mini));
 }

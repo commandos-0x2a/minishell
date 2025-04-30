@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 12:19:29 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/28 23:00:55 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 09:10:15 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,59 @@ static t_list	*add_token(t_list **lst, char *token)
 	new->str = token;
 	*lst = new;
 	return (new);
+}
+
+/*
+// MANDATORY
+
+char	*cut_slice(char **s_r)
+{
+	char	*start;
+	char	*s;
+
+	s = *s_r;
+	while (*s == ' ')
+		s++;
+	start = s;
+	while (s && *s && *s != ' ')
+	{
+		if (*s == '\'' || *s == '\"')
+			s = ft_strchr(s + 1, *s);
+		if (s)
+			s++;
+	}
+	*s_r = s;
+	if (s == NULL)
+		return (NULL);
+	return (start);
+}
+*/
+char	*cut_slice(char **s_r)
+{
+	char	*start;
+	int		nb_bracket;
+	char	*s;
+
+	s = *s_r;
+	while (*s == ' ')
+		s++;
+	start = s;
+	nb_bracket = 0;
+	while (s && *s && (*s != ' ' || nb_bracket) && nb_bracket >= 0)
+	{
+		if (*s == '(')
+			nb_bracket++;
+		else if (*s == ')')
+			nb_bracket--;
+		else if (*s == '\'' || *s == '\"')
+			s = ft_strchr(s + 1, *s);
+		if (s)
+			s++;
+	}
+	*s_r = s;
+	if (s == NULL || nb_bracket != 0)
+		return (NULL);
+	return (start);
 }
 
 static t_list	*tokenizer_iter(char *s, int i)

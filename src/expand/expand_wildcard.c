@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_wildcard.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/29 00:37:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 08:59:00 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,7 @@ char	**expand_wildcard_iter(char *pattern, DIR *dir, int i)
 	struct dirent	*entry;
 	int				is_match;
 	char			**match_files;
-	char			*file;
 
-	file = NULL;
 	entry = readdir(dir);
 	if (entry == NULL)
 		return (ft_calloc(i, sizeof(char *)));

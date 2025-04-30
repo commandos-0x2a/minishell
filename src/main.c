@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/28 05:53:38 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 08:52:25 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	start(t_mini *mini, char tty_path[PATH_MAX])
 	if (mini->tokens == (void *)0x1)
 		return (1);
 	if (check_syntax(mini->tokens))
-		execute_line(mini);
+		flow_control(mini);
 	lst_clean(&mini->tokens);
 	return (1);
 }

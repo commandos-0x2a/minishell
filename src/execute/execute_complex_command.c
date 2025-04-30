@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_complex_command.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/27 20:48:34 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 08:55:57 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,13 @@ static int	stop_process(void)
 	return (0);
 }
 
+static int	close_heredoc_fd(int heredoc_fd)
+{
+	if (heredoc_fd > 0)
+		close(heredoc_fd);
+	return (-1);
+}
+
 static int	handle_file_descriptor(t_mini *mini, int in_fd,
 									int pipefds[2], int pipe_mask)
 {
@@ -58,7 +65,8 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd,
 	heredoc_fd = heredoc_forever(mini, mini->tokens);
 	if (heredoc_fd < 0)
 	{
-		print_error(__FILE__, __LINE__);
+		if (g_sig == 0)
+			print_error(__FILE__, __LINE__);
 		if (pipe_mask & IS_PREV_PIPE)
 			close(in_fd);
 		if (pipe_mask & IS_NEXT_PIPE)
@@ -66,12 +74,13 @@ static int	handle_file_descriptor(t_mini *mini, int in_fd,
 		return (-1);
 	}
 	if (pipex_handler(pipe_mask, in_fd, pipefds) != 0)
-		return (-1);
+		return (close_heredoc_fd(heredoc_fd));
+	if (is_subshell(mini->tokens) && subshell_syntax(mini->tokens) == 0)
+		return (close_heredoc_fd(heredoc_fd));
 	if (stop_process() != 0)
-		return (-1);
+		return (close_heredoc_fd(heredoc_fd));
 	err = redirection_handler(mini, heredoc_fd);
-	if (heredoc_fd > 0)
-		close(heredoc_fd);
+	close_heredoc_fd(heredoc_fd);
 	if (err != 0)
 		return (err);
 	return (0);
@@ -93,7 +102,7 @@ int	execute_complex_command(t_mini *mini, int in_fd,
 			exit_handler(mini, EXIT_FAILURE);
 		get_argv(&mini->tokens);
 		if (!mini->tokens)
-			exit_handler(mini, EXIT_FAILURE);
+			exit_handler(mini, EXIT_SUCCESS);
 		err = execute_simple_command(mini);
 		print_error(__FILE__, __LINE__);
 		exit_handler(mini, err);
@@ -103,9 +112,4 @@ int	execute_complex_command(t_mini *mini, int in_fd,
 	if (pipe_mask & IS_PREV_PIPE)
 		close(in_fd);
 	return (pid);
-}
-
-int	execute_line(t_mini *mini)
-{
-	return (pipeline_control(mini));
 }

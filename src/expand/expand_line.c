@@ -3,14 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   expand_line.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:13:24 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/28 23:20:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 09:09:16 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static size_t	operation_len(const char *s)
+{
+	if (ft_strncmp(s, "&&", 2) == 0 || ft_strncmp(s, "||", 2) == 0
+		|| ft_strncmp(s, ">>", 2) == 0 || ft_strncmp(s, "<<", 2) == 0)
+		return (2);
+	else if (*s == '|' || *s == '<' || *s == '>')
+		return (1);
+	return (0);
+}
 
 static char	*allocate_expanded_line(const char *s)
 {
