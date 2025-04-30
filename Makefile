@@ -71,7 +71,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
-#	 $(MAKE) -C libft clean
+	 $(MAKE) -C libft clean
 	rm -f $(OBJECTS)
 	rm -rf $(OBJDIR)
 
