@@ -3,15 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   ft_readline.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 09:21:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/30 10:23:05 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 13:17:45 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <libft.h>
-#include <linux/limits.h>
+#ifdef __linux__
+# include <linux/limits.h>
+#else
+# include <limits.h>
+#endif
 #include <stdio.h>
 #include <termios.h>
 
@@ -27,6 +31,11 @@ tgoto, tputs
 #ifndef LINE_MAX
 # define LINE_MAX 4096
 #endif
+
+const char *history_move_up(void);
+const char *history_move_down(void);
+int	ft_add_history(const char *line);
+void	ft_clear_history(void);
 
 static int	start_read(char *dst)
 {
@@ -65,7 +74,7 @@ int	setup_terminal_config(struct termios *orginal)
 
 	tcgetattr(0, orginal);
 	config = *orginal;
-
+	
 	tcsetattr(0, TCSANOW, &config);
 	return (0);
 }

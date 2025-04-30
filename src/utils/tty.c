@@ -3,17 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   tty.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 00:16:38 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/30 09:01:18 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/04/30 12:02:32 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <fcntl.h>
 #include <libft.h>
-#include <linux/limits.h>
+#ifdef __linux__
+# include <linux/limits.h>
+#else
+# include <limits.h>
+#endif
 
 int	ft_ttyname_r(int fd, char *buf, size_t len)
 {
