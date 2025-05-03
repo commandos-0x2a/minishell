@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 21:15:57 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/30 17:44:12 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 12:52:49 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*ft_strrchr(const char *s, int c);
 
 int		ft_atoi(const char *nptr);
 int		ft_atoi_r(const char **p_nptr);
-int		ft_atoi_save_r(const char **p_nptr, int *res);
+int		ft_atoi_save_r(char **p_nptr, int *res);
 size_t	ft_atou(const char *nptr);
 size_t	ft_atou_r(const char **p_nptr);
 

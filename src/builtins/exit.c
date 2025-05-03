@@ -3,14 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 21:30:57 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/22 15:29:20 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 12:53:59 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+
+static int	check_arg(char *s, int *status)
+{
+	char *ptr;
+
+	ptr = s;
+	if (ft_atoi_save_r(&ptr, status) == -1)
+	{
+		ft_fprintf(2, PREFIX"exit: %s: numeric argument required\n", s);
+		*status = 2;
+	}
+	else if (ft_str_is_numeric(s) == 0)
+	{
+		ft_fprintf(2, PREFIX"exit: %s: numeric argument required\n", s);
+		*status = 255;
+	}
+	return (0);
+}
 
 int	ft_exit(char **argv, int *_exit)
 {
@@ -25,16 +44,11 @@ int	ft_exit(char **argv, int *_exit)
 			return (128 + g_sig);
 		return (0);
 	}
-	status = ft_atoi(argv[1]);
+	check_arg(argv[1], &status);
 	if (argv[2])
 	{
 		ft_fprintf(2, PREFIX"exit: too many arguments\n");
 		return (1);
-	}
-	else if (ft_str_is_numeric(argv[1]) == 0)
-	{
-		ft_fprintf(2, PREFIX"exit: %s: numeric argument required\n", argv[1]);
-		status = 255;
 	}
 	*_exit = 1;
 	return (status);

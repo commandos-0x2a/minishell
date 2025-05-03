@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 21:20:57 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/13 23:39:14 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 14:00:15 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ int	ft_env(t_mini *mini, char **argv)
 	cur = mini->env;
 	while (cur && cur->str)
 	{
-		ft_printf("%s\n", cur->str);
+		if (ft_strchr(cur->str, '='))
+			ft_printf("%s\n", cur->str);
 		cur = cur->next;
 	}
 	return (0);

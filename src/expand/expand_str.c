@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:28:44 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/30 09:24:04 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 14:08:06 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,17 @@ static char	**ft_split(char *s, int i)
 	else
 		free(token);
 	return (tokens);
+}
+
+int	is_contain_qouts(char *s)
+{
+	while (*s)
+	{
+		if (*s == SINGLE_QUOTE || *s == DOUBLE_QUOTE)
+			return (1);
+		s++;
+	}
+	return (0);
 }
 
 void	replace_qouts(char *s)

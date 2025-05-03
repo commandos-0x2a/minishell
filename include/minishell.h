@@ -52,6 +52,9 @@ typedef struct s_mini
 {
 	t_list	*tokens;
 	t_list	*env;
+	int		is_expand;
+	int		argc;
+	char	**argv;
 	int		exit_status;
 }	t_mini;
 
@@ -95,7 +98,11 @@ char	**expand_str(t_mini *mini, char *str);
 char	*expand_env(t_mini *mini, char *str);
 int		expand_tokens(t_mini *mini, t_list *lst);
 t_list	*expand_tokens_2lst(t_mini *mini, const char *str);
+int		is_contain_qouts(char *s);
+void	replace_qouts(char *s);
 char	*remove_qouts(char *str);
+
+
 char	**expand_wildcard(char *pattern);
 int		match_pattern(const char *pattern, const char *str, char qout);
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_simple_command.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:59:26 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/29 00:31:07 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 12:45:17 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,13 @@ int	execute_simple_command(t_mini *mini)
 	if (cmd.err == 0)
 	{
 		cmd.env = lst_2_dptr(mini->env);
+		cmd.err = 1;
 		if (cmd.env)
 		{
-			execve(cmd.full_path, cmd.argv, cmd.env);
+			cmd.err = execve(cmd.full_path, cmd.argv, cmd.env);
 			print_file_error(__FILE__, __LINE__, cmd.full_path);
 			free(cmd.env);
 		}
-		cmd.err = 1;
 	}
 	free_dptr(cmd.argv);
 	return (cmd.err);

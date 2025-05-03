@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/30 21:35:39 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 13:35:29 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,12 +71,13 @@ int	start(t_mini *mini, char tty_path[PATH_MAX])
 	return (1);
 }
 
-int	main(void)
+int	main(int argc, char **argv)
 {
 	t_mini		mini;
 	char		tty_path[PATH_MAX];
 	int			loop;
-
+	
+	ft_bzero(&mini, sizeof(t_mini));
 	if (!isatty(0) || !isatty(1) || !isatty(2))
 	{
 		ft_fprintf(2, PREFIX"not a tty\n");
@@ -84,7 +85,8 @@ int	main(void)
 	}
 	if (ft_ttyname_r(0, tty_path, sizeof(tty_path)) != 0)
 		return (1);
-	ft_bzero(&mini, sizeof(t_mini));
+	mini.argc = argc;
+	mini.argv = argv;
 	mini.env = copy_env_variables();
 	if (!mini.env)
 		return (1);

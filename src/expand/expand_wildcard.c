@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:13 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/30 08:59:00 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 11:49:19 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ char	**expand_wildcard_iter(char *pattern, DIR *dir, int i)
 
 	entry = readdir(dir);
 	if (entry == NULL)
-		return (ft_calloc(i, sizeof(char *)));
+		return (ft_calloc(i + 1, sizeof(char *)));
 	if (entry->d_name[0] == '.' && pattern[0] != '.')
 		is_match = 0;
 	else

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 12:00:00 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/04/27 05:29:11 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 13:59:19 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,15 @@ static char	*make_env_variable(char *name, char *value)
 
 	len = ft_strlen(name);
 	len++;
-	len += ft_strlen(value);
+	if (value)
+		len += ft_strlen(value);
 	new_env = malloc(++len);
 	if (!new_env)
 		return (NULL);
-	ft_snprintf(new_env, len, "%s=%s", name, value);
+	if (value)
+		ft_snprintf(new_env, len, "%s=%s", name, value);
+	else
+		ft_snprintf(new_env, len, "%s", name);
 	return (new_env);
 }
 
@@ -55,7 +59,7 @@ static int	add_env_var(t_list **env, char *name, char *value)
 	while (cur && cur->str)
 	{
 		if (ft_strncmp(cur->str, name, name_len) == 0
-			&& cur->str[name_len] == '=')
+			&& (cur->str[name_len] == '=' || cur->str[name_len] == '\0'))
 			break ;
 		if (!cur->next)
 			cur->next = ft_calloc(1, sizeof(t_list));
@@ -76,20 +80,16 @@ static int	update_env(t_list **env, char *identify)
 
 	equals = ft_strchr(identify, '=');
 	if (equals)
-	{
 		*equals++ = '\0';
-		if (!*equals)
-			return (0);
-		if (!is_valid_identifier(identify))
-		{
-			ft_fprintf(2, PREFIX"export: not a valid identifier\n");
-			return (1);
-		}
-		if (add_env_var(env, identify, equals))
-		{
-			print_error(__FILE__, __LINE__);
-			return (1);
-		}
+	if (!is_valid_identifier(identify))
+	{
+		ft_fprintf(2, PREFIX"export: not a valid identifier\n");
+		return (1);
+	}
+	if (add_env_var(env, identify, equals))
+	{
+		print_error(__FILE__, __LINE__);
+		return (1);
 	}
 	return (0);
 }

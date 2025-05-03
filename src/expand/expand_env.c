@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:27:16 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/30 21:18:58 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 13:45:10 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ static char	*get_env_value(t_mini *mini, char *str, int *i)
 
 static char	*expand_env_var(t_mini *mini, char *str, int *i)
 {
+	int	arg;
+
 	(*i)++;
 	if (str[*i] == '?')
 	{
@@ -65,7 +67,10 @@ static char	*expand_env_var(t_mini *mini, char *str, int *i)
 		return (ft_strdup(""));
 	else if (ft_isdigit(str[*i]))
 	{
+		arg = str[*i] - '0';
 		(*i)++;
+		if (arg < mini->argc)
+			return (ft_strdup(mini->argv[arg]));
 		return (ft_strdup(""));
 	}
 	else

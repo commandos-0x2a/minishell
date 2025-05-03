@@ -2,14 +2,14 @@ NAME		= minishell
 
 CC			= cc
 LDFLAGS		= -L./libft -lft -lreadline -lncurses
-CFLAGS		= -Wall -Wextra -Werror
+CFLAGS		= -Wall -Wextra -Werror -g
 CPPFLAGS	= -I./libft/include -I./include
 
 SRCDIR = src
 OBJDIR = build
 
 ifeq ($(DEBUG), 1)
-CFLAGS += -DDEBUG -g
+CFLAGS += -DDEBUG
 endif
 
 FILES = 	main					\

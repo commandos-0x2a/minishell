@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 23:37:40 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/30 20:24:09 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 12:07:16 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,8 @@ int	execute_complex_command(t_mini *mini, int in_fd,
 		if (!mini->tokens)
 			exit_handler(mini, EXIT_SUCCESS);
 		err = execute_simple_command(mini);
-		print_error(__FILE__, __LINE__);
+		if (err == 1)
+			print_error(__FILE__, __LINE__);
 		exit_handler(mini, err);
 	}
 	if (pipe_mask & IS_NEXT_PIPE)

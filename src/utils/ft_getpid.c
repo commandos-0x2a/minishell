@@ -6,17 +6,14 @@
 /*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 17:53:06 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/30 21:35:08 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 12:10:16 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <sys/ioctl.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <libft.h>
-#include <ft_printf.h>
 
 pid_t	ft_getpid(void)
 {
@@ -39,5 +36,6 @@ pid_t	ft_getpid(void)
 	}
 	buf[nbytes] = '\0';
 	pid_str = ft_strtok(buf, " ");
+	close(fd);
 	return (ft_atoi(pid_str));
 }

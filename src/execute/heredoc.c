@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/04/30 17:38:30 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/03 14:13:48 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,17 @@ static int	handle_chunk(t_mini *mini, char *limiter,
 	line[nbytes] = '\0';
 	if (line_cmp(line, limiter) == 0)
 		return (0);
-	line_expanded = expand_env(mini, line);
-	free(line);
-	if (!line_expanded)
-		return (-1);
+	if (mini->is_expand)
+	{
+		line_expanded = expand_env(mini, line);
+		free(line);
+		if (!line_expanded)
+			return (-1);
+	}
+	else
+		line_expanded = line;
 	line_len = ft_strlen(line_expanded);
-	if (write(out_fd, line_expanded, line_len) != line_len)
-		return (-1);
+	write(out_fd, line_expanded, line_len);
 	free(line_expanded);
 	return (1);
 }
@@ -75,11 +79,13 @@ static int	handle_chunk(t_mini *mini, char *limiter,
 */
 static int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd)
 {
-	int		err;
-	int		nbytes;
+	int	err;
+	int	nbytes;
 
 	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
 		write(STDOUT_FILENO, "> ", 2);
+	replace_qouts(limiter);
+	mini->is_expand = !is_contain_qouts(limiter);
 	remove_qouts(limiter);
 	while (1)
 	{
