@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/05/25 17:31:53 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/25 20:52:23 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <sys/ioctl.h>
+#include <fcntl.h>
 
 /*
 ** Processes a line read during heredoc input
@@ -108,6 +109,7 @@ static int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd)
 /*
 ** Sets up and processes multiple heredocs in a command
 */
+
 int	heredoc_forever(t_mini *mini, t_list *lst)
 {
 	int	fd;
@@ -136,3 +138,51 @@ int	heredoc_forever(t_mini *mini, t_list *lst)
 	}
 	return (fd);
 }
+
+
+/*
+static void generate_file_name(char filepath[PATH_MAX])
+{
+	int				fd;
+	unsigned char	buf[16];
+
+	fd = open("/dev/random", O_RDONLY);
+	if (fd < 0)
+	{
+		
+	}
+	ft_snprintf((*heredoc_files)->str, PATH_MAX, "/tmp/%s")
+
+}
+
+static int	open_heredoc_file(t_list **heredoc_files)
+{
+	int	fd;
+
+	if (*heredoc_files == NULL)
+	{
+		*heredoc_files = ft_calloc(1, sizeof(t_list));
+		if (*heredoc_files == NULL)
+			return (-1);
+		(*heredoc_files)->str = malloc(PATH_MAX);
+		if ((*heredoc_files)->str == NULL)
+			return (-1);
+		fd = open((*heredoc_files)->str)
+	}
+}
+
+int	heredoc_forever(t_mini *mini, t_list *lst)
+{
+	int	fd;
+	
+	while (lst)
+	{
+		if (ft_strcmp(lst->str, "<<") == 0)
+		{
+			lst = lst->next;
+			
+		}
+		lst = lst->next;
+	}
+}
+*/

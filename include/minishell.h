@@ -52,6 +52,7 @@ typedef struct s_mini
 {
 	t_list	*tokens;
 	t_list	*env;
+	t_list	*heredoc_files;
 	int		is_expand;
 	int		argc;
 	char	**argv;
