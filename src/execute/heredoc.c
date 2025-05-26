@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:42:59 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/05/25 20:52:23 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:15:39 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,15 +59,10 @@ static int	handle_chunk(t_mini *mini, char *limiter,
 	line[nbytes] = '\0';
 	if (line_cmp(line, limiter) == 0)
 		return (0);
-	if (mini->is_expand)
-	{
-		line_expanded = expand_env(mini, line);
-		free(line);
-		if (!line_expanded)
-			return (-1);
-	}
-	else
-		line_expanded = line;
+	line_expanded = expand_env(mini, line);
+	free(line);
+	if (!line_expanded)
+		return (-1);
 	line_len = ft_strlen(line_expanded);
 	write(out_fd, line_expanded, line_len);
 	free(line_expanded);
@@ -86,7 +81,6 @@ static int	heredoc_start_read(t_mini *mini, char *limiter, int out_fd)
 	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
 		write(STDOUT_FILENO, "> ", 2);
 	replace_qouts(limiter);
-	mini->is_expand = !is_contain_qouts(limiter);
 	remove_qouts(limiter);
 	while (1)
 	{
@@ -138,51 +132,3 @@ int	heredoc_forever(t_mini *mini, t_list *lst)
 	}
 	return (fd);
 }
-
-
-/*
-static void generate_file_name(char filepath[PATH_MAX])
-{
-	int				fd;
-	unsigned char	buf[16];
-
-	fd = open("/dev/random", O_RDONLY);
-	if (fd < 0)
-	{
-		
-	}
-	ft_snprintf((*heredoc_files)->str, PATH_MAX, "/tmp/%s")
-
-}
-
-static int	open_heredoc_file(t_list **heredoc_files)
-{
-	int	fd;
-
-	if (*heredoc_files == NULL)
-	{
-		*heredoc_files = ft_calloc(1, sizeof(t_list));
-		if (*heredoc_files == NULL)
-			return (-1);
-		(*heredoc_files)->str = malloc(PATH_MAX);
-		if ((*heredoc_files)->str == NULL)
-			return (-1);
-		fd = open((*heredoc_files)->str)
-	}
-}
-
-int	heredoc_forever(t_mini *mini, t_list *lst)
-{
-	int	fd;
-	
-	while (lst)
-	{
-		if (ft_strcmp(lst->str, "<<") == 0)
-		{
-			lst = lst->next;
-			
-		}
-		lst = lst->next;
-	}
-}
-*/

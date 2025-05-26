@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/05/25 17:30:29 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:11:57 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	exit_handler(t_mini *mini, int exit_status)
 	exit(exit_status);
 }
 
-char	*read_prompt(void)
+static char	*read_prompt(void)
 {
 	char	prompt[PATH_MAX + 3];
 	char	cwd[PATH_MAX];
@@ -42,11 +42,11 @@ char	*read_prompt(void)
 	return (readline(prompt));
 }
 
-int	start(t_mini *mini, char tty_path[PATH_MAX])
+static int	start(t_mini *mini)
 {
 	char	*line;
 
-	if (restore_tty(tty_path) == -1)
+	if (restore_tty(mini->tty_path) == -1)
 		return (1);
 	setup_prompt_signal();
 	line = read_prompt();
@@ -74,16 +74,15 @@ int	start(t_mini *mini, char tty_path[PATH_MAX])
 int	main(int argc, char **argv)
 {
 	t_mini		mini;
-	char		tty_path[PATH_MAX];
 	int			loop;
-	
+
 	ft_bzero(&mini, sizeof(t_mini));
 	if (!isatty(0) || !isatty(1) || !isatty(2))
 	{
 		ft_fprintf(2, PREFIX"not a tty\n");
 		return (1);
 	}
-	if (ft_ttyname_r(0, tty_path, sizeof(tty_path)) != 0)
+	if (ft_ttyname_r(0, mini.tty_path, sizeof(mini.tty_path)) != 0)
 		return (1);
 	mini.argc = argc;
 	mini.argv = argv;
@@ -94,7 +93,7 @@ int	main(int argc, char **argv)
 	loop = 1;
 	while (loop == 1)
 	{
-		loop = start(&mini, tty_path);
+		loop = start(&mini);
 		mini.tokens = NULL;
 	}
 	mini_clean(&mini);

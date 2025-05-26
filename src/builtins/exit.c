@@ -3,19 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 21:30:57 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/05/25 17:31:23 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:12:22 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
 static int	check_arg(char *s, int *status)
 {
-	char *ptr;
+	char	*ptr;
 
 	ptr = s;
 	if (ft_atoi_save_r(&ptr, status) == -1)

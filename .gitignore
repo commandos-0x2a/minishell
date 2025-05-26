@@ -1,0 +1,10 @@
+*.o
+*/*.o
+build
+libft/build
+*/*.a
+*.a
+minishell
+readline_curses.supp
+printer.py
+.vscode

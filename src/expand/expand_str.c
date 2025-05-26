@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_str.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:28:44 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/05/25 17:32:19 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:14:34 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,17 +38,6 @@ static char	**ft_split(char *s, int i)
 	else
 		free(token);
 	return (tokens);
-}
-
-int	is_contain_qouts(char *s)
-{
-	while (*s)
-	{
-		if (*s == SINGLE_QUOTE || *s == DOUBLE_QUOTE)
-			return (1);
-		s++;
-	}
-	return (0);
 }
 
 void	replace_qouts(char *s)
@@ -115,6 +104,14 @@ char	**expand_str(t_mini *mini, char *str)
 	if (!expanded_str)
 		return (NULL);
 	slices = ft_split(expanded_str, 0);
+	if (slices && !*slices)
+	{
+		free(slices);
+		slices = ft_calloc(2, sizeof(char *));
+		if (slices)
+			*slices = expanded_str;
+		return (slices);
+	}
 	free(expanded_str);
 	return (slices);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 20:54:35 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/05/25 17:30:15 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:10:30 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	ft_atoi_r(const char **p_nptr)
 int	ft_atoi_save_r(char **p_nptr, int *res)
 {
 	char	*nptr;
-	int			sign;
+	int		sign;
 
 	nptr = *p_nptr;
 	while (ft_isspace(*nptr))
