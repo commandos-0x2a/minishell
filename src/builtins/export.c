@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 12:00:00 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/05/25 17:31:28 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/28 19:30:15 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ static int	add_env_var(t_list **env, char *name, char *value)
 	return (0);
 }
 
-static int	update_env(t_list **env, char *identify)
+int	update_env(t_list **env, char *identify)
 {
 	char	*equals;
 

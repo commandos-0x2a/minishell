@@ -148,5 +148,5 @@ pid_t	ft_getpid(void);
 
 char	**copy_dptr(char **dptr);
 void	free_dptr(char **ptr);
-
+int		update_env(t_list **env, char *identify);
 #endif
