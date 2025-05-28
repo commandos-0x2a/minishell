@@ -122,7 +122,7 @@ int		redirection_handler(t_mini *mini, int heredoc_fd);
 int		heredoc_forever(t_mini *mini, t_list *lst);
 
 /*  environment variables  */
-t_list	*copy_env_variables(void);
+t_list	*copy_env_variables(char **environ);
 char	*ft_getenv(t_list *env, const char *name);
 
 /*  built-in commands  */

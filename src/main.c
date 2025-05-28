@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/05/26 15:11:57 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/28 14:45:43 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static int	start(t_mini *mini)
 	return (1);
 }
 
-int	main(int argc, char **argv)
+int	main(int argc, char **argv, char **envp)
 {
 	t_mini		mini;
 	int			loop;
@@ -86,7 +86,7 @@ int	main(int argc, char **argv)
 		return (1);
 	mini.argc = argc;
 	mini.argv = argv;
-	mini.env = copy_env_variables();
+	mini.env = copy_env_variables(envp);
 	if (!mini.env)
 		return (1);
 	g_sig = 0;
