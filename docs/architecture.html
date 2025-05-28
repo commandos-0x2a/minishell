@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minishell Architecture - Documentation</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Animate.css CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Mermaid for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <style>
+        .mermaid {
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+        }
+        code {
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-blue-900 text-white shadow-md">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="animate__animated animate__fadeIn">
+                    <h1 class="text-2xl font-bold">Minishell Documentation</h1>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="index.html" class="hover:text-blue-300">Home</a>
+                    <a href="architecture.html" class="hover:text-blue-300">Architecture</a>
+                    <a href="execution.html" class="hover:text-blue-300">Command Execution</a>
+                    <a href="builtins.html" class="hover:text-blue-300">Built-ins</a>
+                    <a href="resources.html" class="hover:text-blue-300">Resources</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Minishell Architecture</h1>
+        
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Project Structure Overview</h2>
+            <div class="mermaid">
+                graph TD
+                    A[Minishell] --> B[Main Execution Loop]
+                    A --> C[Tokenizer]
+                    A --> D[Command Execution]
+                    A --> E[Built-in Commands]
+                    A --> F[Utilities]
+                    D --> D1[Flow Control]
+                    D --> D2[Pipeline Control]
+                    D --> D3[Simple Command]
+                    D --> D4[Complex Command]
+                    D --> D5[Subshell]
+                    C --> C1[Tokenization]
+                    C --> C2[Expansion]
+                    E --> E1[cd, echo, pwd]
+                    E --> E2[env, export, unset]
+                    E --> E3[exit]
+            </div>
+            <p class="mt-4 text-gray-700">
+                The architecture follows a modular design, separating different concerns into distinct components.
+            </p>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Core Data Structures</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-3 text-blue-800">t_mini Structure</h3>
+                <p class="mb-4">The central data structure that manages the shell state:</p>
+                <pre><code>typedef struct s_mini
+{
+    t_list  *tokens;        // Linked list of tokens
+    t_list  *env;           // Linked list of environment variables
+    t_list  *heredoc_files; // Linked list of heredoc temporary files
+    char    tty_path[PATH_MAX];  // Path to the TTY
+    int     argc;           // Argument count
+    char    **argv;         // Argument vector
+    int     exit_status;    // Exit status of the last command
+}   t_mini;</code></pre>
+                
+                <h3 class="text-xl font-semibold mt-6 mb-3 text-blue-800">t_list Structure</h3>
+                <p class="mb-4">A linked list structure used throughout the project:</p>
+                <pre><code>typedef struct s_list
+{
+    char            *str;   // String content
+    struct s_list   *next;  // Pointer to the next element
+}   t_list;</code></pre>
+            </div>
+        </section>
+
+        <section class="mb-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInLeft">
+                <h2 class="text-xl font-semibold mb-3 text-blue-800">Main Execution Loop</h2>
+                <p class="mb-4">
+                    The main execution loop in <code>main.c</code> is responsible for:
+                </p>
+                <ol class="list-decimal pl-6 space-y-1">
+                    <li>Setting up the shell environment</li>
+                    <li>Reading user input with a custom prompt</li>
+                    <li>Processing the input through tokenizer</li>
+                    <li>Executing commands through the flow control system</li>
+                    <li>Managing memory and cleaning up resources</li>
+                </ol>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInRight">
+                <h2 class="text-xl font-semibold mb-3 text-blue-800">Tokenizer</h2>
+                <p class="mb-4">
+                    The tokenizer processes input strings into tokens for parsing:
+                </p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li>Splits input into meaningful tokens</li>
+                    <li>Handles quotes (single and double)</li>
+                    <li>Preserves special characters for command processing</li>
+                    <li>Creates a linked list of tokens for further processing</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Execution Subsystem</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-4">
+                    The execution subsystem handles the entire process of executing commands:
+                </p>
+                <div class="mermaid">
+                    flowchart TB
+                    A[Flow Control] --> B{Logical Operators?}
+                    B -->|Yes| C[Handle operators]
+                    B -->|No| D[Pipeline Control]
+                    C --> D
+                    D --> E{Is Pipeline?}
+                    E -->|Yes| F[Process Pipe Commands]
+                    E -->|No| G{Is Builtin?}
+                    G -->|Yes| H[Execute Builtin]
+                    G -->|No| I{Is Subshell?}
+                    I -->|Yes| J[Run Subshell]
+                    I -->|No| K[Execute External Command]
+                </div>
+                
+                <h3 class="text-lg font-semibold mt-6 mb-2 text-blue-800">Key Components</h3>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li><strong>Flow Control</strong>: Handles logical operators (&&, ||)</li>
+                    <li><strong>Pipeline Control</strong>: Manages command pipelines</li>
+                    <li><strong>Execute Simple Command</strong>: Executes a single command</li>
+                    <li><strong>Execute Complex Command</strong>: Handles redirections, pipes, and forks</li>
+                    <li><strong>Subshell</strong>: Creates and manages subshells</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">File Structure</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <ul class="list-none space-y-2">
+                    <li><span class="font-mono text-blue-600">Makefile</span> - Project build configuration</li>
+                    <li class="ml-4"><span class="font-mono text-blue-600">include/</span> - Header files</li>
+                    <li class="ml-8"><span class="font-mono">minishell.h</span> - Main header with declarations and data structures</li>
+                    <li class="ml-4"><span class="font-mono text-blue-600">libft/</span> - Library with utility functions</li>
+                    <li class="ml-4"><span class="font-mono text-blue-600">src/</span> - Source code</li>
+                    <li class="ml-8"><span class="font-mono">main.c</span> - Entry point and main loop</li>
+                    <li class="ml-8"><span class="font-mono">tokenizer.c</span> - Tokenization of input</li>
+                    <li class="ml-8"><span class="font-mono text-blue-600">builtins/</span> - Implementation of built-in commands</li>
+                    <li class="ml-8"><span class="font-mono text-blue-600">execute/</span> - Command execution logic</li>
+                    <li class="ml-12"><span class="font-mono">flow_control.c</span> - Handles logical operators</li>
+                    <li class="ml-12"><span class="font-mono">pipeline_control.c</span> - Manages command pipelines</li>
+                    <li class="ml-12"><span class="font-mono">execute_complex_command.c</span> - Complex command execution</li>
+                    <li class="ml-12"><span class="font-mono">execute_simple_command.c</span> - Simple command execution</li>
+                    <li class="ml-8"><span class="font-mono text-blue-600">expand/</span> - Expansion of variables and wildcards</li>
+                    <li class="ml-8"><span class="font-mono text-blue-600">utils/</span> - Utility functions</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h4 class="text-lg font-semibold mb-2">Minishell Project</h4>
+                    <p>A simplified Unix shell implementation</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-2">Quick Links</h4>
+                    <ul class="space-y-1">
+                        <li><a href="resources.html" class="hover:text-blue-300">GNU Resources</a></li>
+                        <li><a href="resources.html#unix" class="hover:text-blue-300">Unix Resources</a></li>
+                        <li><a href="resources.html#shell" class="hover:text-blue-300">Shell Programming</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

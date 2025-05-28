@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Built-in Commands - Minishell Documentation</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Animate.css CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Mermaid for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <style>
+        .mermaid {
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+        }
+        code {
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-blue-900 text-white shadow-md">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="animate__animated animate__fadeIn">
+                    <h1 class="text-2xl font-bold">Minishell Documentation</h1>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="index.html" class="hover:text-blue-300">Home</a>
+                    <a href="architecture.html" class="hover:text-blue-300">Architecture</a>
+                    <a href="execution.html" class="hover:text-blue-300">Command Execution</a>
+                    <a href="builtins.html" class="hover:text-blue-300">Built-ins</a>
+                    <a href="resources.html" class="hover:text-blue-300">Resources</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Built-in Commands</h1>
+        
+        <section class="mb-12 animate__animated animate__fadeInUp">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Overview</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-4">
+                    Built-in commands are implemented directly within the shell rather than as external programs.
+                    These commands are executed in the current shell process, which allows them to modify the shell's
+                    environment or perform tasks that would be difficult or impossible for external programs.
+                </p>
+
+                <div class="mermaid">
+                    graph TD
+                    A[Built-in Commands] --> B[Directory Management]
+                    A --> C[Environment Variables]
+                    A --> D[Shell Control]
+                    A --> E[Output Commands]
+                    
+                    B --> B1[cd]
+                    B --> B2[pwd]
+                    C --> C1[env]
+                    C --> C2[export]
+                    C --> C3[unset]
+                    D --> D1[exit]
+                    E --> E1[echo]
+                </div>
+                
+                <p class="mt-4">
+                    Each built-in command has its own implementation in the <code>src/builtins/</code> directory,
+                    with a centralized handler that dispatches commands to the appropriate function.
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Built-in Command Handler</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-4">
+                    The handler system identifies and executes built-in commands:
+                </p>
+
+                <h3 class="text-lg font-semibold mb-3 text-blue-800">Command Detection</h3>
+                <pre><code>int is_builtin(t_mini *mini, const char *cmd, int expand)
+{
+    // If command is NULL, return false
+    if (!cmd)
+        return (0);
+    
+    // Check if command matches any built-in name
+    if (ft_strcmp(cmd, "cd") == 0 || ft_strcmp(cmd, "echo") == 0 ||
+        ft_strcmp(cmd, "env") == 0 || ft_strcmp(cmd, "exit") == 0 ||
+        ft_strcmp(cmd, "export") == 0 || ft_strcmp(cmd, "pwd") == 0 ||
+        ft_strcmp(cmd, "unset") == 0)
+        return (1);
+        
+    return (0);
+}</code></pre>
+
+                <h3 class="text-lg font-semibold mt-6 mb-3 text-blue-800">Command Execution</h3>
+                <pre><code>int handle_builtin(t_mini *mini, char **argv, int _exit)
+{
+    int ret;
+
+    ret = 0;
+    // Call the appropriate function based on command name
+    if (ft_strcmp(argv[0], "cd") == 0)
+        ret = ft_cd(mini, argv);
+    else if (ft_strcmp(argv[0], "echo") == 0)
+        ret = ft_echo(argv);
+    else if (ft_strcmp(argv[0], "env") == 0)
+        ret = ft_env(mini, argv);
+    else if (ft_strcmp(argv[0], "exit") == 0)
+        ret = ft_exit(argv, &_exit);
+    else if (ft_strcmp(argv[0], "export") == 0)
+        ret = ft_export(mini, argv);
+    else if (ft_strcmp(argv[0], "pwd") == 0)
+        ret = ft_pwd(argv);
+    else if (ft_strcmp(argv[0], "unset") == 0)
+        ret = ft_unset(mini, argv);
+
+    if (_exit)
+        exit_handler(mini, ret);
+    return (ret);
+}</code></pre>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInLeft">
+                <h2 class="text-xl font-semibold mb-3 text-blue-800">Directory Management</h2>
+                
+                <h3 class="text-lg font-semibold mb-2">cd</h3>
+                <p class="mb-4">
+                    Changes the current directory of the shell:
+                </p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li><code>cd</code> - Change to home directory</li>
+                    <li><code>cd path</code> - Change to specified path</li>
+                    <li><code>cd -</code> - Change to previous directory</li>
+                    <li>Updates PWD and OLDPWD environment variables</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold mt-4 mb-2">pwd</h3>
+                <p class="mb-4">
+                    Prints the current working directory:
+                </p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li>Uses <code>getcwd()</code> to retrieve path</li>
+                    <li>Prints absolute path to standard output</li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInRight">
+                <h2 class="text-xl font-semibold mb-3 text-blue-800">Environment Variables</h2>
+                
+                <h3 class="text-lg font-semibold mb-2">env</h3>
+                <p class="mb-4">
+                    Displays all environment variables:
+                </p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li>Lists all variables in NAME=VALUE format</li>
+                    <li>Iterates through the shell's environment list</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold mt-4 mb-2">export</h3>
+                <p class="mb-4">
+                    Sets or modifies environment variables:
+                </p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li><code>export</code> - Lists all variables in sorted order</li>
+                    <li><code>export NAME=VALUE</code> - Sets variable</li>
+                    <li><code>export NAME</code> - Marks variable for export</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold mt-4 mb-2">unset</h3>
+                <p class="mb-4">
+                    Removes environment variables:
+                </p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li>Removes variable from environment</li>
+                    <li>Accepts multiple variable names as arguments</li>
+                </ul>
+            </div>
+        </div>
+
+        <section class="mb-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-3 text-blue-800">Shell Control</h2>
+                
+                <h3 class="text-lg font-semibold mb-2">exit</h3>
+                <p class="mb-4">
+                    Exits the shell with a specified status:
+                </p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li><code>exit</code> - Exit with last command status</li>
+                    <li><code>exit N</code> - Exit with status N (0-255)</li>
+                    <li>Validates numeric arguments</li>
+                    <li>Handles errors for too many arguments</li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-3 text-blue-800">Output Commands</h2>
+                
+                <h3 class="text-lg font-semibold mb-2">echo</h3>
+                <p class="mb-4">
+                    Displays a line of text:
+                </p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li><code>echo text</code> - Print text followed by newline</li>
+                    <li><code>echo -n text</code> - Print text without newline</li>
+                    <li>Handles multiple arguments by joining with spaces</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Implementation Details</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-3 text-blue-800">Environment Variable Management</h3>
+                <p class="mb-4">
+                    Environment variables are stored as a linked list in the t_mini structure:
+                </p>
+
+                <div class="mermaid">
+                    flowchart LR
+                    subgraph Environment
+                        A["HOME=/home/user"] --> B["PATH=/usr/bin:/bin"] --> C["USER=username"] --> D["..."]
+                    end
+                </div>
+
+                <h4 class="mt-6 mb-2 font-semibold">Key Functions</h4>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li><code>ft_getenv(t_list *env, const char *name)</code> - Retrieve variable value</li>
+                    <li><code>copy_env_variables()</code> - Copy environment into linked list structure</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold mt-6 mb-3 text-blue-800">Return Values</h3>
+                <p class="mb-4">
+                    Built-in commands return status codes similar to external commands:
+                </p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li><code>0</code> - Success</li>
+                    <li><code>1</code> - General error</li>
+                    <li><code>2</code> - Incorrect usage</li>
+                </ul>
+                <p class="mt-2">
+                    These return values are stored in the <code>mini->exit_status</code> field and can be used by subsequent
+                    commands, especially in logical operator sequences.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h4 class="text-lg font-semibold mb-2">Minishell Project</h4>
+                    <p>A simplified Unix shell implementation</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-2">Quick Links</h4>
+                    <ul class="space-y-1">
+                        <li><a href="resources.html" class="hover:text-blue-300">GNU Resources</a></li>
+                        <li><a href="resources.html#unix" class="hover:text-blue-300">Unix Resources</a></li>
+                        <li><a href="resources.html#shell" class="hover:text-blue-300">Shell Programming</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

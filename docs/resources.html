@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - Minishell Documentation</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Animate.css CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Mermaid for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <style>
+        .mermaid {
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+        }
+        code {
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-blue-900 text-white shadow-md">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="animate__animated animate__fadeIn">
+                    <h1 class="text-2xl font-bold">Minishell Documentation</h1>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="index.html" class="hover:text-blue-300">Home</a>
+                    <a href="architecture.html" class="hover:text-blue-300">Architecture</a>
+                    <a href="execution.html" class="hover:text-blue-300">Command Execution</a>
+                    <a href="builtins.html" class="hover:text-blue-300">Built-ins</a>
+                    <a href="resources.html" class="hover:text-blue-300">Resources</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Resources & References</h1>
+        
+        <section id="gnu" class="mb-12 animate__animated animate__fadeInUp">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">GNU Resources</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-6">
+                    GNU provides extensive documentation on shell features, system calls, and standard utilities
+                    that are essential for understanding and developing shell applications.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3 text-blue-800">GNU Bash Documentation</h3>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li><a href="https://www.gnu.org/software/bash/manual/bash.html" class="text-blue-600 hover:underline" target="_blank">Bash Reference Manual</a></li>
+                            <li><a href="https://www.gnu.org/software/bash/manual/html_node/index.html" class="text-blue-600 hover:underline" target="_blank">Bash Features</a></li>
+                            <li><a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Builtin-Commands.html" class="text-blue-600 hover:underline" target="_blank">Shell Built-in Commands</a></li>
+                            <li><a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Variables.html" class="text-blue-600 hover:underline" target="_blank">Shell Variables</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3 text-blue-800">GNU C Library</h3>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li><a href="https://www.gnu.org/software/libc/manual/" class="text-blue-600 hover:underline" target="_blank">GNU C Library Manual</a></li>
+                            <li><a href="https://www.gnu.org/software/libc/manual/html_node/Processes.html" class="text-blue-600 hover:underline" target="_blank">Process Control</a></li>
+                            <li><a href="https://www.gnu.org/software/libc/manual/html_node/File-System-Interface.html" class="text-blue-600 hover:underline" target="_blank">File System Interface</a></li>
+                            <li><a href="https://www.gnu.org/software/libc/manual/html_node/Pipes-and-FIFOs.html" class="text-blue-600 hover:underline" target="_blank">Pipes and FIFOs</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-800">GNU Tools</h3>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><a href="https://www.gnu.org/software/coreutils/manual/coreutils.html" class="text-blue-600 hover:underline" target="_blank">GNU Core Utilities</a></li>
+                        <li><a href="https://www.gnu.org/software/make/manual/make.html" class="text-blue-600 hover:underline" target="_blank">GNU Make</a></li>
+                        <li><a href="https://www.gnu.org/software/gdb/documentation/" class="text-blue-600 hover:underline" target="_blank">GDB Debugger</a></li>
+                        <li><a href="https://www.gnu.org/software/binutils/" class="text-blue-600 hover:underline" target="_blank">GNU Binutils</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="unix" class="mb-12 animate__animated animate__fadeInUp animate__delay-1s">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Unix Resources</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-6">
+                    These resources cover Unix system programming, standards, and the philosophy behind
+                    the design of Unix shells and utilities.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3 text-blue-800">Unix Programming</h3>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li><a href="https://www.freebsd.org/cgi/man.cgi" class="text-blue-600 hover:underline" target="_blank">FreeBSD Manual Pages</a></li>
+                            <li><a href="https://pubs.opengroup.org/onlinepubs/9699919799/" class="text-blue-600 hover:underline" target="_blank">POSIX.1-2017 Standard</a></li>
+                            <li><a href="https://www.kernel.org/doc/man-pages/" class="text-blue-600 hover:underline" target="_blank">Linux man-pages Project</a></li>
+                            <li><a href="https://developers.redhat.com/blog/tag/linux" class="text-blue-600 hover:underline" target="_blank">Red Hat Developer Blog</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3 text-blue-800">Unix System Calls</h3>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li><a href="https://man7.org/linux/man-pages/man2/fork.2.html" class="text-blue-600 hover:underline" target="_blank">fork(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/execve.2.html" class="text-blue-600 hover:underline" target="_blank">execve(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/wait.2.html" class="text-blue-600 hover:underline" target="_blank">wait(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/pipe.2.html" class="text-blue-600 hover:underline" target="_blank">pipe(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/dup.2.html" class="text-blue-600 hover:underline" target="_blank">dup(2)</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-800">Unix Philosophy and Design</h3>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><a href="https://homepage.cs.uri.edu/~thenry/resources/unix_art/ch01s06.html" class="text-blue-600 hover:underline" target="_blank">The Unix Philosophy</a></li>
+                        <li><a href="https://en.wikipedia.org/wiki/Unix_philosophy" class="text-blue-600 hover:underline" target="_blank">Wikipedia: Unix Philosophy</a></li>
+                        <li><a href="https://www.bell-labs.com/usr/dmr/www/hist.html" class="text-blue-600 hover:underline" target="_blank">The Evolution of the Unix Time-sharing System</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="shell" class="mb-12 animate__animated animate__fadeInUp animate__delay-2s">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Shell Programming</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-6">
+                    These resources focus on shell programming techniques, best practices, and examples.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3 text-blue-800">Shell Scripting</h3>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li><a href="https://www.shellscript.sh/" class="text-blue-600 hover:underline" target="_blank">Shell Scripting Tutorial</a></li>
+                            <li><a href="https://tldp.org/LDP/abs/html/" class="text-blue-600 hover:underline" target="_blank">Advanced Bash-Scripting Guide</a></li>
+                            <li><a href="https://google.github.io/styleguide/shellguide.html" class="text-blue-600 hover:underline" target="_blank">Google Shell Style Guide</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3 text-blue-800">Shell Implementation</h3>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li><a href="https://brennan.io/2015/01/16/write-a-shell-in-c/" class="text-blue-600 hover:underline" target="_blank">Write a Shell in C</a></li>
+                            <li><a href="https://github.com/aosabook/500lines/tree/master/shell" class="text-blue-600 hover:underline" target="_blank">A Shell in 500 Lines of Code</a></li>
+                            <li><a href="https://www.cs.purdue.edu/homes/grr/SystemsProgrammingBook/Book/Chapter5-WritingYourOwnShell.pdf" class="text-blue-600 hover:underline" target="_blank">Writing Your Own Shell</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-800">Books & Publications</h3>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>"Advanced Programming in the UNIX Environment" by W. Richard Stevens</li>
+                        <li>"The Linux Programming Interface" by Michael Kerrisk</li>
+                        <li>"UNIX Network Programming" by W. Richard Stevens</li>
+                        <li>"Understanding the Linux Kernel" by Daniel P. Bovet and Marco Cesati</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="minishell-specific" class="mb-12 animate__animated animate__fadeInUp animate__delay-3s">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Minishell-Specific Resources</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-6">
+                    These resources are particularly useful for understanding the implementation of minishell.
+                </p>
+
+                <h3 class="text-lg font-semibold mb-3 text-blue-800">Key Man Pages</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <h4 class="font-semibold mb-2">Process Control</h4>
+                        <ul class="list-disc pl-6 space-y-1">
+                            <li><a href="https://man7.org/linux/man-pages/man2/fork.2.html" class="text-blue-600 hover:underline" target="_blank">fork(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/wait.2.html" class="text-blue-600 hover:underline" target="_blank">wait(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/execve.2.html" class="text-blue-600 hover:underline" target="_blank">execve(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/exit.2.html" class="text-blue-600 hover:underline" target="_blank">exit(2)</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">File Operations</h4>
+                        <ul class="list-disc pl-6 space-y-1">
+                            <li><a href="https://man7.org/linux/man-pages/man2/open.2.html" class="text-blue-600 hover:underline" target="_blank">open(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/close.2.html" class="text-blue-600 hover:underline" target="_blank">close(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/read.2.html" class="text-blue-600 hover:underline" target="_blank">read(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/write.2.html" class="text-blue-600 hover:underline" target="_blank">write(2)</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">Pipes & Redirection</h4>
+                        <ul class="list-disc pl-6 space-y-1">
+                            <li><a href="https://man7.org/linux/man-pages/man2/pipe.2.html" class="text-blue-600 hover:underline" target="_blank">pipe(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/dup.2.html" class="text-blue-600 hover:underline" target="_blank">dup(2)</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man2/dup2.2.html" class="text-blue-600 hover:underline" target="_blank">dup2(2)</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold mb-3 text-blue-800">Libraries and Functions</h3>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li><a href="https://man7.org/linux/man-pages/man3/readline.3.html" class="text-blue-600 hover:underline" target="_blank">GNU Readline Library</a></li>
+                    <li><a href="https://tiswww.case.edu/php/chet/readline/rltop.html" class="text-blue-600 hover:underline" target="_blank">Readline Documentation</a></li>
+                    <li><a href="https://en.cppreference.com/w/c/memory" class="text-blue-600 hover:underline" target="_blank">C Memory Management</a></li>
+                    <li><a href="https://en.cppreference.com/w/c/string/byte" class="text-blue-600 hover:underline" target="_blank">C String Handling</a></li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h4 class="text-lg font-semibold mb-2">Minishell Project</h4>
+                    <p>A simplified Unix shell implementation</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-2">Quick Links</h4>
+                    <ul class="space-y-1">
+                        <li><a href="#gnu" class="hover:text-blue-300">GNU Resources</a></li>
+                        <li><a href="#unix" class="hover:text-blue-300">Unix Resources</a></li>
+                        <li><a href="#shell" class="hover:text-blue-300">Shell Programming</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

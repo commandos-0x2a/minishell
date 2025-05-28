@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minishell Documentation</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Animate.css CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Mermaid for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <style>
+        .mermaid {
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-blue-900 text-white shadow-md">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="animate__animated animate__fadeIn">
+                    <h1 class="text-2xl font-bold">Minishell Documentation</h1>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="index.html" class="hover:text-blue-300">Home</a>
+                    <a href="architecture.html" class="hover:text-blue-300">Architecture</a>
+                    <a href="execution.html" class="hover:text-blue-300">Command Execution</a>
+                    <a href="builtins.html" class="hover:text-blue-300">Built-ins</a>
+                    <a href="resources.html" class="hover:text-blue-300">Resources</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+        <section class="animate__animated animate__fadeInUp mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Welcome to the Minishell Project</h2>
+            <p class="text-lg text-gray-700 mb-4">
+                Minishell is a simplified implementation of a Unix shell, capable of parsing commands, 
+                handling pipes, redirections, environment variables, and executing built-in commands.
+            </p>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-3 text-blue-800">Key Features</h3>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>Command parsing and execution</li>
+                    <li>Built-in commands like cd, echo, pwd, env, export, unset, and exit</li>
+                    <li>Pipeline support (|)</li>
+                    <li>Logical operators (&&, ||)</li>
+                    <li>Input/output redirection</li>
+                    <li>Environment variable expansion</li>
+                    <li>Signal handling</li>
+                    <li>Subshell execution</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInLeft">
+                <h3 class="text-xl font-semibold mb-3 text-blue-800">Project Structure</h3>
+                <p class="mb-4">The project is organized into several modules:</p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li><strong>Main</strong>: Core shell execution loop</li>
+                    <li><strong>Parser</strong>: Tokenization and syntax analysis</li>
+                    <li><strong>Executor</strong>: Command execution and pipeline handling</li>
+                    <li><strong>Builtins</strong>: Implementation of built-in commands</li>
+                    <li><strong>Utils</strong>: Helper functions and utilities</li>
+                </ul>
+                <p class="mt-4">
+                    <a href="architecture.html" class="text-blue-600 hover:underline">Learn more about the architecture →</a>
+                </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInRight">
+                <h3 class="text-xl font-semibold mb-3 text-blue-800">Command Flow</h3>
+                <p class="mb-4">The command execution flow:</p>
+                <ol class="list-decimal pl-6 space-y-1">
+                    <li>Read input from the user</li>
+                    <li>Tokenize the input</li>
+                    <li>Parse and check syntax</li>
+                    <li>Handle logical operators (&&, ||)</li>
+                    <li>Process pipelines</li>
+                    <li>Execute commands and handle redirections</li>
+                </ol>
+                <p class="mt-4">
+                    <a href="execution.html" class="text-blue-600 hover:underline">Deep dive into the execution flow →</a>
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Flow Overview</h2>
+            <div class="mermaid">
+                graph TD
+                    A[User Input] --> B[Tokenization]
+                    B --> C[Syntax Checking]
+                    C --> D[Flow Control]
+                    D --> E[Pipeline Control]
+                    E --> F[Execute Command]
+                    F --> G1[Built-in Command] & G2[External Command]
+                    G1 --> H[Return Result]
+                    G2 --> H
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h4 class="text-lg font-semibold mb-2">Minishell Project</h4>
+                    <p>A simplified Unix shell implementation</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-2">Quick Links</h4>
+                    <ul class="space-y-1">
+                        <li><a href="resources.html" class="hover:text-blue-300">GNU Resources</a></li>
+                        <li><a href="resources.html#unix" class="hover:text-blue-300">Unix Resources</a></li>
+                        <li><a href="resources.html#shell" class="hover:text-blue-300">Shell Programming</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

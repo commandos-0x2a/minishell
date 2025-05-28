@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Execution - Minishell Documentation</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Animate.css CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Mermaid for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <style>
+        .mermaid {
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+        }
+        code {
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-blue-900 text-white shadow-md">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="animate__animated animate__fadeIn">
+                    <h1 class="text-2xl font-bold">Minishell Documentation</h1>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="index.html" class="hover:text-blue-300">Home</a>
+                    <a href="architecture.html" class="hover:text-blue-300">Architecture</a>
+                    <a href="execution.html" class="hover:text-blue-300">Command Execution</a>
+                    <a href="builtins.html" class="hover:text-blue-300">Built-ins</a>
+                    <a href="resources.html" class="hover:text-blue-300">Resources</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Command Execution System</h1>
+        
+        <section class="mb-12 animate__animated animate__fadeInUp">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Execution Flow</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-4">
+                    The command execution system is the heart of the minishell project. It processes tokenized input
+                    and executes commands with their arguments, handling all the complexity of redirection, pipes,
+                    logical operators, and subshells.
+                </p>
+
+                <div class="mermaid">
+                    flowchart TD
+                    A[User Input] --> B[Tokenizer]
+                    B --> C[Flow Control]
+                    C --> D1{operators}
+                    D1 -->|Yes| E1[Handle Logical Operators]
+                    D1 -->|No| F1[Pipeline Control]
+                    E1 --> F1
+                    F1 --> G1{Pipeline?}
+                    G1 -->|Yes| H1[Handle Pipes]
+                    G1 -->|No| I1[Execute Command]
+                    H1 --> I1
+                    I1 --> J1{Builtin Command?}
+                    J1 -->|Yes| K1[Execute Builtin]
+                    J1 -->|No| L1{Subshell?}
+                    L1 -->|Yes| M1[Run Subshell]
+                    L1 -->|No| N1[Execute External Command]
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Flow Control</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-4">
+                    The flow control system handles logical operators <code>&&</code> and <code>||</code> in commands. It works by:
+                </p>
+                <ol class="list-decimal pl-6 space-y-1 mb-6">
+                    <li>Parsing the command for logical operators</li>
+                    <li>Splitting the command into segments</li>
+                    <li>Executing each segment based on the results of previous segments</li>
+                    <li>For <code>&&</code>, execute next command only if the previous one succeeded (exit code 0)</li>
+                    <li>For <code>||</code>, execute next command only if the previous one failed (non-zero exit code)</li>
+                </ol>
+                
+                <h3 class="text-lg font-semibold mb-2 text-blue-800">Implementation Highlights</h3>
+                <pre><code>int flow_control(t_mini *mini)
+{
+    int op;      // Operator type (1 for &&, 2 for ||)
+    int test;    // Test condition for executing next command
+
+    test = 1;
+    while (mini->tokens && mini->tokens->str)
+    {
+        set_null_token(mini->tokens, &op);  // Find operator and set
+        if (test)
+        {
+            // Execute command via pipeline control
+            if (pipeline_control(mini) == -1)
+                return (-1);
+            
+            // Set test based on operator and exit status
+            if (op == 1)  // && operator
+                test = !mini->exit_status;
+            else if (op == 2)  // || operator
+                test = mini->exit_status;
+        }
+        if (op == 0)
+            break;
+        if (op == 2)
+            test = !test;
+        lst_move2next(&mini->tokens);  // Move to next command
+    }
+    return (0);
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Pipeline Control</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-4">
+                    Pipeline control manages the execution of piped commands, where the output of one command is the input to another:
+                </p>
+
+                <div class="mermaid">
+                    sequenceDiagram
+                        participant Parent as Parent Process
+                        participant Process1 as Command Process 1
+                        participant Process2 as Command Process 2
+                        
+                        Parent->>Parent: Create pipe
+                        Parent->>Process1: Fork child process
+                        Parent->>Process2: Fork child process
+                        Process1->>Process1: Connect stdout to pipe write end
+                        Process2->>Process2: Connect stdin to pipe read end
+                        Process1->>Process1: Execute command 1
+                        Process2->>Process2: Execute command 2
+                        Parent->>Parent: Wait for children
+                </div>
+                
+                <h3 class="text-lg font-semibold mt-6 mb-2 text-blue-800">Key Steps</h3>
+                <ol class="list-decimal pl-6 space-y-1">
+                    <li>Detect pipes in the command</li>
+                    <li>Create pipe file descriptors for inter-process communication</li>
+                    <li>Fork child processes for each command in the pipeline</li>
+                    <li>Connect standard input/output to the appropriate pipe ends</li>
+                    <li>Execute each command, redirecting output accordingly</li>
+                    <li>Wait for all child processes to complete</li>
+                </ol>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInLeft">
+                <h2 class="text-xl font-semibold mb-3 text-blue-800">Execute Simple Command</h2>
+                <p class="mb-4">
+                    <code>execute_simple_command()</code> processes single commands:
+                </p>
+                <ol class="list-decimal pl-6 space-y-1">
+                    <li>Check if the command is a subshell and run it if needed</li>
+                    <li>Expand tokens (variables, wildcards, etc.)</li>
+                    <li>Convert tokens to argument array</li>
+                    <li>Check if the command is a built-in and handle accordingly</li>
+                    <li>For external commands:
+                        <ul class="list-disc pl-6">
+                            <li>Find the full path of the executable</li>
+                            <li>Convert environment to string array</li>
+                            <li>Execute command using execve()</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInRight">
+                <h2 class="text-xl font-semibold mb-3 text-blue-800">Execute Complex Command</h2>
+                <p class="mb-4">
+                    <code>execute_complex_command()</code> handles more complex scenarios:
+                </p>
+                <ol class="list-decimal pl-6 space-y-1">
+                    <li>Process heredocs (<code>&lt;&lt;</code>)</li>
+                    <li>Handle file descriptor connections for pipelines</li>
+                    <li>Check and validate subshells</li>
+                    <li>Process redirections (<code>&gt;, &lt;, &gt;&gt;</code>)</li>
+                    <li>Fork a new process for the command</li>
+                    <li>Set up input/output redirections</li>
+                    <li>Execute the simple command</li>
+                    <li>Parent process manages file descriptors and returns PID</li>
+                </ol>
+            </div>
+        </div>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Subshell Execution</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-4">
+                    Subshells allow executing commands in a child shell environment:
+                </p>
+
+                <div class="mermaid">
+                    sequenceDiagram
+                        participant P as Parent Shell
+                        participant S as Subshell
+                        
+                        P->>P: Parse command with parentheses
+                        P->>S: Fork subshell process
+                        S->>S: Extract content within parentheses
+                        S->>S: Tokenize and parse subshell command
+                        S->>S: Execute command via flow_control
+                        S->>P: Return exit status
+                </div>
+                
+                <h3 class="text-lg font-semibold mt-6 mb-2 text-blue-800">Implementation Details</h3>
+                <p class="mb-4">
+                    Subshell execution involves:
+                </p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li>Detecting commands that start with parentheses</li>
+                    <li>Validating proper syntax (balanced parentheses)</li>
+                    <li>Extracting the command string from within parentheses</li>
+                    <li>Re-tokenizing this string</li>
+                    <li>Executing it through the flow control system</li>
+                    <li>Maintaining environment changes in the scope of the subshell</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Command Path Resolution</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-4">
+                    External commands need path resolution to find the executable:
+                </p>
+                <ol class="list-decimal pl-6 space-y-1">
+                    <li>Check if command is an absolute path (/bin/ls)</li>
+                    <li>Check if command is a relative path (./script)</li>
+                    <li>If neither, search through directories in PATH environment variable</li>
+                    <li>For each directory in PATH:
+                        <ul class="list-disc pl-6">
+                            <li>Combine with command name to form a full path</li>
+                            <li>Check if file exists and is executable</li>
+                            <li>Use first match found</li>
+                        </ul>
+                    </li>
+                </ol>
+                <p class="mt-4">
+                    This resolution is performed by <code>get_full_path()</code> in <code>src/utils/get_full_path.c</code>.
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Redirection Handling</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-4">
+                    The shell handles various input/output redirections:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2 text-blue-800">Input Redirection</h3>
+                        <p><code>&lt; file</code> - Read input from a file</p>
+                        <p><code>&lt;&lt; delimiter</code> - Heredoc input</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2 text-blue-800">Output Redirection</h3>
+                        <p><code>&gt; file</code> - Write output to a file (create/truncate)</p>
+                        <p><code>&gt;&gt; file</code> - Append output to a file</p>
+                    </div>
+                </div>
+
+                <p class="mb-4">
+                    Redirection handling involves:
+                </p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li>Detecting redirection operators in the token list</li>
+                    <li>Opening appropriate files with correct flags (O_RDONLY, O_WRONLY, etc.)</li>
+                    <li>Duplicating file descriptors to stdin/stdout/stderr</li>
+                    <li>Handling heredoc by creating temporary files</li>
+                    <li>Removing redirection operators from the token list before command execution</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h4 class="text-lg font-semibold mb-2">Minishell Project</h4>
+                    <p>A simplified Unix shell implementation</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-2">Quick Links</h4>
+                    <ul class="space-y-1">
+                        <li><a href="resources.html" class="hover:text-blue-300">GNU Resources</a></li>
+                        <li><a href="resources.html#unix" class="hover:text-blue-300">Unix Resources</a></li>
+                        <li><a href="resources.html#shell" class="hover:text-blue-300">Shell Programming</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
