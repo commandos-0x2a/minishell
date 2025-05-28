@@ -1,0 +1,17 @@
+0 verbose cli /home/mkurkar/.nvm/versions/node/v20.17.0/bin/node /home/mkurkar/.nvm/versions/node/v20.17.0/bin/npm
+1 info using npm@10.8.2
+2 info using node@v20.17.0
+3 silly config load:file:/home/mkurkar/.nvm/versions/node/v20.17.0/lib/node_modules/npm/npmrc
+4 silly config load:file:/sgoinfre/mkurkar/commandos0x2a/minishell/.npmrc
+5 silly config load:file:/home/mkurkar/.npmrc
+6 silly config load:file:/home/mkurkar/.nvm/versions/node/v20.17.0/etc/npmrc
+7 verbose title npm config get prefix
+8 verbose argv "config" "get" "prefix"
+9 verbose logfile logs-max:10 dir:/sgoinfre/mkurkar/commandos0x2a/minishell/_logs/2025-05-28T13_11_23_716Z-
+10 verbose logfile /sgoinfre/mkurkar/commandos0x2a/minishell/_logs/2025-05-28T13_11_23_716Z-debug-0.log
+11 verbose cwd /sgoinfre/mkurkar/commandos0x2a/minishell
+12 verbose os Linux 6.8.0-59-generic
+13 verbose node v20.17.0
+14 verbose npm  v10.8.2
+15 verbose exit 0
+16 info ok
