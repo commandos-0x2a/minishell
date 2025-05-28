@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/05/28 14:45:43 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/05/28 19:49:55 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	g_sig = 0;
 	loop = 1;
+	increment_shlvl(&mini);
 	while (loop == 1)
 	{
 		loop = start(&mini);

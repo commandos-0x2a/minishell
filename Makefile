@@ -34,6 +34,7 @@ FILES = 	main					\
 			utils/get_argv			\
 			utils/check_syntax		\
 			utils/ft_getpid			\
+			utils/increment_shlvl	\
 			\
 			expand/expand_line		\
 			expand/expand_env		\

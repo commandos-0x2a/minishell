@@ -6,7 +6,7 @@
 /*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 12:00:00 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/05/28 19:30:15 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/05/28 19:51:56 by mkurkar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	is_valid_identifier(char *s)
 	return (1);
 }
 
-static char	*make_env_variable(char *name, char *value)
+char	*make_env_variable(char *name, char *value)
 {
 	size_t	len;
 	char	*new_env;
