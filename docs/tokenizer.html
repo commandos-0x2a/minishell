@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tokenizer - Minishell Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.7.0/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom CSS and JS -->
+    <link rel="stylesheet" href="css/custom.css">
+    <script src="js/custom.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .operator-token {
+            background-color: #fef3c7;
+            border-color: #f59e0b;
+        }
+        .redirection-token {
+            background-color: #f3e8ff;
+            border-color: #8b5cf6;
+        }
+        .command-token {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+        }
+        .argument-token {
+            background-color: #e0f2fe;
+            border-color: #0ea5e9;
+        }
+        .expansion-token {
+            background-color: #fce7f3;
+            border-color: #ec4899;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-600 text-white">
+        <nav class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-xl font-bold">Minishell Documentation</h1>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="index.html" class="hover:text-blue-300">Home</a>
+                    <a href="architecture.html" class="hover:text-blue-300">Architecture</a>
+                    <a href="execution.html" class="hover:text-blue-300">Execution</a>
+                    <a href="tokenizer.html" class="hover:text-blue-300 font-semibold">Tokenizer</a>
+                    <a href="builtins.html" class="hover:text-blue-300">Built-ins</a>
+                    <a href="resources.html" class="hover:text-blue-300">Resources</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Tokenizer & Parser</h1>
+        
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Overview</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-4">
+                    The tokenizer is the first step in processing user input. It transforms a command line string into 
+                    a linked list of tokens that can be processed by the execution engine. The tokenization process involves:
+                </p>
+                <ul class="list-disc pl-6 space-y-2 mb-6">
+                    <li><strong>Line Expansion</strong>: Adding spaces around operators for easier parsing</li>
+                    <li><strong>Token Cutting</strong>: Splitting the input into meaningful tokens</li>
+                    <li><strong>Quote Handling</strong>: Managing single and double quotes</li>
+                    <li><strong>Bracket Tracking</strong>: Handling subshell parentheses</li>
+                    <li><strong>Variable Expansion</strong>: Expanding environment variables and special parameters</li>
+                </ul>
+
+                <div class="mermaid">
+                    flowchart TD
+                    A[Raw Input String] --> B[expand_line]
+                    B --> C[Line with Spaced Operators]
+                    C --> D[tokenizer_iter]
+                    D --> E[cut_slice Function]
+                    E --> F{Quote or Bracket?}
+                    F -->|Yes| G[Handle Special Characters]
+                    F -->|No| H[Simple Token Split]
+                    G --> I[Token Extracted]
+                    H --> I
+                    I --> J[Add to Token List]
+                    J --> K{More Input?}
+                    K -->|Yes| D
+                    K -->|No| L[Complete Token List]
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Step-by-Step Tokenization Process</h2>
+            
+            <div class="space-y-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-800">Step 1: Line Expansion</h3>
+                    <p class="mb-4">The <code>expand_line</code> function adds spaces around operators to make tokenization easier:</p>
+                    
+                    <div class="space-y-3">
+                        <div class="bg-gray-50 p-3 rounded">
+                            <strong>Input:</strong> <code>echo hello|grep l</code><br>
+                            <strong>Output:</strong> <code>echo hello | grep l</code>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <strong>Input:</strong> <code>cat&lt;file.txt&gt;&gt;output.txt</code><br>
+                            <strong>Output:</strong> <code>cat &lt; file.txt &gt;&gt; output.txt</code>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded">
+                            <strong>Input:</strong> <code>ls&&echo done||echo failed</code><br>
+                            <strong>Output:</strong> <code>ls && echo done || echo failed</code>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4 mb-2 font-semibold">Recognized Operators</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                        <span class="operator-token">&&</span>
+                        <span class="operator-token">||</span>
+                        <span class="redirection-token">&gt;&gt;</span>
+                        <span class="redirection-token">&lt;&lt;</span>
+                        <span class="operator-token">|</span>
+                        <span class="redirection-token">&gt;</span>
+                        <span class="redirection-token">&lt;</span>
+                        <span class="token-box">( )</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-800">Step 2: Token Cutting with <code>cut_slice</code></h3>
+                    <p class="mb-4">The core tokenization logic handles various scenarios:</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-semibold text-green-700">Simple Tokens</h4>
+                            <p class="text-sm text-gray-600 mb-2">Separated by spaces, stopped by quotes or brackets</p>
+                            <div class="bg-gray-50 p-3 rounded">
+                                <code>"echo hello world"</code> → 
+                                <span class="command-token">echo</span>
+                                <span class="argument-token">hello</span>
+                                <span class="argument-token">world</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="font-semibold text-purple-700">Quoted Strings</h4>
+                            <p class="text-sm text-gray-600 mb-2">Preserve spaces within quotes</p>
+                            <div class="bg-gray-50 p-3 rounded">
+                                <code>"echo 'hello world' test"</code> → 
+                                <span class="command-token">echo</span>
+                                <span class="argument-token">'hello world'</span>
+                                <span class="argument-token">test</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="font-semibold text-blue-700">Subshell Commands</h4>
+                            <p class="text-sm text-gray-600 mb-2">Track parentheses for balanced subshells</p>
+                            <div class="bg-gray-50 p-3 rounded">
+                                <code>"(echo hello; ls) | cat"</code> → 
+                                <span class="token-box">(echo hello; ls)</span>
+                                <span class="operator-token">|</span>
+                                <span class="command-token">cat</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-800">Step 3: Token List Creation</h3>
+                    <p class="mb-4">Tokens are stored in a linked list structure for easy manipulation:</p>
+                    
+                    <div class="mermaid">
+                        flowchart LR
+                        A[Token 1 str: echo] --> B[Token 2 str:  hello ]
+                        B --> C[Token 3<br/>str: PIPE]
+                        C --> D[Token 4<br/>str: grep]
+                        D --> E[Token 5<br/>str: h]
+                        E --> F[NULL]
+                    </div>
+
+                    <div class="mt-4 bg-gray-50 p-4 rounded">
+                        <h4 class="font-semibold mb-2">C Structure:</h4>
+                        <pre><code>typedef struct s_list
+{
+    char            *str;   // Token string
+    struct s_list   *next;  // Next token in list
+}   t_list;</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Command Lifecycle Examples</h2>
+            <p class="mb-6">Let's trace through different types of commands to see how they are processed:</p>
+
+            <div class="space-y-8">
+                <!-- Normal Command -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-4 text-green-700">🔄 Normal Command: <code>echo "Hello World"</code></h3>
+                    
+<div class="mermaid">
+    flowchart TD
+    A["Input: echo 'Hello World'"] --> B[expand_line]
+    B --> C["Expanded: echo dq Hello World dq"]
+    C --> D[tokenizer_iter]
+    D --> E[cut_slice: 'echo']
+    E --> F["cut_slice: 'dq Hello World dq'"]
+    F --> G["Token List: echo → dq  Hello World dq   → NULL dq"]
+    G --> H[expand_tokens]
+    H --> I[Variable Expansion]
+    I --> J[Quote Removal]
+    J --> K["\" Final: echo → Hello World → NULL\""]
+    K --> L[execute_simple_command]
+    L --> M[Command Execution]
+
+</div>
+
+                    <div class="mt-4 bg-green-50 p-4 rounded">
+                        <h4 class="font-semibold text-green-800">Processing Steps:</h4>
+                        <ol class="list-decimal pl-6 space-y-1 text-sm">
+                            <li>Input string contains no operators, so expansion doesn't change it</li>
+                            <li>Tokenizer creates two tokens: "echo" and "\"Hello World\""</li>
+                            <li>During expansion, quotes are processed and removed</li>
+                            <li>Final tokens: ["echo", "Hello World"]</li>
+                            <li>Execute as simple builtin command</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Redirection Command -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-4 text-purple-700">📁 Redirection: <code>cat &lt; input.txt &gt; output.txt</code></h3>
+                    
+                    <div class="mermaid">
+                        flowchart TD
+                        A["Input: cat &lt; input.txt &gt; output.txt"] --> B[expand_line]
+                        B --> C["Expanded: cat &lt; input.txt &gt; output.txt"]
+                        C --> D[tokenizer_iter]
+                        D --> E["Tokens: cat → &lt; → input.txt → &gt; → output.txt"]
+                        E --> F[redirection_handler]
+                        F --> G["Open input.txt for reading<br/>Open output.txt for writing"]
+                        G --> H[get_argv: Remove redirection tokens]
+                        H --> I["Command args: cat"]
+                        I --> J[execute_simple_command]
+                        J --> K["Execute with redirected I/O"]
+                    </div>
+
+                    <div class="mt-4 bg-purple-50 p-4 rounded">
+                        <h4 class="font-semibold text-purple-800">Processing Steps:</h4>
+                        <ol class="list-decimal pl-6 space-y-1 text-sm">
+                            <li>Line expansion adds spaces (already present in this example)</li>
+                            <li>Tokenizer creates 5 tokens: ["cat", "&lt;", "input.txt", "&gt;", "output.txt"]</li>
+                            <li>Redirection handler processes "&lt;" and "&gt;" operators</li>
+                            <li>File descriptors are set up for input.txt (stdin) and output.txt (stdout)</li>
+                            <li><code>get_argv</code> removes redirection tokens, leaving only ["cat"]</li>
+                            <li>Command executes with redirected file descriptors</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Heredoc Command -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-4 text-orange-700">📜 Heredoc: <code>cat &lt;&lt; EOF</code></h3>
+                    
+                    <div class="mermaid">
+                        flowchart TD
+                        A["Input: cat &lt;&lt; EOF"] --> B[expand_line]
+                        B --> C["Expanded: cat &lt;&lt; EOF"]
+                        C --> D[tokenizer_iter]
+                        D --> E["Tokens: cat → &lt;&lt; → EOF"]
+                        E --> F[heredoc_forever]
+                        F --> G["Read input until 'EOF' delimiter<br/>Store in temporary file"]
+                        G --> H[Variable expansion on each line]
+                        H --> I["Create heredoc file descriptor"]
+                        I --> J[redirection_handler]
+                        J --> K["Redirect stdin to heredoc fd"]
+                        K --> L[get_argv: Remove heredoc tokens]
+                        L --> M["Command args: cat"]
+                        M --> N[execute_simple_command]
+                    </div>
+
+                    <div class="mt-4 bg-orange-50 p-4 rounded">
+                        <h4 class="font-semibold text-orange-800">Processing Steps:</h4>
+                        <ol class="list-decimal pl-6 space-y-1 text-sm">
+                            <li>Tokenizer creates: ["cat", "&lt;&lt;", "EOF"]</li>
+                            <li><code>heredoc_forever</code> function handles the "&lt;&lt;" operator</li>
+                            <li>Shell prompts for input with "&gt; " until "EOF" is encountered</li>
+                            <li>Each input line is expanded for variables (unless delimiter is quoted)</li>
+                            <li>Input is stored in a temporary file and file descriptor is created</li>
+                            <li>Stdin is redirected to read from the heredoc file</li>
+                            <li>Command executes with the heredoc content as input</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Pipeline Command -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-4 text-blue-700">🔗 Pipeline: <code>ls -la | grep txt | wc -l</code></h3>
+                    
+                    <div class="mermaid">
+                        flowchart TD
+                        A["Input: ls -la | grep txt | wc -l"] --> B[expand_line]
+                        B --> C["Expanded: ls -la | grep txt | wc -l"]
+                        C --> D[tokenizer_iter]
+                        D --> E["Tokens: ls → -la → | → grep → txt → | → wc → -l"]
+                        E --> F[pipeline_control]
+                        F --> G[set_null_token: Find first PIPE]
+                        G --> H["Command 1: ls -la<br/>Create pipe[0,1]"]
+                        H --> I["Fork: ls writes to pipe[1]"]
+                        I --> J["Recursive call with pipe[0] as stdin"]
+                        J --> K["Command 2: grep txt<br/>Create pipe[0,1]"]
+                        K --> L["Fork: grep reads from previous pipe[0]<br/>writes to new pipe[1]"]
+                        L --> M["Command 3: wc -l<br/>reads from pipe[0]"]
+                        M --> N[Wait for all processes]
+                    </div>
+
+                    <div class="mt-4 bg-blue-50 p-4 rounded">
+                        <h4 class="font-semibold text-blue-800">Processing Steps:</h4>
+                        <ol class="list-decimal pl-6 space-y-1 text-sm">
+                            <li>Tokenizer creates 8 tokens including two "|" operators</li>
+                            <li><code>pipeline_control</code> detects pipeline pattern</li>
+                            <li><code>set_null_token</code> finds and nullifies the first "|", marking it as pipe boundary</li>
+                            <li>First command "ls -la" is executed with stdout connected to pipe</li>
+                            <li>Process forks and recursively handles remaining pipeline</li>
+                            <li>Second command "grep txt" reads from first pipe, writes to second pipe</li>
+                            <li>Final command "wc -l" reads from second pipe, writes to terminal</li>
+                            <li>All processes run concurrently with proper pipe connections</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Subshell Command -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-4 text-indigo-700">🏠 Subshell: <code>(cd /tmp && ls) | wc -l</code></h3>
+                    
+                    <div class="mermaid">
+                        flowchart TD
+                        A["Input: (cd /tmp && ls) | wc -l"] --> B[expand_line]
+                        B --> C["Expanded: (cd /tmp && ls) | wc -l"]
+                        C --> D[tokenizer_iter with bracket tracking]
+                        D --> E["Tokens: (cd /tmp && ls) → | → wc → -l"]
+                        E --> F[pipeline_control]
+                        F --> G[is_subshell: Detect C at start]
+                        G --> H[Fork process for subshell]
+                        H --> I["In child: run_subshell"]
+                        I --> J["Extract: cd /tmp && ls"]
+                        J --> K[Re-tokenize subshell content]
+                        K --> L[flow_control: Handle && operator]
+                        L --> M["Execute cd /tmp, then ls"]
+                        M --> N["Parent: Connect subshell output to pipe"]
+                        N --> O["Execute wc -l with pipe input"]
+                    </div>
+
+                    <div class="mt-4 bg-indigo-50 p-4 rounded">
+                        <h4 class="font-semibold text-indigo-800">Processing Steps:</h4>
+                        <ol class="list-decimal pl-6 space-y-1 text-sm">
+                            <li><code>cut_slice</code> uses bracket counter to keep "(cd /tmp && ls)" as single token</li>
+                            <li>Pipeline control detects both subshell and pipe</li>
+                            <li><code>is_subshell</code> identifies the command starts with '('</li>
+                            <li>Fork creates child process for subshell execution</li>
+                            <li>In child: extract content, remove parentheses, re-tokenize</li>
+                            <li>Subshell content "cd /tmp && ls" goes through full parsing again</li>
+                            <li>Flow control handles the && operator within subshell</li>
+                            <li>Subshell output is piped to "wc -l" in parent process</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Variable Expansion Process</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="mb-4">
+                    After tokenization, variables are expanded using the <code>expand_tokens</code> function:
+                </p>
+
+                <div class="mermaid">
+                    flowchart TD
+                    A[Token with Variables] --> B[expand_str]
+                    B --> C[replace_qouts]
+                    C --> D[Convert quotes to special chars<br/>' → 0x1, DQ → 0x2]
+                    D --> E[expand_env]
+                    E --> F{Inside quotes?}
+                    F -->|Single| G[No expansion]
+                    F -->|Double| H[Expand variables]
+                    F -->|None| H
+                    H --> I[$VAR → value<br/>$? → exit status<br/>$0-$9 → arguments]
+                    G --> J[ft_split on spaces]
+                    I --> J
+                    J --> K[Multiple tokens if spaces]
+                    K --> L[expand_wildcard]
+                    L --> M[remove_qouts]
+                    M --> N[Final expanded tokens]
+                </div>
+
+                <div class="mt-6 space-y-4">
+                    <div class="bg-gray-50 p-4 rounded">
+                        <h4 class="font-semibold mb-2">Example: <code>echo $HOME/bin "$USER files"</code></h4>
+                        <div class="space-y-2 text-sm">
+                            <div><strong>1. Initial tokens:</strong> ["echo", "$HOME/bin", "\"$USER files\""]</div>
+                            <div><strong>2. Quote replacement:</strong> ["echo", "$HOME/bin", "␂$USER files␂"]</div>
+                            <div><strong>3. Variable expansion:</strong> ["echo", "/home/user/bin", "␂john files␂"]</div>
+                            <div><strong>4. Space splitting:</strong> ["echo", "/home/user/bin", "␂john files␂"]</div>
+                            <div><strong>5. Quote removal:</strong> ["echo", "/home/user/bin", "john files"]</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded">
+                        <h4 class="font-semibold mb-2">Special Variables</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="expansion-token">$?</span> - Exit status of last command<br>
+                                <span class="expansion-token">$0</span> - Script name<br>
+                                <span class="expansion-token">$1-$9</span> - Positional arguments
+                            </div>
+                            <div>
+                                <span class="expansion-token">$HOME</span> - User home directory<br>
+                                <span class="expansion-token">$PATH</span> - Command search path<br>
+                                <span class="expansion-token">$USER</span> - Current username
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Implementation Details</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-800">Key Functions</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong><code>tokenizer()</code></strong> - Main entry point for tokenization</li>
+                        <li><strong><code>expand_line()</code></strong> - Adds spaces around operators</li>
+                        <li><strong><code>tokenizer_iter()</code></strong> - Recursive tokenization logic</li>
+                        <li><strong><code>cut_slice()</code></strong> - Core token extraction function</li>
+                        <li><strong><code>add_token()</code></strong> - Adds token to linked list</li>
+                        <li><strong><code>expand_tokens()</code></strong> - Variable and wildcard expansion</li>
+                        <li><strong><code>expand_env()</code></strong> - Environment variable expansion</li>
+                        <li><strong><code>expand_wildcard()</code></strong> - Filename globbing</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-800">Error Handling</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>Unmatched quotes:</strong> Syntax error reported</li>
+                        <li><strong>Unbalanced parentheses:</strong> Detected in <code>cut_slice</code></li>
+                        <li><strong>Memory allocation failure:</strong> Cleanup and return NULL</li>
+                        <li><strong>Invalid syntax:</strong> Error message with token context</li>
+                        <li><strong>Expansion errors:</strong> Graceful fallback to original token</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Useful Links</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3 text-blue-800">Shell Parsing Resources</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Operation.html" 
+                                   class="text-blue-600 hover:underline" target="_blank">
+                                GNU Bash Manual - Shell Operation</a></li>
+                            <li><a href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html" 
+                                   class="text-blue-600 hover:underline" target="_blank">
+                                POSIX Shell Command Language</a></li>
+                            <li><a href="https://www.gnu.org/software/bash/manual/html_node/Word-Splitting.html" 
+                                   class="text-blue-600 hover:underline" target="_blank">
+                                Word Splitting in Bash</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3 text-blue-800">Implementation References</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="https://www.gnu.org/software/bash/manual/html_node/Quoting.html" 
+                                   class="text-blue-600 hover:underline" target="_blank">
+                                Bash Quoting Mechanisms</a></li>
+                            <li><a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html" 
+                                   class="text-blue-600 hover:underline" target="_blank">
+                                Shell Parameter Expansion</a></li>
+                            <li><a href="https://man7.org/linux/man-pages/man1/sh.1p.html" 
+                                   class="text-blue-600 hover:underline" target="_blank">
+                                POSIX sh Manual</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2024 Minishell Documentation. Built with TailwindCSS and Mermaid.js</p>
+        </div>
+    </footer>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>

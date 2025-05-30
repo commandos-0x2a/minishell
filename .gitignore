@@ -8,3 +8,4 @@ minishell
 readline_curses.supp
 printer.py
 .vscode
+_logs

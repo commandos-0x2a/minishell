@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Encoding Test</title>
+    <script src="js/custom.js"></script>
+    <style>
+        .code-keyword { color: #007acc; font-weight: bold; }
+        .code-string { color: #7f0000; }
+        .code-comment { color: #008000; font-style: italic; }
+        .code-function { color: #795e26; }
+        pre { background: #f5f5f5; padding: 10px; margin: 10px 0; border: 1px solid #ddd; }
+        .test-section { margin: 20px 0; padding: 15px; border: 2px solid #ccc; border-radius: 8px; }
+        .passed { border-color: #28a745; background-color: #d4edda; }
+        .failed { border-color: #dc3545; background-color: #f8d7da; }
+        .info { border-color: #17a2b8; background-color: #d1ecf1; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Final Double-Encoding Test</h1>
+    
+    <div class="test-section info">
+        <h2>Test Case: The Original Problem</h2>
+        <p>Testing the exact issue reported: <code>code-keyword">else "code-keyword">if (ft_strcmp(argv[0], "pwd") == 0)</code></p>
+        
+        <pre><code id="test-code">else if (ft_strcmp(argv[0], "pwd") == 0)
+        ret = ft_pwd(argv);
+    else if (ft_strcmp(argv[0], "unset") == 0)
+        ret = ft_unset(mini, argv);</code></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>🛠️ Test Controls</h2>
+        <button onclick="runSyntaxHighlighting()" style="padding: 8px 16px; margin: 5px;">Apply Syntax Highlighting</button>
+        <button onclick="checkForDoubleEncoding()" style="padding: 8px 16px; margin: 5px;">Check for Double Encoding</button>
+        <button onclick="runCleanup()" style="padding: 8px 16px; margin: 5px;">Run Cleanup</button>
+        <button onclick="resetTest()" style="padding: 8px 16px; margin: 5px;">Reset</button>
+    </div>
+
+    <div id="test-results" class="test-section">
+        <h2>📊 Test Results</h2>
+        <div id="results-content">Click buttons above to run tests...</div>
+    </div>
+
+    <div class="test-section info">
+        <h2>🔧 Debug Information</h2>
+        <div id="debug-info">
+            <p><strong>Browser:</strong> <span id="browser-info"></span></p>
+            <p><strong>JavaScript Status:</strong> <span id="js-status">Loading...</span></p>
+            <p><strong>MinishellDocs Object:</strong> <span id="minishell-status">Checking...</span></p>
+        </div>
+    </div>
+
+    <script>
+        let originalContent = '';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            originalContent = document.getElementById('test-code').innerHTML;
+            
+            // Update debug info
+            document.getElementById('browser-info').textContent = navigator.userAgent.split(' ').pop();
+            document.getElementById('js-status').textContent = 'Loaded ✅';
+            
+            // Check MinishellDocs availability
+            setTimeout(() => {
+                if (window.MinishellDocs) {
+                    document.getElementById('minishell-status').textContent = 'Available ✅';
+                } else {
+                    document.getElementById('minishell-status').textContent = 'Not Available ❌';
+                }
+            }, 100);
+        });
+
+        function runSyntaxHighlighting() {
+            const resultsDiv = document.getElementById('results-content');
+            const codeElement = document.getElementById('test-code');
+            
+            try {
+                // Apply syntax highlighting
+                const highlighter = new CodeHighlighter();
+                highlighter.highlightC(codeElement);
+                
+                resultsDiv.innerHTML = '<div style="color: green;">✅ Syntax highlighting applied successfully</div>';
+                updateTestSection('test-results', 'passed');
+            } catch (error) {
+                resultsDiv.innerHTML = '<div style="color: red;">❌ Error: ' + error.message + '</div>';
+                updateTestSection('test-results', 'failed');
+            }
+        }
+
+        function checkForDoubleEncoding() {
+            const resultsDiv = document.getElementById('results-content');
+            const content = document.getElementById('test-code').innerHTML;
+            
+            const doubleEncodingPatterns = [
+                'code-keyword">else "code-keyword">if',
+                '<span class="<span',
+                'code-keyword">([^<]+) "code-keyword">',
+                '>([^<]+) "([^"]+)">'
+            ];
+            
+            let foundIssues = [];
+            doubleEncodingPatterns.forEach((pattern, index) => {
+                const regex = new RegExp(pattern);
+                if (regex.test(content)) {
+                    foundIssues.push(`Pattern ${index + 1}: ${pattern}`);
+                }
+            });
+            
+            if (foundIssues.length === 0) {
+                resultsDiv.innerHTML = '<div style="color: green;">✅ No double encoding detected!</div>';
+                updateTestSection('test-results', 'passed');
+            } else {
+                resultsDiv.innerHTML = '<div style="color: red;">❌ Double encoding found:<br>' + 
+                    foundIssues.map(issue => '• ' + issue).join('<br>') + '</div>';
+                updateTestSection('test-results', 'failed');
+            }
+            
+            // Show current content for debugging
+            resultsDiv.innerHTML += '<hr><strong>Current HTML:</strong><br><pre style="font-size: 12px; background: #f0f0f0; padding: 5px;">' + 
+                escapeHtml(content) + '</pre>';
+        }
+
+        function runCleanup() {
+            const resultsDiv = document.getElementById('results-content');
+            
+            try {
+                if (window.MinishellDocs && window.MinishellDocs.cleanupHTML) {
+                    window.MinishellDocs.cleanupHTML();
+                    resultsDiv.innerHTML = '<div style="color: green;">✅ Cleanup function executed successfully</div>';
+                    updateTestSection('test-results', 'passed');
+                    
+                    // Re-check for encoding issues after cleanup
+                    setTimeout(checkForDoubleEncoding, 100);
+                } else {
+                    resultsDiv.innerHTML = '<div style="color: red;">❌ MinishellDocs.cleanupHTML not available</div>';
+                    updateTestSection('test-results', 'failed');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<div style="color: red;">❌ Error: ' + error.message + '</div>';
+                updateTestSection('test-results', 'failed');
+            }
+        }
+
+        function resetTest() {
+            const codeElement = document.getElementById('test-code');
+            codeElement.innerHTML = originalContent;
+            codeElement.classList.remove('highlighted');
+            
+            document.getElementById('results-content').innerHTML = 'Test reset. Click buttons above to run tests...';
+            updateTestSection('test-results', '');
+        }
+
+        function updateTestSection(sectionId, status) {
+            const section = document.getElementById(sectionId);
+            section.className = 'test-section ' + status;
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Double-Encoding Fix</title>
+    <script src="js/custom.js"></script>
+    <style>
+        .code-keyword { color: #007acc; font-weight: bold; }
+        .code-string { color: #7f0000; }
+        .code-comment { color: #008000; font-style: italic; }
+        .code-function { color: #795e26; }
+        pre { background: #f5f5f5; padding: 10px; margin: 10px 0; }
+        .test-result { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .passed { background-color: #d4edda; border-color: #c3e6cb; }
+        .failed { background-color: #f8d7da; border-color: #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>Double-Encoding Fix Test Page</h1>
+    
+    <div id="test-content">
+        <h2>Test Code Block</h2>
+        <pre><code>int handle_builtin(t_mini *mini, char **argv, int _exit)
+{
+    int ret;
+
+    ret = 0;
+    // Call the appropriate function based on command name
+    if (ft_strcmp(argv[0], "cd") == 0)
+        ret = ft_cd(mini, argv);
+    else if (ft_strcmp(argv[0], "echo") == 0)
+        ret = ft_echo(argv);
+    else if (ft_strcmp(argv[0], "env") == 0)
+        ret = ft_env(mini, argv);
+    else if (ft_strcmp(argv[0], "exit") == 0)
+        ret = ft_exit(argv, &_exit);
+    else if (ft_strcmp(argv[0], "export") == 0)
+        ret = ft_export(mini, argv);
+    else if (ft_strcmp(argv[0], "pwd") == 0)
+        ret = ft_pwd(argv);
+    else if (ft_strcmp(argv[0], "unset") == 0)
+        ret = ft_unset(mini, argv);
+
+    if (_exit)
+        exit_handler(mini, ret);
+    return (ret);
+}</code></pre>
+    </div>
+
+    <div id="controls">
+        <button onclick="testSyntaxHighlighting()">Test Syntax Highlighting</button>
+        <button onclick="testCleanup()">Test Cleanup Function</button>
+        <button onclick="debugEncoding()">Debug Encoding Issues</button>
+        <button onclick="resetContent()">Reset Content</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        let originalContent = '';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            originalContent = document.getElementById('test-content').innerHTML;
+        });
+
+        function testSyntaxHighlighting() {
+            const results = document.getElementById('results');
+            const codeHighlighter = new CodeHighlighter();
+            
+            try {
+                codeHighlighter.highlightCodeBlocks();
+                
+                // Check for double encoding
+                const content = document.getElementById('test-content').innerHTML;
+                const hasDoubleEncoding = content.includes('code-keyword">else "code-keyword">if') || 
+                                        content.includes('<span class="<span');
+                
+                if (hasDoubleEncoding) {
+                    results.innerHTML = '<div class="test-result failed">❌ FAILED: Double encoding detected!</div>';
+                } else {
+                    results.innerHTML = '<div class="test-result passed">✅ PASSED: No double encoding found</div>';
+                }
+            } catch (error) {
+                results.innerHTML = '<div class="test-result failed">❌ ERROR: ' + error.message + '</div>';
+            }
+        }
+
+        function testCleanup() {
+            const results = document.getElementById('results');
+            
+            try {
+                if (window.MinishellDocs && window.MinishellDocs.cleanupHTML) {
+                    window.MinishellDocs.cleanupHTML();
+                    results.innerHTML = '<div class="test-result passed">✅ Cleanup function executed successfully</div>';
+                } else {
+                    results.innerHTML = '<div class="test-result failed">❌ ERROR: Cleanup function not found</div>';
+                }
+            } catch (error) {
+                results.innerHTML = '<div class="test-result failed">❌ ERROR: ' + error.message + '</div>';
+            }
+        }
+
+        function debugEncoding() {
+            const results = document.getElementById('results');
+            
+            try {
+                if (window.MinishellDocs && window.MinishellDocs.debugEncodingIssues) {
+                    const issues = window.MinishellDocs.debugEncodingIssues();
+                    if (issues.length === 0) {
+                        results.innerHTML = '<div class="test-result passed">✅ No encoding issues found</div>';
+                    } else {
+                        results.innerHTML = '<div class="test-result failed">❌ Found ' + issues.length + ' encoding issues</div>';
+                    }
+                } else {
+                    results.innerHTML = '<div class="test-result failed">❌ ERROR: Debug function not found</div>';
+                }
+            } catch (error) {
+                results.innerHTML = '<div class="test-result failed">❌ ERROR: ' + error.message + '</div>';
+            }
+        }
+
+        function resetContent() {
+            document.getElementById('test-content').innerHTML = originalContent;
+            document.getElementById('results').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

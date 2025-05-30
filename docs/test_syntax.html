@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syntax Highlighting Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/custom.css">
+    <script src="js/custom.js"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Syntax Highlighting Test Page</h1>
+        
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">C Code Example</h2>
+            <div class="code-block">
+                <code>
+int main(void) {
+    char *str = "Hello World";
+    if (str != NULL) {
+        printf("%s\n", str);
+        return 0;
+    }
+    /* This is a comment */
+    return 1;
+}
+                </code>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">Shell Commands Example</h2>
+            <div class="code-block">
+                <code>
+echo "Testing syntax highlighting"
+case $var in
+    "test") echo "Found test case" ;;
+    *) echo "Default case" ;;
+esac
+                </code>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">Debug Controls</h2>
+            <div class="space-x-4">
+                <button onclick="MinishellDocs.debugEncodingIssues()" 
+                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    🔍 Check for Encoding Issues
+                </button>
+                <button onclick="MinishellDocs.cleanupHTML()" 
+                        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    🧹 Clean Up HTML
+                </button>
+                <button onclick="location.reload()" 
+                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    🔄 Reload Page
+                </button>
+            </div>
+            <div class="mt-4 text-sm text-gray-600">
+                <p>Open browser console (F12) to see debug output.</p>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Instructions</h2>
+            <ol class="list-decimal list-inside space-y-2">
+                <li>Click "Check for Encoding Issues" to scan for problems</li>
+                <li>If issues are found, click "Clean Up HTML" to fix them</li>
+                <li>Check the browser console for detailed information</li>
+                <li>Use the theme toggle (🌙/☀️) to test in different modes</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

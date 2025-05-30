@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minishell Documentation</title>
@@ -11,13 +10,19 @@
     <!-- Mermaid for diagrams -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
+    <!-- Custom CSS and JS -->
+    <link rel="stylesheet" href="css/custom.css">
+    <script src="js/custom.js"></script>
+    <!-- Google Fonts for better typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .mermaid {
-            background-color: #f9fafb;
-            padding: 20px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .code-block, code {
+            font-family: 'JetBrains Mono', monospace;
         }
     </style>
 </head>
@@ -31,7 +36,8 @@
                 <div class="flex space-x-6">
                     <a href="index.html" class="hover:text-blue-300">Home</a>
                     <a href="architecture.html" class="hover:text-blue-300">Architecture</a>
-                    <a href="execution.html" class="hover:text-blue-300">Command Execution</a>
+                    <a href="tokenizer.html" class="hover:text-blue-300">Tokenizer</a>
+                    <a href="execution.html" class="hover:text-blue-300">Execution</a>
                     <a href="builtins.html" class="hover:text-blue-300">Built-ins</a>
                     <a href="resources.html" class="hover:text-blue-300">Resources</a>
                 </div>
@@ -67,7 +73,8 @@
                 <p class="mb-4">The project is organized into several modules:</p>
                 <ul class="list-disc pl-6 space-y-1">
                     <li><strong>Main</strong>: Core shell execution loop</li>
-                    <li><strong>Parser</strong>: Tokenization and syntax analysis</li>
+                    <li><strong>Tokenizer</strong>: Input parsing and tokenization</li>
+                    <li><strong>Parser</strong>: Syntax analysis and command structure</li>
                     <li><strong>Executor</strong>: Command execution and pipeline handling</li>
                     <li><strong>Builtins</strong>: Implementation of built-in commands</li>
                     <li><strong>Utils</strong>: Helper functions and utilities</li>
@@ -82,14 +89,43 @@
                 <p class="mb-4">The command execution flow:</p>
                 <ol class="list-decimal pl-6 space-y-1">
                     <li>Read input from the user</li>
-                    <li>Tokenize the input</li>
-                    <li>Parse and check syntax</li>
+                    <li>Tokenize and parse the input</li>
+                    <li>Expand variables and wildcards</li>
+                    <li>Check syntax and validate commands</li>
                     <li>Handle logical operators (&&, ||)</li>
-                    <li>Process pipelines</li>
-                    <li>Execute commands and handle redirections</li>
+                    <li>Process pipelines and redirections</li>
+                    <li>Execute commands and handle built-ins</li>
                 </ol>
                 <p class="mt-4">
-                    <a href="execution.html" class="text-blue-600 hover:underline">Deep dive into the execution flow →</a>
+                    <a href="tokenizer.html" class="text-blue-600 hover:underline">Learn about tokenization →</a> |
+                    <a href="execution.html" class="text-blue-600 hover:underline">Deep dive into execution →</a>
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Quick Example</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold mb-3 text-blue-800">Basic Shell Usage</h3>
+                <div class="code-block">
+<code>// Simple command execution
+$ echo "Hello, Minishell!"
+Hello, Minishell!
+
+// Pipeline example
+$ ls -la | grep .c | wc -l
+12
+
+// Redirection example  
+$ cat input.txt > output.txt
+
+// Environment variables
+$ export MY_VAR="test"
+$ echo $MY_VAR
+test</code>
+                </div>
+                <p class="mt-4 text-sm text-gray-600">
+                    The minishell supports all these operations with proper parsing, execution, and error handling.
                 </p>
             </div>
         </section>
@@ -98,14 +134,24 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Flow Overview</h2>
             <div class="mermaid">
                 graph TD
-                    A[User Input] --> B[Tokenization]
-                    B --> C[Syntax Checking]
-                    C --> D[Flow Control]
-                    D --> E[Pipeline Control]
-                    E --> F[Execute Command]
-                    F --> G1[Built-in Command] & G2[External Command]
-                    G1 --> H[Return Result]
-                    G2 --> H
+                    A[User Input] --> B[Line Expansion]
+                    B --> C[Tokenization]
+                    C --> D[Variable Expansion]
+                    D --> E[Syntax Checking]
+                    E --> F{Valid Syntax?}
+                    F -->|No| G[Error Message]
+                    F -->|Yes| H[Flow Control]
+                    H --> I{Logical Operators?}
+                    I -->|Yes| J[Handle AND and OR]
+                    I -->|No| K[Pipeline Control]
+                    J --> K
+                    K --> L{Pipeline?}
+                    L -->|Yes| M[Process Pipes]
+                    L -->|No| N[Simple Command]
+                    M --> O[Execute Commands]
+                    N --> O
+                    O --> P[Wait & Get Exit Status]
+                    P --> A
             </div>
         </section>
     </main>
