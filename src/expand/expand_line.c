@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_line.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:13:24 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/05/25 17:32:13 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/31 09:16:29 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ static char	*allocate_expanded_line(const char *s)
 		len += op_len;
 		s += op_len;
 		len++;
-		s++;
+		if (op_len == 0)
+			s++;
 	}
 	return (malloc(++len));
 }
@@ -61,7 +62,8 @@ char	*expand_line(const char *s)
 				*s2++ = *s++;
 			*s2++ = ' ';
 		}
-		*s2++ = *s++;
+		else
+			*s2++ = *s++;
 	}
 	*s2 = '\0';
 	return (line);

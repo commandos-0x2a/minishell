@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_control.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaltayeh <yaltayeh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 23:32:02 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/05/25 17:31:58 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/05/31 09:07:48 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,8 @@ static pid_t	execute_command(t_mini *mini, int in_fd,	\
 	if builtin run return 0 and stored exit status in mini.exit_status
 	if syscall fail return -1
 	return child_pid 
-	valgrind --leak-check=full --show-leak-kinds=all
-			--trace-children=yes --track-fds=yes
-			--suppressions=readline_curses.supp ./minishell
+	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes 
+	--track-fds=yes --suppressions=readline_curses.supp ./minishell 
 	<< 1 cat > 1 | << 2 cat > 2| << 3 cat > 3
 */
 static int	pipeline_control_iter(t_mini *mini, int in_fd, int pipe_mask)

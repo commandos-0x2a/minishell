@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 00:40:23 by yaltayeh          #+#    #+#             */
-/*   Updated: 2024/11/02 11:09:51 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/06/02 22:32:08 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	ft_fprintf(int fd, const char *fmt, ...)
 	int		ret;
 
 	va_start(ap, fmt);
-	ret = ft_vfprintf(fd, fmt, &ap);
+	ret = ft_vfprintf(fd, fmt, ap);
 	va_end(ap);
 	return (ret);
 }

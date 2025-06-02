@@ -54,16 +54,10 @@ FILES =	\
 		\
 		ft_printf/ft_printf						\
 		ft_printf/ft_fprintf					\
+		ft_printf/ft_snprintf					\
 		ft_printf/ft_vprintf					\
 		ft_printf/ft_vfprintf					\
-		ft_printf/ft_snprintf					\
-		ft_printf/utils/ft_printf_redirect		\
-		ft_printf/utils/ft_flags_parser			\
-		ft_printf/utils/ft_handlers				\
-		ft_printf/utils/ft_handlers2			\
-		ft_printf/utils/ft_decimal_handler		\
-		ft_printf/utils/ft_u_decimal_handler	\
-		ft_printf/utils/ft_flags_apply			\
+		ft_printf/ft_vsnprintf					\
 #
 
 OBJECTS	= $(FILES:%=$(OBJDIR)/%.o)
