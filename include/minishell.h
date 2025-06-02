@@ -57,6 +57,7 @@ typedef struct s_mini
 	int		argc;
 	char	**argv;
 	int		exit_status;
+	int		loop;
 }	t_mini;
 
 struct s_cmd

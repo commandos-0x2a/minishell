@@ -6,13 +6,13 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 19:33:34 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/05/31 10:42:13 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/06/02 22:39:05 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <libft.h>
 
-static void put_char_to_buf(char *buf, char c, size_t *pos, size_t size)
+static void	put_char_to_buf(char *buf, char c, size_t *pos, size_t size)
 {
 	if (buf && size > 0 && *pos < size - 1)
 		buf[*pos] = c;
@@ -49,13 +49,14 @@ static void	ft_handle_number(int n, char *buf, size_t *pos, size_t size)
 		put_char_to_buf(buf, digits[--i], pos, size);
 }
 
-static void	ft_handle_string(const char *src, char *buf, size_t *pos, size_t size)
+static void	ft_handle_string(const char *src, char *buf,
+					size_t *pos, size_t size)
 {
 	while (src && *src)
 		put_char_to_buf(buf, *src++, pos, size);
 }
 
-int ft_vsnprintf(char *buf, size_t size, const char *format, va_list ap)
+int	ft_vsnprintf(char *buf, size_t size, const char *format, va_list ap)
 {
 	size_t	pos;
 
@@ -76,7 +77,6 @@ int ft_vsnprintf(char *buf, size_t size, const char *format, va_list ap)
 		else
 			put_char_to_buf(buf, *format++, &pos, size);
 	}
-	
 	put_char_to_buf(buf, '\0', &pos, size);
 	return ((int)pos);
 }

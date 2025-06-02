@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkurkar <mkurkar@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:09:28 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/05/28 19:49:55 by mkurkar          ###   ########.fr       */
+/*   Updated: 2025/06/02 22:41:29 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ static int	start(t_mini *mini)
 int	main(int argc, char **argv, char **envp)
 {
 	t_mini		mini;
-	int			loop;
 
 	ft_bzero(&mini, sizeof(t_mini));
 	if (!isatty(0) || !isatty(1) || !isatty(2))
@@ -90,13 +89,13 @@ int	main(int argc, char **argv, char **envp)
 	if (!mini.env)
 		return (1);
 	g_sig = 0;
-	loop = 1;
+	mini.loop = 1;
 	increment_shlvl(&mini);
-	while (loop == 1)
+	while (mini.loop == 1)
 	{
-		loop = start(&mini);
+		mini.loop = start(&mini);
 		mini.tokens = NULL;
 	}
 	mini_clean(&mini);
-	return (-loop);
+	return (-mini.loop);
 }

@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/08 19:50:37 by yaltayeh          #+#    #+#             */
-/*   Updated: 2025/06/02 22:32:38 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/06/02 22:38:02 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	ft_vfprintf(int fd, const char *fmt, va_list ap)
 	int		n;
 	size_t	size;
 	va_list	ap2;
-	
+
 	va_copy(ap2, ap);
 	n = ft_vsnprintf(NULL, 0, fmt, ap2);
 	va_end(ap2);
