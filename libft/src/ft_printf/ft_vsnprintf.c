@@ -6,7 +6,7 @@
 /*   By: yaltayeh <yaltayeh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 19:33:34 by mkurkar           #+#    #+#             */
-/*   Updated: 2025/06/02 22:39:05 by yaltayeh         ###   ########.fr       */
+/*   Updated: 2025/06/04 21:14:36 by yaltayeh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void	put_char_to_buf(char *buf, char c, size_t *pos, size_t size)
 		buf[*pos] = c;
 	if (c)
 		++*pos;
-	if (buf && size > 0 && *pos == size)
+	if (buf && size > 0 && *pos == size - 1)
 		buf[*pos] = '\0';
 }
 
