@@ -79,6 +79,14 @@ clean:
 fclean: clean
 	rm -f $(NAME)
 
+test.elf: 
+	$(CC) $(CFLAGS) $(CPPFLAGS) -fsanitize=address \
+	-o test.elf test/get_next_line.c $(LDFLAGS)
+
+test: test.elf
+	@./test.elf test/test.txt && echo "Test passed!" || echo "Test failed!"
+	@rm -f test.elf 
+
 re: fclean all
 
-.PHONY: all bonus libft clean fclean re
+.PHONY: all bonus libft clean fclean re test
